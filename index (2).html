@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<!-- iPhone / Home Screen -->
+<link rel="apple-touch-icon" href="dining-icon.png">
+<link rel="icon" type="image/png" href="dining-icon.png">
+<link rel="manifest" href="manifest.json">
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Dining Dollars">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1,
+               viewport-fit=cover">
+
+<meta name="theme-color" content="#03244D">
+
+<title>Auburn Dining Dollars</title>
+
+<style>
+:root{
+  --navy:#03244D;
+  --navy-soft:#0A315C;
+  --navy-light:#E8EEF5;
+  --navy-dark:#021B38;
+  --orange:#F26522;
+  --orange-bright:#FF7A2F;
+  --orange-light:#FFF0E7;
+  --cream:#F7F8FA;
+  --white:#FFFFFF;
+  --card-line:#DDE4EC;
+  --ink:#18212B;
+  --muted:#65717D;
+  --good:#2E7D4F;
+  --bad:#C23B22;
+  --shadow: 0 8px 24px rgba(3,36,77,0.10);
+  --radius:18px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html{ background:var(--cream); }
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(242,101,34,.08), transparent 32%),
+    linear-gradient(180deg, #F7F8FA 0%, #F3F6F9 100%);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:48px;
+}
+button, input{ font-family:inherit; }
+button{ cursor:pointer; }
+
+.wrap{ width:100%; max-width:480px; margin:0 auto; padding: calc(20px + env(safe-area-inset-top)) 18px 8px; }
+.wrap::before{
+  content:""; display:block; width:48px; height:4px; border-radius:999px;
+  background: linear-gradient(90deg, var(--orange), var(--orange-bright));
+  margin-bottom:16px;
+}
+
+.eyebrow{ font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--orange); font-weight:800; margin:0 0 4px 2px; }
+h1{ font-size:24px; margin:0 0 18px 2px; font-weight:800; letter-spacing:-.025em; color:var(--navy); }
+
+.gear{
+  position:absolute; top: calc(22px + env(safe-area-inset-top)); right:18px;
+  width:40px; height:40px; border-radius:50%; background:var(--navy-light);
+  border: 1px solid rgba(3,36,77,.08);
+  display:flex; align-items:center; justify-content:center;
+  transition: transform .15s ease, background .15s ease;
+}
+.gear:active{ transform:scale(.92); background:#D7E2EE; }
+.gear svg{ width:18px; height:18px; }
+
+.card{
+  position:relative; border-radius:23px; padding:23px 22px 20px;
+  background: linear-gradient(135deg, #03244D 0%, #063568 52%, #0A447A 100%);
+  color:white; box-shadow: 0 16px 38px rgba(3,36,77,.20);
+  overflow:hidden; margin-bottom:16px;
+}
+.card::before{
+  content:""; position:absolute; right:-45px; top:-70px; width:200px; height:200px;
+  border-radius:50%; background: radial-gradient(circle, rgba(242,101,34,.48), transparent 70%);
+}
+.card::after{
+  content:""; position:absolute; left:-80px; bottom:-100px; width:210px; height:210px;
+  border-radius:50%; background: radial-gradient(circle, rgba(255,255,255,.06), transparent 70%);
+}
+.card-top{ display:flex; justify-content:space-between; align-items:flex-start; position:relative; z-index:1; }
+.chip{ width:35px; height:27px; border-radius:6px; background: linear-gradient(135deg, #FFD28F, #F26522); box-shadow: inset 0 0 0 1px rgba(255,255,255,.25); }
+.card-label{ font-size:11px; letter-spacing:.12em; text-transform:uppercase; opacity:.72; margin-top:2px; }
+.balance-num{ font-size:43px; font-weight:800; letter-spacing:-.025em; margin:10px 0 2px; position:relative; z-index:1; }
+.balance-sub{ font-size:13px; opacity:.75; position:relative; z-index:1; }
+.card-bottom{ display:flex; justify-content:space-between; align-items:flex-end; margin-top:19px; position:relative; z-index:1; }
+.card-bottom .field{ font-size:12px; opacity:.7; }
+.card-bottom .field b{ display:block; font-size:15px; font-weight:650; opacity:1; color:white; margin-top:2px; }
+
+.allowance, .stat, .progress-wrap, .history{ background:var(--white); border: 1px solid var(--card-line); box-shadow:var(--shadow); }
+
+.allowance{ border-radius:var(--radius); padding:20px; margin-bottom:14px; }
+.allowance-top{ display:flex; justify-content:space-between; align-items:center; }
+.allowance-label{ font-size:13px; color:var(--muted); font-weight:700; }
+.allowance-num{ font-size:40px; font-weight:800; color:var(--orange); margin:6px 0 2px; letter-spacing:-.025em; }
+.allowance-sub{ font-size:13px; color:var(--muted); }
+.allowance-note{
+  display:inline-flex; align-items:center; margin-top:10px; padding:5px 9px; border-radius:999px;
+  background:var(--orange-light); color:var(--orange); font-size:11px; font-weight:800;
+}
+
+.stat-row{ display:flex; gap:12px; margin-bottom:14px; }
+.stat{ flex:1; border-radius:14px; padding:15px; text-align:center; }
+.stat .n{ font-size:22px; font-weight:750; color:var(--navy); }
+.stat .l{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-top:2px; }
+
+.progress-wrap{ border-radius:14px; padding:16px; margin-bottom:18px; }
+.progress-head{ display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-bottom:8px; }
+.bar{ height:8px; background:#E7ECF1; border-radius:999px; overflow:hidden; }
+.bar-fill{ height:100%; background: linear-gradient(90deg, var(--orange), var(--orange-bright)); border-radius:999px; transition: width .4s ease; }
+
+.actions{ display:flex; gap:10px; margin-bottom:18px; }
+.btn{ flex:1; padding:14px 10px; border-radius:14px; border:none; font-size:14px; font-weight:750; transition: transform .12s ease, opacity .12s ease; }
+.btn:active{ transform:scale(.97); opacity:.9; }
+.btn-primary{ background: linear-gradient(135deg, #F26522, #DD4F12); color:white; box-shadow: 0 6px 16px rgba(242,101,34,.25); }
+.btn-secondary{ background:#E8EEF5; color:var(--navy); border: 1px solid #D5DFEA; }
+
+.history{ border-radius:var(--radius); padding:16px 18px; }
+.history h3{ font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:0 0 10px; }
+.hrow{ display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom: 1px solid #E9EDF1; font-size:13.5px; }
+.hrow:last-child{ border-bottom:none; }
+.hrow .d{ color:var(--muted); font-size:12px; }
+.empty{ color:var(--muted); font-size:13px; padding:6px 0; }
+
+.overlay{
+  position:fixed; inset:0; background: rgba(3,36,77,.48);
+  display:flex; align-items:flex-end; justify-content:center; z-index:50;
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+}
+.sheet{
+  position:relative; background:var(--cream); width:100%; max-width:480px;
+  border-radius: 22px 22px 0 0; padding: 22px 20px calc(24px + env(safe-area-inset-bottom));
+  max-height:88vh; overflow-y:auto;
+}
+.sheet.center{ border-radius:22px; margin-top:auto; margin-bottom:auto; width:calc(100% - 24px); }
+.sheet h2{ margin:0 0 4px; font-size:19px; color:var(--navy); }
+.sheet p.hint{ margin:0 0 16px; font-size:13px; color:var(--muted); }
+
+label{ display:block; font-size:12px; font-weight:650; color:var(--muted); margin:14px 0 6px; text-transform:uppercase; letter-spacing:.04em; }
+input[type=number], input[type=date], input[type=text]{
+  width:100%; padding:12px 14px; border-radius:12px; border: 1px solid var(--card-line);
+  font-size:16px; background:white; font-family:inherit; color:var(--ink); outline:none;
+}
+input:focus{ border-color:var(--orange); box-shadow: 0 0 0 3px rgba(242,101,34,.12); }
+.row2{ display:flex; gap:10px; }
+.row2 > div{ flex:1; }
+
+.sheet-actions{ display:flex; gap:10px; margin-top:22px; }
+.sheet-actions .btn{ padding:14px; }
+.close-x{ position:absolute; top:14px; right:16px; background:none; border:none; font-size:22px; color:var(--muted); padding:4px 8px; }
+.link{ display:block; background:none; border:none; color:var(--bad); font-size:12px; text-decoration:underline; padding:0; margin:16px auto 0; }
+.note{ font-size:11.5px; color:var(--muted); background: rgba(242,101,34,.08); border-radius:10px; padding:10px 12px; margin-top:14px; line-height:1.4; }
+
+.loading{ display:flex; align-items:center; justify-content:center; min-height:60vh; color:var(--muted); font-size:14px; }
+
+@media(max-width:380px){
+  .balance-num{ font-size:38px; }
+  .allowance-num{ font-size:36px; }
+  .card{ padding:20px; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+  <div class="loading">Loading…</div>
+</div>
+
+<script>
+/* =========================================================
+   AUBURN DINING DOLLARS TRACKER — FALL 2026
+   Persistent storage: localStorage
+   Semester: August 17, 2026 → December 11, 2026
+   No class: Sep 7, Oct 8–9, Nov 23–27 (weekends auto-excluded)
+   ========================================================= */
+
+const CONFIG_KEY = 'auburn_dining_dollars_config_v3';
+const HISTORY_KEY = 'auburn_dining_dollars_history_v3';
+
+const DEFAULTS = {
+  totalBudget:475,
+  balance:null,
+  semesterStart:'2026-08-17',
+  semesterEnd:'2026-12-11',
+  holidays:[
+    '2026-09-07',
+    '2026-10-08','2026-10-09',
+    '2026-11-23','2026-11-24','2026-11-25','2026-11-26','2026-11-27'
+  ],
+  setupComplete:false
+};
+
+let config = null;
+let history = [];
+
+function todayISO(){
+  const d = new Date();
+  const off = d.getTimezoneOffset();
+  const local = new Date(d.getTime() - off * 60000);
+  return local.toISOString().slice(0,10);
+}
+
+function fmtDate(iso){
+  const [y,m,d] = iso.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  return dt.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+}
+
+function fmtMoney(n){
+  if(typeof n !== 'number' || !isFinite(n)){ n = 0; }
+  return '$' + n.toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 });
+}
+
+function schoolDays(cfg){
+  const days = [];
+  const [sy,sm,sd] = cfg.semesterStart.split('-').map(Number);
+  const [ey,em,ed] = cfg.semesterEnd.split('-').map(Number);
+  let cur = new Date(sy, sm - 1, sd);
+  const end = new Date(ey, em - 1, ed);
+  const holidaySet = new Set(cfg.holidays);
+  while(cur <= end){
+    const dow = cur.getDay();
+    const iso = cur.getFullYear() + '-' + String(cur.getMonth()+1).padStart(2,'0') + '-' + String(cur.getDate()).padStart(2,'0');
+    if(dow !== 0 && dow !== 6 && !holidaySet.has(iso)){
+      days.push(iso);
+    }
+    cur.setDate(cur.getDate() + 1);
+  }
+  return days;
+}
+
+function cloneDefaults(){
+  return {
+    totalBudget: DEFAULTS.totalBudget,
+    balance: DEFAULTS.balance,
+    semesterStart: DEFAULTS.semesterStart,
+    semesterEnd: DEFAULTS.semesterEnd,
+    holidays:[...DEFAULTS.holidays],
+    setupComplete: DEFAULTS.setupComplete
+  };
+}
+
+function saveConfig(){
+  try{
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+    return true;
+  }catch(e){
+    console.error('Could not save config:', e);
+    return false;
+  }
+}
+
+function saveHistory(){
+  try{
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    return true;
+  }catch(e){
+    console.error('Could not save history:', e);
+    return false;
+  }
+}
+
+function loadState(){
+  try{
+    const savedConfig = localStorage.getItem(CONFIG_KEY);
+    config = savedConfig ? JSON.parse(savedConfig) : cloneDefaults();
+  }catch(e){
+    console.error('Config loading error:', e);
+    config = cloneDefaults();
+  }
+
+  if(!Array.isArray(config.holidays)){
+    config.holidays = [...DEFAULTS.holidays];
+  }else{
+    DEFAULTS.holidays.forEach(date => {
+      if(!config.holidays.includes(date)){
+        config.holidays.push(date);
+      }
+    });
+  }
+
+  /* Always lock the semester to Fall 2026. */
+  config.semesterStart = DEFAULTS.semesterStart;
+  config.semesterEnd = DEFAULTS.semesterEnd;
+
+  try{
+    const savedHistory = localStorage.getItem(HISTORY_KEY);
+    history = savedHistory ? JSON.parse(savedHistory) : [];
+  }catch(e){
+    console.error('History loading error:', e);
+    history = [];
+  }
+
+  if(!Array.isArray(history)){ history = []; }
+
+  if(config.balance !== null && (typeof config.balance !== 'number' || !isFinite(config.balance))){
+    config.balance = 0;
+  }
+}
+
+/* Total eligible class days is a fixed number — not derived from the
+   semester date range. The start/end dates below are only used to figure
+   out how many class days have passed as of today; they don't drive the total. */
+const TOTAL_CLASS_DAYS = 72;
+
+function computeStats(){
+  const days = schoolDays(config);
+  const today = todayISO();
+  const totalDays = TOTAL_CLASS_DAYS;
+
+  const earnedDays = days.filter(d => d <= today).slice(0, totalDays);
+  const elapsedDays = earnedDays.length;
+
+  const dayIndex = days.indexOf(today);
+  const dayOfClass = (dayIndex >= 0 && dayIndex < totalDays) ? dayIndex + 1 : null;
+
+  const remainingCount = Math.max(0, totalDays - elapsedDays);
+
+  const totalBudget = Number(config.totalBudget) || 0;
+  const dailyRate = totalDays > 0 ? totalBudget / totalDays : 0;
+
+  const accumulatedAllowance = dailyRate * elapsedDays;
+
+  const totalSpent = history.reduce((total, entry) => {
+    const countsAsSpend = entry && (entry.type === 'spend' || entry.type === 'setup');
+    if(countsAsSpend && typeof entry.amount === 'number' && isFinite(entry.amount)){
+      return total + entry.amount;
+    }
+    return total;
+  }, 0);
+
+  const availableToSpend = accumulatedAllowance - totalSpent;
+
+  const balance = Number(config.balance) || 0;
+
+  return {
+    days, today, totalDays, earnedDays, elapsedDays, remainingCount,
+    dayOfClass, dailyRate, accumulatedAllowance, totalSpent, availableToSpend,
+    balance, totalBudget, isClassToday: dayIndex >= 0
+  };
+}
+
+function render(){
+  const app = document.getElementById('app');
+  if(!config.setupComplete){
+    app.innerHTML = onboardingView();
+    wireOnboarding();
+    return;
+  }
+  app.innerHTML = mainView();
+  wireMain();
+}
+
+function onboardingView(){
+  return `
+    <div class="wrap" style="padding-top:36px;">
+      <div class="eyebrow">Auburn University</div>
+      <h1>Dining Dollars</h1>
+
+      <div class="allowance" style="margin-bottom:16px;">
+        <p class="hint" style="margin-bottom:0;">
+          Enter your <b>current</b> Dining Dollars balance.
+          I'll calculate your accumulated spending allowance based on how many class days have passed.
+        </p>
+        <label>Current balance</label>
+        <input type="number" id="ob-balance" inputmode="decimal" placeholder="e.g. 475.00" step="0.01" min="0">
+      </div>
+
+      <div class="allowance">
+        <p class="hint" style="margin-bottom:2px;">
+          <b>Fall 2026 settings</b>
+          Budget is split across 72 eligible class days — dates below are just for reference.
+        </p>
+        <div class="row2">
+          <div>
+            <label>Total budget</label>
+            <input type="number" id="ob-total" value="${config.totalBudget}" step="1" min="1">
+          </div>
+          <div>
+            <label>Last day</label>
+            <input type="text" value="Dec 11, 2026" disabled style="opacity:.65;">
+          </div>
+        </div>
+        <label>First day of class</label>
+        <input type="text" value="Aug 17, 2026" disabled style="opacity:.65;">
+        <div class="note">
+          Weekends are automatically excluded.
+          Labor Day, Fall Break, and Thanksgiving Break are built into the app automatically.
+        </div>
+      </div>
+
+      <div class="sheet-actions" style="margin-top:4px;">
+        <button class="btn btn-primary" id="ob-start-btn" style="flex:1;">Start tracking</button>
+      </div>
+    </div>
+  `;
+}
+
+function wireOnboarding(){
+  document.getElementById('ob-start-btn').onclick = () => {
+    const balance = parseFloat(document.getElementById('ob-balance').value);
+    const total = parseFloat(document.getElementById('ob-total').value);
+
+    if(isNaN(balance) || balance < 0){
+      alert('Enter your current balance to continue.');
+      return;
+    }
+
+    if(!isNaN(total) && total > 0){
+      config.totalBudget = total;
+    }
+
+    config.semesterStart = DEFAULTS.semesterStart;
+    config.semesterEnd = DEFAULTS.semesterEnd;
+    config.holidays = [...DEFAULTS.holidays];
+    config.balance = balance;
+    config.setupComplete = true;
+
+    /* Spending that happened before you started using the tracker
+       (e.g. you're entering this on day 6, not day 1) still counts
+       toward total_spent, or available_to_spend would be wrong. */
+    const spentBeforeSetup = Math.max(0, config.totalBudget - balance);
+
+    history = [{
+      date: todayISO(),
+      type: 'setup',
+      amount: spentBeforeSetup > 0 ? spentBeforeSetup : null,
+      balanceAfter: balance,
+      note: 'Starting balance entered'
+    }];
+
+    saveConfig();
+    saveHistory();
+    render();
+  };
+}
+
+function mainView(){
+  const s = computeStats();
+
+  const dayLabel = s.dayOfClass ? `Day ${s.dayOfClass} of ${s.totalDays}` : `Not a class day`;
+
+  const historyRows = history.slice().reverse().slice(0,8).map(h => {
+    let label;
+    if(h.type === 'setup'){
+      label = (typeof h.amount === 'number' && h.amount > 0)
+        ? `Starting balance (${fmtMoney(h.amount)} already spent)`
+        : 'Starting balance';
+    }else if(h.type === 'spend'){
+      label = `Purchase −${fmtMoney(h.amount)}`;
+    }else{
+      label = 'Balance updated';
+    }
+    return `
+      <div class="hrow">
+        <span>${label}</span>
+        <span>${fmtMoney(h.balanceAfter)} <span class="d">· ${fmtDate(h.date)}</span></span>
+      </div>
+    `;
+  }).join('');
+
+  let allowanceSub;
+  if(s.elapsedDays === 0){
+    allowanceSub = 'No class days have occurred yet';
+  }else{
+    allowanceSub = `${fmtMoney(s.accumulatedAllowance)} earned − ${fmtMoney(s.totalSpent)} spent`;
+  }
+
+  return `
+    <div class="wrap" style="position:relative;">
+      <div class="eyebrow">Auburn University · Fall 2026</div>
+      <h1>Dining Dollars</h1>
+
+      <button class="gear" id="open-settings" aria-label="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#03244D" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a2 2 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+
+      <div class="card">
+        <div class="card-top">
+          <div><div class="card-label">Current balance</div></div>
+          <div class="chip"></div>
+        </div>
+        <div class="balance-num">${fmtMoney(s.balance)}</div>
+        <div class="balance-sub">of ${fmtMoney(s.totalBudget)} for the semester</div>
+        <div class="card-bottom">
+          <div class="field">${dayLabel}<b>${fmtDate(s.today)}</b></div>
+          <div class="field" style="text-align:right;">Class days left<b>${s.remainingCount}</b></div>
+        </div>
+      </div>
+
+      <div class="allowance">
+        <div class="allowance-top"><span class="allowance-label">Available to spend</span></div>
+        <div class="allowance-num" style="${s.availableToSpend < 0 ? 'color:var(--bad);' : ''}">${s.availableToSpend < 0 ? '−' : ''}${fmtMoney(Math.abs(s.availableToSpend))}</div>
+        <div class="allowance-sub">${allowanceSub}</div>
+        ${s.availableToSpend < 0
+          ? `<div class="allowance-note" style="background:rgba(194,59,34,.10); color:var(--bad);">Spent ahead of what you've earned</div>`
+          : `<div class="allowance-note">Earns ${fmtMoney(s.dailyRate)} each class day</div>`
+        }
+      </div>
+
+      <div class="stat-row">
+        <div class="stat"><div class="n">${fmtMoney(s.totalSpent)}</div><div class="l">Spent so far</div></div>
+        <div class="stat"><div class="n">${fmtMoney(s.accumulatedAllowance)}</div><div class="l">Earned so far</div></div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-head">
+          <span>${s.elapsedDays} class days completed</span>
+          <span>${s.totalDays} total</span>
+        </div>
+        <div class="bar"><div class="bar-fill" style="width:${s.totalDays > 0 ? (s.elapsedDays / s.totalDays) * 100 : 0}%"></div></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="open-spend">Log purchase</button>
+        <button class="btn btn-secondary" id="open-update">Update balance</button>
+      </div>
+
+      <div class="history">
+        <h3>Recent activity</h3>
+        ${history.length ? historyRows : '<div class="empty">Nothing logged yet</div>'}
+      </div>
+    </div>
+  `;
+}
+
+function wireMain(){
+  document.getElementById('open-settings').onclick = () => showSettings();
+  document.getElementById('open-spend').onclick = () => showSpend();
+  document.getElementById('open-update').onclick = () => showUpdate();
+}
+
+function overlay(innerHTML){
+  const div = document.createElement('div');
+  div.className = 'overlay';
+  div.innerHTML = `<div class="sheet center">${innerHTML}</div>`;
+  div.addEventListener('click', e => { if(e.target === div){ div.remove(); } });
+  document.body.appendChild(div);
+  return div;
+}
+
+function showSpend(){
+  const s = computeStats();
+  const ov = overlay(`
+    <button class="close-x" id="close-spend">×</button>
+    <h2>Log a purchase</h2>
+    <p class="hint">You currently have <b>${fmtMoney(s.availableToSpend)}</b> available to spend.</p>
+    <label>Amount spent</label>
+    <input type="number" id="spend-amount" inputmode="decimal" step="0.01" min="0" placeholder="0.00" autofocus>
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" id="cancel-spend">Cancel</button>
+      <button class="btn btn-primary" id="confirm-spend">Log it</button>
+    </div>
+  `);
+
+  document.getElementById('close-spend').onclick = () => ov.remove();
+  document.getElementById('cancel-spend').onclick = () => ov.remove();
+  document.getElementById('confirm-spend').onclick = () => {
+    const amt = parseFloat(document.getElementById('spend-amount').value);
+    if(isNaN(amt) || amt <= 0){ alert('Enter a valid amount.'); return; }
+
+    const currentStats = computeStats();
+    if(amt > currentStats.availableToSpend){
+      const proceed = confirm(`This purchase is ${fmtMoney(amt - currentStats.availableToSpend)} more than your currently earned allowance of ${fmtMoney(currentStats.availableToSpend)}. Continue?`);
+      if(!proceed){ return; }
+    }
+
+    config.balance = Math.max(0, Number(config.balance) - amt);
+
+    history.push({ date: todayISO(), type: 'spend', amount: amt, balanceAfter: config.balance });
+
+    saveConfig();
+    saveHistory();
+    ov.remove();
+    render();
+  };
+}
+
+function showUpdate(){
+  const ov = overlay(`
+    <button class="close-x" id="close-update">×</button>
+    <h2>Update balance</h2>
+    <p class="hint">Checked your actual Dining Dollars balance? Enter the current number here to re-sync the account.</p>
+    <label>Current balance</label>
+    <input type="number" id="update-amount" inputmode="decimal" step="0.01" min="0" value="${Number(config.balance).toFixed(2)}" autofocus>
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" id="cancel-update">Cancel</button>
+      <button class="btn btn-primary" id="confirm-update">Save</button>
+    </div>
+  `);
+
+  document.getElementById('close-update').onclick = () => ov.remove();
+  document.getElementById('cancel-update').onclick = () => ov.remove();
+  document.getElementById('confirm-update').onclick = () => {
+    const amt = parseFloat(document.getElementById('update-amount').value);
+    if(isNaN(amt) || amt < 0){ alert('Enter a valid amount.'); return; }
+
+    config.balance = amt;
+
+    /* Updating the actual balance does NOT affect earned allowance. */
+    history.push({ date: todayISO(), type: 'update', amount: null, balanceAfter: amt });
+
+    saveConfig();
+    saveHistory();
+    ov.remove();
+    render();
+  };
+}
+
+function showSettings(){
+  const ov = overlay(`
+    <button class="close-x" id="close-settings">×</button>
+    <h2>Settings</h2>
+    <p class="hint">Budget is split across 72 fixed class days. Dates below are shown for reference only.</p>
+    <label>Total budget</label>
+    <input type="number" id="set-total" value="${config.totalBudget}" step="1" min="1">
+    <label>Semester dates</label>
+    <input type="text" value="Aug 17 – Dec 11, 2026" disabled style="opacity:.65;">
+    <div class="note">
+      Automatically excluded: Labor Day — Sep 7 · Fall Break — Oct 8–9 · Thanksgiving Break — Nov 23–27
+    </div>
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" id="cancel-settings">Cancel</button>
+      <button class="btn btn-primary" id="save-settings">Save</button>
+    </div>
+    <button class="link" id="reset-all">Reset all data and start over</button>
+  `);
+
+  document.getElementById('close-settings').onclick = () => ov.remove();
+  document.getElementById('cancel-settings').onclick = () => ov.remove();
+
+  document.getElementById('save-settings').onclick = () => {
+    const total = parseFloat(document.getElementById('set-total').value);
+    if(!isNaN(total) && total > 0){ config.totalBudget = total; }
+
+    config.semesterStart = DEFAULTS.semesterStart;
+    config.semesterEnd = DEFAULTS.semesterEnd;
+    config.holidays = [...DEFAULTS.holidays];
+
+    saveConfig();
+    ov.remove();
+    render();
+  };
+
+  document.getElementById('reset-all').onclick = () => {
+    if(confirm('This clears your balance, history, and settings. Continue?')){
+      localStorage.removeItem(CONFIG_KEY);
+      localStorage.removeItem(HISTORY_KEY);
+      config = cloneDefaults();
+      history = [];
+      ov.remove();
+      render();
+    }
+  };
+}
+
+(function init(){
+  loadState();
+  render();
+})();
+</script>
+
+</body>
+</html>
