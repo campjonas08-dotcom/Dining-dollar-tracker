@@ -2,8 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1,
+               viewport-fit=cover">
+
+<!-- iPhone / Home Screen app settings -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Dining Dollars">
+
+<meta name="theme-color" content="#03244D">
+
 <title>Dining Dollars</title>
+
 <style>
   :root{
     --navy: #03244D;
@@ -17,765 +31,2477 @@
     --good: #2E7D4F;
     --bad: #C23B22;
     --radius: 18px;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+
+    font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "SF Pro Text",
+      "Segoe UI",
+      sans-serif;
   }
-  *{box-sizing:border-box;}
+
+  *{
+    box-sizing:border-box;
+  }
+
+  html{
+    background:var(--cream);
+  }
+
   body{
     margin:0;
-    background: var(--cream);
-    color: var(--ink);
-    -webkit-font-smoothing: antialiased;
-    padding-bottom: 48px;
+    background:var(--cream);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:48px;
+
+    /* Better iPhone scrolling */
+    overscroll-behavior-y:none;
   }
+
+  button,
+  input{
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  button{
+    font-family:inherit;
+    cursor:pointer;
+  }
+
   .wrap{
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 20px 18px 8px;
+    max-width:480px;
+    margin:0 auto;
+    padding:
+      calc(20px + env(safe-area-inset-top))
+      18px
+      8px;
   }
+
   .eyebrow{
-    font-size: 12px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
-    font-weight: 600;
-    margin: 0 0 4px 2px;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--muted);
+    font-weight:600;
+    margin:0 0 4px 2px;
   }
+
   h1{
-    font-size: 22px;
-    margin: 0 0 18px 2px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
+    font-size:22px;
+    margin:0 0 18px 2px;
+    font-weight:700;
+    letter-spacing:-0.01em;
   }
+
   .gear{
-    position: absolute;
-    top: 22px;
-    right: 18px;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: rgba(3,36,77,0.06);
-    border: none;
+    position:absolute;
+    top:calc(22px + env(safe-area-inset-top));
+    right:18px;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:rgba(3,36,77,0.06);
+    border:none;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     cursor:pointer;
   }
-  .gear svg{ width:18px; height:18px; }
 
-  /* dining card */
-  .card{
-    position: relative;
-    border-radius: 22px;
-    padding: 22px 22px 20px;
-    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 60%, #123A6B 100%);
-    color: white;
-    box-shadow: 0 14px 30px -14px rgba(3,36,77,0.55);
-    overflow: hidden;
-    margin-bottom: 16px;
+  .gear svg{
+    width:18px;
+    height:18px;
   }
+
+  /* Dining card */
+
+  .card{
+    position:relative;
+    border-radius:22px;
+    padding:22px 22px 20px;
+
+    background:
+      linear-gradient(
+        135deg,
+        var(--navy) 0%,
+        var(--navy-soft) 60%,
+        #123A6B 100%
+      );
+
+    color:white;
+
+    box-shadow:
+      0 14px 30px -14px rgba(3,36,77,0.55);
+
+    overflow:hidden;
+    margin-bottom:16px;
+  }
+
   .card::after{
     content:"";
     position:absolute;
     right:-40px;
     top:-60px;
+
     width:180px;
     height:180px;
+
     border-radius:50%;
-    background: radial-gradient(circle, rgba(221,85,12,0.35), transparent 70%);
+
+    background:
+      radial-gradient(
+        circle,
+        rgba(221,85,12,0.35),
+        transparent 70%
+      );
   }
+
   .card-top{
     display:flex;
     justify-content:space-between;
     align-items:flex-start;
+
     position:relative;
     z-index:1;
   }
+
   .chip{
-    width:34px;height:26px;border-radius:6px;
-    background: linear-gradient(135deg,#f5c88a,#DD550C);
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25);
+    width:34px;
+    height:26px;
+    border-radius:6px;
+
+    background:
+      linear-gradient(
+        135deg,
+        #f5c88a,
+        #DD550C
+      );
+
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,0.25);
   }
+
   .card-label{
     font-size:11px;
     letter-spacing:0.12em;
     text-transform:uppercase;
     opacity:0.7;
-    margin-top: 2px;
+    margin-top:2px;
   }
+
   .balance-num{
-    font-size: 42px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin: 10px 0 2px;
-    position:relative; z-index:1;
+    font-size:42px;
+    font-weight:700;
+    letter-spacing:-0.02em;
+    margin:10px 0 2px;
+
+    position:relative;
+    z-index:1;
   }
+
   .balance-sub{
-    font-size: 13px;
-    opacity: 0.75;
-    position:relative; z-index:1;
+    font-size:13px;
+    opacity:0.75;
+
+    position:relative;
+    z-index:1;
   }
+
   .card-bottom{
     display:flex;
     justify-content:space-between;
     align-items:flex-end;
-    margin-top: 18px;
-    position:relative; z-index:1;
-  }
-  .card-bottom .field{ font-size: 12px; opacity:0.7; }
-  .card-bottom .field b{ display:block; font-size:15px; font-weight:600; opacity:1; color:white; }
 
-  /* allowance card */
-  .allowance{
-    background: white;
-    border: 1px solid var(--card-line);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 14px;
+    margin-top:18px;
+
+    position:relative;
+    z-index:1;
   }
+
+  .card-bottom .field{
+    font-size:12px;
+    opacity:0.7;
+  }
+
+  .card-bottom .field b{
+    display:block;
+    font-size:15px;
+    font-weight:600;
+    opacity:1;
+    color:white;
+  }
+
+  /* Allowance */
+
+  .allowance{
+    background:white;
+    border:1px solid var(--card-line);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-bottom:14px;
+  }
+
   .allowance-top{
     display:flex;
     justify-content:space-between;
     align-items:center;
+    gap:10px;
   }
+
   .allowance-label{
-    font-size: 13px;
-    color: var(--muted);
-    font-weight: 600;
+    font-size:13px;
+    color:var(--muted);
+    font-weight:600;
   }
+
   .pace-chip{
-    font-size: 11px;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 999px;
+    font-size:11px;
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:999px;
+    white-space:nowrap;
   }
-  .pace-good{ background: rgba(46,125,79,0.12); color: var(--good); }
-  .pace-bad{ background: rgba(194,59,34,0.12); color: var(--bad); }
-  .pace-even{ background: rgba(107,101,89,0.12); color: var(--muted); }
+
+  .pace-good{
+    background:rgba(46,125,79,0.12);
+    color:var(--good);
+  }
+
+  .pace-bad{
+    background:rgba(194,59,34,0.12);
+    color:var(--bad);
+  }
+
+  .pace-even{
+    background:rgba(107,101,89,0.12);
+    color:var(--muted);
+  }
+
   .allowance-num{
-    font-size: 40px;
-    font-weight: 800;
-    color: var(--orange);
-    margin: 6px 0 2px;
-    letter-spacing: -0.02em;
+    font-size:40px;
+    font-weight:800;
+    color:var(--orange);
+
+    margin:6px 0 2px;
+    letter-spacing:-0.02em;
   }
-  .allowance-sub{ font-size: 13px; color: var(--muted); }
+
+  .allowance-sub{
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  /* Stats */
 
   .stat-row{
     display:flex;
-    gap: 12px;
-    margin-bottom: 14px;
+    gap:12px;
+    margin-bottom:14px;
   }
+
   .stat{
     flex:1;
-    background: white;
-    border: 1px solid var(--card-line);
-    border-radius: 14px;
-    padding: 14px;
+    background:white;
+    border:1px solid var(--card-line);
+    border-radius:14px;
+    padding:14px;
     text-align:center;
   }
-  .stat .n{ font-size: 22px; font-weight:700; }
-  .stat .l{ font-size: 11px; color: var(--muted); text-transform:uppercase; letter-spacing:0.06em; margin-top:2px; }
+
+  .stat .n{
+    font-size:22px;
+    font-weight:700;
+  }
+
+  .stat .l{
+    font-size:11px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-top:2px;
+  }
+
+  /* Progress */
 
   .progress-wrap{
-    background: white;
-    border: 1px solid var(--card-line);
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 18px;
+    background:white;
+    border:1px solid var(--card-line);
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:18px;
   }
+
   .progress-head{
-    display:flex; justify-content:space-between;
-    font-size: 12px; color: var(--muted); margin-bottom:8px;
+    display:flex;
+    justify-content:space-between;
+
+    font-size:12px;
+    color:var(--muted);
+
+    margin-bottom:8px;
   }
+
   .bar{
-    height: 8px;
-    background: #EFE8D9;
-    border-radius: 999px;
+    height:8px;
+    background:#EFE8D9;
+    border-radius:999px;
     overflow:hidden;
   }
+
   .bar-fill{
     height:100%;
-    background: linear-gradient(90deg, var(--orange), var(--orange-bright));
-    border-radius: 999px;
-    transition: width 0.4s ease;
+
+    background:
+      linear-gradient(
+        90deg,
+        var(--orange),
+        var(--orange-bright)
+      );
+
+    border-radius:999px;
+
+    transition:
+      width 0.4s ease;
   }
+
+  /* Buttons */
 
   .actions{
     display:flex;
-    gap: 10px;
-    margin-bottom: 18px;
+    gap:10px;
+    margin-bottom:18px;
   }
-  button{
-    font-family: inherit;
-    cursor:pointer;
-  }
+
   .btn{
     flex:1;
-    padding: 14px 10px;
-    border-radius: 14px;
-    border: none;
-    font-size: 14px;
-    font-weight: 700;
+    padding:14px 10px;
+    border-radius:14px;
+    border:none;
+
+    font-size:14px;
+    font-weight:700;
   }
-  .btn-primary{ background: var(--orange); color:white; }
-  .btn-secondary{ background: white; color: var(--navy); border: 1px solid var(--card-line); }
+
+  .btn-primary{
+    background:var(--orange);
+    color:white;
+  }
+
+  .btn-secondary{
+    background:white;
+    color:var(--navy);
+    border:1px solid var(--card-line);
+  }
+
+  .btn:active{
+    transform:scale(0.98);
+  }
+
+  /* History */
 
   .history{
-    background: white;
-    border: 1px solid var(--card-line);
-    border-radius: var(--radius);
-    padding: 16px 18px;
+    background:white;
+    border:1px solid var(--card-line);
+    border-radius:var(--radius);
+    padding:16px 18px;
   }
-  .history h3{
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    margin: 0 0 10px;
-  }
-  .hrow{
-    display:flex; justify-content:space-between; align-items:center;
-    padding: 9px 0;
-    border-bottom: 1px solid #F1EBDD;
-    font-size: 13.5px;
-  }
-  .hrow:last-child{ border-bottom:none; }
-  .hrow .d{ color: var(--muted); font-size:12px; }
-  .empty{ color: var(--muted); font-size: 13px; padding: 6px 0; }
 
-  /* modal */
+  .history h3{
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--muted);
+    margin:0 0 10px;
+  }
+
+  .hrow{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:9px 0;
+
+    border-bottom:1px solid #F1EBDD;
+
+    font-size:13.5px;
+
+    gap:10px;
+  }
+
+  .hrow:last-child{
+    border-bottom:none;
+  }
+
+  .hrow .d{
+    color:var(--muted);
+    font-size:12px;
+  }
+
+  .empty{
+    color:var(--muted);
+    font-size:13px;
+    padding:6px 0;
+  }
+
+  /* Modal */
+
   .overlay{
-    position: fixed; inset:0;
-    background: rgba(3,36,77,0.45);
-    display:flex; align-items:flex-end; justify-content:center;
-    z-index: 50;
+    position:fixed;
+    inset:0;
+
+    background:rgba(3,36,77,0.45);
+
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+
+    z-index:50;
+
+    padding:
+      0
+      env(safe-area-inset-right)
+      env(safe-area-inset-bottom)
+      env(safe-area-inset-left);
   }
+
   .sheet{
-    background: var(--cream);
-    width: 100%;
-    max-width: 480px;
-    border-radius: 22px 22px 0 0;
-    padding: 22px 20px calc(24px + env(safe-area-inset-bottom));
-    max-height: 88vh;
-    overflow-y: auto;
+    background:var(--cream);
+
+    width:100%;
+    max-width:480px;
+
+    border-radius:22px 22px 0 0;
+
+    padding:
+      22px 20px
+      calc(24px + env(safe-area-inset-bottom));
+
+    max-height:88vh;
+    overflow-y:auto;
+
+    position:relative;
   }
+
   .sheet.center{
-    border-radius: 22px;
-    margin-bottom: auto;
-    margin-top: auto;
+    border-radius:22px;
+    margin-bottom:auto;
+    margin-top:auto;
   }
-  .sheet h2{ margin: 0 0 4px; font-size: 19px; }
-  .sheet p.hint{ margin: 0 0 16px; font-size: 13px; color: var(--muted); }
+
+  .sheet h2{
+    margin:0 0 4px;
+    font-size:19px;
+  }
+
+  .sheet p.hint{
+    margin:0 0 16px;
+    font-size:13px;
+    color:var(--muted);
+  }
+
   label{
-    display:block; font-size: 12px; font-weight:600; color: var(--muted);
-    margin: 14px 0 6px;
-    text-transform: uppercase; letter-spacing: 0.04em;
+    display:block;
+
+    font-size:12px;
+    font-weight:600;
+
+    color:var(--muted);
+
+    margin:14px 0 6px;
+
+    text-transform:uppercase;
+    letter-spacing:0.04em;
   }
-  input[type=number], input[type=date], input[type=text]{
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 12px;
-    border: 1px solid var(--card-line);
-    font-size: 16px;
-    background: white;
-    font-family: inherit;
+
+  input[type=number],
+  input[type=date],
+  input[type=text]{
+    width:100%;
+
+    padding:12px 14px;
+
+    border-radius:12px;
+    border:1px solid var(--card-line);
+
+    font-size:16px;
+
+    background:white;
+    font-family:inherit;
+
+    -webkit-appearance:none;
   }
-  .row2{ display:flex; gap:10px; }
-  .row2 > div{ flex:1; }
+
+  .row2{
+    display:flex;
+    gap:10px;
+  }
+
+  .row2 > div{
+    flex:1;
+  }
+
   .holiday-list{
-    display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:10px;
   }
+
   .holiday-chip{
-    background: white;
-    border: 1px solid var(--card-line);
-    border-radius: 999px;
-    padding: 6px 10px;
-    font-size: 12px;
-    display:flex; align-items:center; gap:6px;
+    background:white;
+    border:1px solid var(--card-line);
+    border-radius:999px;
+
+    padding:6px 10px;
+
+    font-size:12px;
+
+    display:flex;
+    align-items:center;
+    gap:6px;
   }
+
   .holiday-chip button{
-    background:none; border:none; color: var(--bad); font-weight:700; font-size:13px; padding:0;
+    background:none;
+    border:none;
+
+    color:var(--bad);
+
+    font-weight:700;
+    font-size:13px;
+
+    padding:0;
   }
-  .add-holiday-row{ display:flex; gap:8px; margin-top:10px; }
-  .add-holiday-row input{ flex:1; }
+
+  .add-holiday-row{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+  }
+
+  .add-holiday-row input{
+    flex:1;
+  }
+
   .add-holiday-row button{
-    padding: 0 16px; border-radius: 12px; border:none;
-    background: var(--navy); color:white; font-weight:700; font-size: 13px;
+    padding:0 16px;
+
+    border-radius:12px;
+    border:none;
+
+    background:var(--navy);
+    color:white;
+
+    font-weight:700;
+    font-size:13px;
   }
-  .sheet-actions{ display:flex; gap:10px; margin-top:22px; }
-  .sheet-actions .btn{ padding: 14px; }
+
+  .sheet-actions{
+    display:flex;
+    gap:10px;
+    margin-top:22px;
+  }
+
+  .sheet-actions .btn{
+    padding:14px;
+  }
+
   .close-x{
-    position:absolute; top:14px; right:16px;
-    background:none; border:none; font-size:20px; color: var(--muted);
+    position:absolute;
+    top:14px;
+    right:16px;
+
+    background:none;
+    border:none;
+
+    font-size:20px;
+    color:var(--muted);
   }
-  .sheet{ position:relative; }
+
   .link{
-    background:none; border:none; color: var(--bad); font-size: 12px;
-    text-decoration: underline; padding: 0; margin-top: 4px;
+    display:block;
+
+    background:none;
+    border:none;
+
+    color:var(--bad);
+
+    font-size:12px;
+
+    text-decoration:underline;
+
+    padding:0;
+    margin:12px auto 0;
   }
+
   .note{
-    font-size: 11.5px; color: var(--muted); background: rgba(221,85,12,0.08);
-    border-radius: 10px; padding: 10px 12px; margin-top: 14px; line-height:1.4;
+    font-size:11.5px;
+    color:var(--muted);
+
+    background:rgba(221,85,12,0.08);
+
+    border-radius:10px;
+
+    padding:10px 12px;
+
+    margin-top:14px;
+
+    line-height:1.4;
   }
+
   .loading{
-    display:flex; align-items:center; justify-content:center;
-    min-height: 60vh; color: var(--muted); font-size: 14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    min-height:60vh;
+
+    color:var(--muted);
+    font-size:14px;
   }
 </style>
 </head>
+
 <body>
 
-<div id="app"><div class="loading">Loading…</div></div>
+<div id="app">
+  <div class="loading">Loading…</div>
+</div>
 
 <script>
-const CONFIG_KEY = 'dc_config_v1';
-const HISTORY_KEY = 'dc_history_v1';
+
+/* ============================================================
+   DINING DOLLARS
+   Data is stored locally on the device using localStorage.
+   ============================================================ */
+
+const CONFIG_KEY = 'dining_dollars_config_v2';
+const HISTORY_KEY = 'dining_dollars_history_v2';
 
 const DEFAULTS = {
   totalBudget: 475,
   balance: null,
+
   semesterStart: '2026-08-21',
   semesterEnd: '2026-12-11',
-  holidays: ['2026-09-07','2026-11-23','2026-11-24','2026-11-25','2026-11-26','2026-11-27'],
+
+  holidays: [
+    '2026-09-07',
+    '2026-11-23',
+    '2026-11-24',
+    '2026-11-25',
+    '2026-11-26',
+    '2026-11-27'
+  ],
+
   setupComplete: false
 };
 
 let config = null;
 let history = [];
 
+
+/* ============================================================
+   DATE FUNCTIONS
+   ============================================================ */
+
 function todayISO(){
+
   const d = new Date();
+
   const off = d.getTimezoneOffset();
-  const local = new Date(d.getTime() - off*60000);
-  return local.toISOString().slice(0,10);
+
+  const local =
+    new Date(
+      d.getTime() - off * 60000
+    );
+
+  return local
+    .toISOString()
+    .slice(0,10);
 }
+
 
 function fmtDate(iso){
-  const [y,m,d] = iso.split('-').map(Number);
-  const dt = new Date(y, m-1, d);
-  return dt.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+
+  const [y,m,d] =
+    iso.split('-').map(Number);
+
+  const dt =
+    new Date(
+      y,
+      m - 1,
+      d
+    );
+
+  return dt.toLocaleDateString(
+    'en-US',
+    {
+      month:'short',
+      day:'numeric'
+    }
+  );
 }
+
 
 function fmtMoney(n){
-  return '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  return '$' +
+    Number(n).toLocaleString(
+      'en-US',
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    );
 }
 
+
+/* ============================================================
+   SCHOOL DAYS
+   ============================================================ */
+
 function schoolDays(cfg){
+
   const days = [];
-  let [sy,sm,sd] = cfg.semesterStart.split('-').map(Number);
-  let [ey,em,ed] = cfg.semesterEnd.split('-').map(Number);
-  let cur = new Date(sy, sm-1, sd);
-  const end = new Date(ey, em-1, ed);
-  const holidaySet = new Set(cfg.holidays);
+
+  let [sy,sm,sd] =
+    cfg.semesterStart
+      .split('-')
+      .map(Number);
+
+  let [ey,em,ed] =
+    cfg.semesterEnd
+      .split('-')
+      .map(Number);
+
+  let cur =
+    new Date(
+      sy,
+      sm - 1,
+      sd
+    );
+
+  const end =
+    new Date(
+      ey,
+      em - 1,
+      ed
+    );
+
+  const holidaySet =
+    new Set(cfg.holidays);
+
   while(cur <= end){
-    const dow = cur.getDay();
-    const iso = cur.getFullYear()+'-'+String(cur.getMonth()+1).padStart(2,'0')+'-'+String(cur.getDate()).padStart(2,'0');
-    if(dow !== 0 && dow !== 6 && !holidaySet.has(iso)){
+
+    const dow =
+      cur.getDay();
+
+    const iso =
+      cur.getFullYear() +
+      '-' +
+      String(
+        cur.getMonth() + 1
+      ).padStart(2,'0') +
+      '-' +
+      String(
+        cur.getDate()
+      ).padStart(2,'0');
+
+    if(
+      dow !== 0 &&
+      dow !== 6 &&
+      !holidaySet.has(iso)
+    ){
+
       days.push(iso);
+
     }
-    cur.setDate(cur.getDate()+1);
+
+    cur.setDate(
+      cur.getDate() + 1
+    );
   }
+
   return days;
 }
 
-async function loadState(){
+
+/* ============================================================
+   LOCAL STORAGE
+   ============================================================ */
+
+/*
+   This is the important change.
+
+   Instead of window.storage, the app uses localStorage.
+
+   Safari stores this information on the iPhone, so closing
+   the app or restarting the phone will NOT erase the balance.
+*/
+
+function loadState(){
+
   try{
-    const c = await window.storage.get(CONFIG_KEY, false);
-    config = c ? JSON.parse(c.value) : {...DEFAULTS};
-  }catch(e){
-    config = {...DEFAULTS};
+
+    const savedConfig =
+      localStorage.getItem(
+        CONFIG_KEY
+      );
+
+    if(savedConfig){
+
+      config =
+        JSON.parse(
+          savedConfig
+        );
+
+    }else{
+
+      config = {
+        ...DEFAULTS,
+        holidays:[
+          ...DEFAULTS.holidays
+        ]
+      };
+
+    }
+
+  }catch(error){
+
+    console.error(
+      'Could not load config:',
+      error
+    );
+
+    config = {
+      ...DEFAULTS,
+      holidays:[
+        ...DEFAULTS.holidays
+      ]
+    };
+
   }
+
+
   try{
-    const h = await window.storage.get(HISTORY_KEY, false);
-    history = h ? JSON.parse(h.value) : [];
-  }catch(e){
+
+    const savedHistory =
+      localStorage.getItem(
+        HISTORY_KEY
+      );
+
+    if(savedHistory){
+
+      history =
+        JSON.parse(
+          savedHistory
+        );
+
+    }else{
+
+      history = [];
+
+    }
+
+  }catch(error){
+
+    console.error(
+      'Could not load history:',
+      error
+    );
+
     history = [];
+
   }
 }
 
-async function saveConfig(){
-  await window.storage.set(CONFIG_KEY, JSON.stringify(config), false);
+
+function saveConfig(){
+
+  try{
+
+    localStorage.setItem(
+      CONFIG_KEY,
+      JSON.stringify(config)
+    );
+
+    return true;
+
+  }catch(error){
+
+    console.error(
+      'Could not save config:',
+      error
+    );
+
+    alert(
+      'Could not save your data on this device.'
+    );
+
+    return false;
+  }
 }
-async function saveHistory(){
-  await window.storage.set(HISTORY_KEY, JSON.stringify(history), false);
+
+
+function saveHistory(){
+
+  try{
+
+    localStorage.setItem(
+      HISTORY_KEY,
+      JSON.stringify(history)
+    );
+
+    return true;
+
+  }catch(error){
+
+    console.error(
+      'Could not save history:',
+      error
+    );
+
+    return false;
+  }
 }
+
+
+/* ============================================================
+   RENDER
+   ============================================================ */
 
 function render(){
-  const app = document.getElementById('app');
+
+  const app =
+    document.getElementById(
+      'app'
+    );
+
   if(!config.setupComplete){
-    app.innerHTML = onboardingView();
+
+    app.innerHTML =
+      onboardingView();
+
     wireOnboarding();
+
     return;
   }
-  app.innerHTML = mainView();
+
+  app.innerHTML =
+    mainView();
+
   wireMain();
 }
 
+
+/* ============================================================
+   ONBOARDING
+   ============================================================ */
+
 function onboardingView(){
+
   return `
-    <div class="wrap" style="padding-top:36px;">
-      <div class="eyebrow">Auburn University</div>
-      <h1>Set up your Dining Dollars tracker</h1>
-      <div class="allowance" style="margin-bottom:16px;">
-        <p class="hint" style="margin-bottom:0;">Enter your <b>current</b> Dining Dollars balance right now. I'll figure out what you've already spent and split the rest across your remaining class days.</p>
-        <label>Current balance</label>
-        <input type="number" id="ob-balance" inputmode="decimal" placeholder="e.g. 452.30" step="0.01" min="0">
+
+    <div
+      class="wrap"
+      style="padding-top:36px;"
+    >
+
+      <div class="eyebrow">
+        Auburn University
       </div>
+
+      <h1>
+        Set up your Dining Dollars tracker
+      </h1>
+
+
+      <div
+        class="allowance"
+        style="margin-bottom:16px;"
+      >
+
+        <p
+          class="hint"
+          style="margin-bottom:0;"
+        >
+          Enter your
+          <b>current</b>
+          Dining Dollars balance right now.
+          I'll figure out what you've already
+          spent and split the rest across your
+          remaining class days.
+        </p>
+
+        <label>
+          Current balance
+        </label>
+
+        <input
+          type="number"
+          id="ob-balance"
+          inputmode="decimal"
+          placeholder="e.g. 452.30"
+          step="0.01"
+          min="0"
+        >
+
+      </div>
+
 
       <div class="allowance">
-        <p class="hint" style="margin-bottom:2px;"><b>Semester settings</b> — I estimated these for Auburn's Fall 2026 term. Double check them against Auburn's official academic calendar and edit anything that's off before you start.</p>
+
+        <p
+          class="hint"
+          style="margin-bottom:2px;"
+        >
+          <b>Semester settings</b>
+          — I estimated these for Auburn's
+          Fall 2026 term. Double check them
+          against Auburn's official academic
+          calendar before you start.
+        </p>
+
+
         <div class="row2">
-          <div>
-            <label>Total budget</label>
-            <input type="number" id="ob-total" value="${config.totalBudget}" step="1" min="1">
-          </div>
-          <div>
-            <label>Last day to use it</label>
-            <input type="date" id="ob-end" value="${config.semesterEnd}">
-          </div>
-        </div>
-        <label>First day of class this semester</label>
-        <input type="date" id="ob-start" value="${config.semesterStart}">
 
-        <label>Holidays / no-class weekdays (excluded automatically)</label>
-        <div class="holiday-list" id="ob-holiday-list"></div>
+          <div>
+
+            <label>
+              Total budget
+            </label>
+
+            <input
+              type="number"
+              id="ob-total"
+              value="${config.totalBudget}"
+              step="1"
+              min="1"
+            >
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Last day to use it
+            </label>
+
+            <input
+              type="date"
+              id="ob-end"
+              value="${config.semesterEnd}"
+            >
+
+          </div>
+
+        </div>
+
+
+        <label>
+          First day of class this semester
+        </label>
+
+        <input
+          type="date"
+          id="ob-start"
+          value="${config.semesterStart}"
+        >
+
+
+        <label>
+          Holidays / no-class weekdays
+        </label>
+
+        <div
+          class="holiday-list"
+          id="ob-holiday-list"
+        ></div>
+
+
         <div class="add-holiday-row">
-          <input type="date" id="ob-holiday-input">
-          <button type="button" id="ob-add-holiday">Add</button>
+
+          <input
+            type="date"
+            id="ob-holiday-input"
+          >
+
+          <button
+            type="button"
+            id="ob-add-holiday"
+          >
+            Add
+          </button>
+
         </div>
-        <div class="note">Weekends are already excluded automatically. I've pre-filled Labor Day and Thanksgiving break as a starting guess — add or remove dates (like fall break) so this matches Auburn's real calendar.</div>
+
+
+        <div class="note">
+
+          Weekends are already excluded
+          automatically.
+
+          I've pre-filled Labor Day and
+          Thanksgiving break as a starting
+          point.
+
+          Add or remove dates so this matches
+          Auburn's real calendar.
+
+        </div>
+
       </div>
 
-      <div class="sheet-actions" style="margin-top:4px;">
-        <button class="btn btn-primary" id="ob-start-btn" style="flex:1;">Start tracking</button>
+
+      <div
+        class="sheet-actions"
+        style="margin-top:4px;"
+      >
+
+        <button
+          class="btn btn-primary"
+          id="ob-start-btn"
+          style="flex:1;"
+        >
+          Start tracking
+        </button>
+
       </div>
+
     </div>
+
   `;
 }
 
-function holidayListHTML(idPrefix){
-  const sorted = [...config.holidays].sort();
-  if(sorted.length === 0) return `<div class="empty">No holidays added</div>`;
-  return sorted.map(iso => `
-    <span class="holiday-chip" data-date="${iso}">
-      ${fmtDate(iso)} <button type="button" class="rm-holiday" data-date="${iso}">×</button>
-    </span>
-  `).join('');
-}
 
-function wireOnboarding(){
-  document.getElementById('ob-holiday-list').innerHTML = holidayListHTML();
+function holidayListHTML(){
 
-  document.getElementById('ob-add-holiday').onclick = () => {
-    const val = document.getElementById('ob-holiday-input').value;
-    if(val && !config.holidays.includes(val)){
-      config.holidays.push(val);
-      document.getElementById('ob-holiday-list').innerHTML = holidayListHTML();
-    }
-  };
+  const sorted =
+    [...config.holidays].sort();
 
-  document.getElementById('ob-holiday-list').addEventListener('click', (e) => {
-    if(e.target.classList.contains('rm-holiday')){
-      const d = e.target.dataset.date;
-      config.holidays = config.holidays.filter(x => x !== d);
-      document.getElementById('ob-holiday-list').innerHTML = holidayListHTML();
-    }
-  });
+  if(sorted.length === 0){
 
-  document.getElementById('ob-start-btn').onclick = async () => {
-    const balance = parseFloat(document.getElementById('ob-balance').value);
-    const total = parseFloat(document.getElementById('ob-total').value);
-    const start = document.getElementById('ob-start').value;
-    const end = document.getElementById('ob-end').value;
-    if(isNaN(balance) || balance < 0){
-      alert('Enter your current balance to continue.');
-      return;
-    }
-    config.totalBudget = isNaN(total) ? config.totalBudget : total;
-    config.semesterStart = start || config.semesterStart;
-    config.semesterEnd = end || config.semesterEnd;
-    config.balance = balance;
-    config.setupComplete = true;
-    history = [{
-      date: todayISO(),
-      type: 'setup',
-      amount: null,
-      balanceAfter: balance,
-      note: 'Starting balance entered'
-    }];
-    await saveConfig();
-    await saveHistory();
-    render();
-  };
-}
-
-function computeStats(){
-  const days = schoolDays(config);
-  const today = todayISO();
-  const remaining = days.filter(d => d >= today);
-  const dayIndex = days.indexOf(today);
-  const dayOfClass = dayIndex >= 0 ? dayIndex + 1 : null;
-  const totalDays = days.length;
-  const remainingCount = remaining.length;
-  const dailyAllowance = remainingCount > 0 ? config.balance / remainingCount : 0;
-  const spent = config.totalBudget - config.balance;
-  const idealBalance = remainingCount > 0
-    ? config.totalBudget * (remainingCount / totalDays)
-    : 0;
-  const diff = config.balance - idealBalance;
-  return { days, today, remaining, dayOfClass, totalDays, remainingCount, dailyAllowance, spent, idealBalance, diff, isClassToday: dayIndex >= 0 };
-}
-
-function mainView(){
-  const s = computeStats();
-  const pctUsed = Math.min(100, Math.max(0, (s.spent / config.totalBudget) * 100));
-
-  let paceChip;
-  if(s.remainingCount === 0){
-    paceChip = `<span class="pace-chip pace-even">Semester over</span>`;
-  } else if(Math.abs(s.diff) < 3){
-    paceChip = `<span class="pace-chip pace-even">On pace</span>`;
-  } else if(s.diff > 0){
-    paceChip = `<span class="pace-chip pace-good">+${fmtMoney(s.diff)} ahead</span>`;
-  } else {
-    paceChip = `<span class="pace-chip pace-bad">${fmtMoney(Math.abs(s.diff))} behind</span>`;
-  }
-
-  const dayLabel = s.dayOfClass
-    ? `Day ${s.dayOfClass} of ${s.totalDays}`
-    : `Not a class day`;
-
-  const historyRows = history.slice().reverse().slice(0, 8).map(h => {
-    const label = h.type === 'setup'
-      ? 'Starting balance'
-      : h.type === 'spend'
-        ? `Logged purchase −${fmtMoney(h.amount)}`
-        : `Balance updated`;
     return `
-      <div class="hrow">
-        <span>${label}</span>
-        <span>
-          ${fmtMoney(h.balanceAfter)}
-          <span class="d">· ${fmtDate(h.date)}</span>
-        </span>
+      <div class="empty">
+        No holidays added
       </div>
     `;
-  }).join('');
+  }
+
+  return sorted.map(
+    iso => `
+
+      <span
+        class="holiday-chip"
+        data-date="${iso}"
+      >
+
+        ${fmtDate(iso)}
+
+        <button
+          type="button"
+          class="rm-holiday"
+          data-date="${iso}"
+        >
+          ×
+        </button>
+
+      </span>
+
+    `
+  ).join('');
+}
+
+
+function wireOnboarding(){
+
+  document.getElementById(
+    'ob-holiday-list'
+  ).innerHTML =
+    holidayListHTML();
+
+
+  document.getElementById(
+    'ob-add-holiday'
+  ).onclick = () => {
+
+    const val =
+      document.getElementById(
+        'ob-holiday-input'
+      ).value;
+
+    if(
+      val &&
+      !config.holidays.includes(val)
+    ){
+
+      config.holidays.push(val);
+
+      document.getElementById(
+        'ob-holiday-list'
+      ).innerHTML =
+        holidayListHTML();
+    }
+
+  };
+
+
+  document.getElementById(
+    'ob-holiday-list'
+  ).addEventListener(
+    'click',
+    e => {
+
+      if(
+        e.target.classList.contains(
+          'rm-holiday'
+        )
+      ){
+
+        const d =
+          e.target.dataset.date;
+
+        config.holidays =
+          config.holidays.filter(
+            x => x !== d
+          );
+
+        document.getElementById(
+          'ob-holiday-list'
+        ).innerHTML =
+          holidayListHTML();
+
+      }
+
+    }
+  );
+
+
+  document.getElementById(
+    'ob-start-btn'
+  ).onclick = () => {
+
+    const balance =
+      parseFloat(
+        document.getElementById(
+          'ob-balance'
+        ).value
+      );
+
+    const total =
+      parseFloat(
+        document.getElementById(
+          'ob-total'
+        ).value
+      );
+
+    const start =
+      document.getElementById(
+        'ob-start'
+      ).value;
+
+    const end =
+      document.getElementById(
+        'ob-end'
+      ).value;
+
+
+    if(
+      isNaN(balance) ||
+      balance < 0
+    ){
+
+      alert(
+        'Enter your current balance to continue.'
+      );
+
+      return;
+    }
+
+
+    config.totalBudget =
+      isNaN(total)
+        ? config.totalBudget
+        : total;
+
+    config.semesterStart =
+      start ||
+      config.semesterStart;
+
+    config.semesterEnd =
+      end ||
+      config.semesterEnd;
+
+    config.balance =
+      balance;
+
+    config.setupComplete =
+      true;
+
+
+    history = [
+
+      {
+        date:todayISO(),
+        type:'setup',
+        amount:null,
+        balanceAfter:balance,
+        note:'Starting balance entered'
+      }
+
+    ];
+
+
+    saveConfig();
+    saveHistory();
+
+    render();
+
+  };
+
+}
+
+
+/* ============================================================
+   STATISTICS
+   ============================================================ */
+
+function computeStats(){
+
+  const days =
+    schoolDays(config);
+
+  const today =
+    todayISO();
+
+  const remaining =
+    days.filter(
+      d => d >= today
+    );
+
+  const dayIndex =
+    days.indexOf(today);
+
+  const dayOfClass =
+    dayIndex >= 0
+      ? dayIndex + 1
+      : null;
+
+  const totalDays =
+    days.length;
+
+  const remainingCount =
+    remaining.length;
+
+  const dailyAllowance =
+    remainingCount > 0
+      ? config.balance /
+        remainingCount
+      : 0;
+
+  const spent =
+    config.totalBudget -
+    config.balance;
+
+  const idealBalance =
+    remainingCount > 0
+      ? config.totalBudget *
+        (remainingCount /
+         totalDays)
+      : 0;
+
+  const diff =
+    config.balance -
+    idealBalance;
+
+
+  return {
+
+    days,
+    today,
+    remaining,
+    dayOfClass,
+    totalDays,
+    remainingCount,
+    dailyAllowance,
+    spent,
+    idealBalance,
+    diff,
+
+    isClassToday:
+      dayIndex >= 0
+
+  };
+}
+
+
+/* ============================================================
+   MAIN VIEW
+   ============================================================ */
+
+function mainView(){
+
+  const s =
+    computeStats();
+
+  const pctUsed =
+    Math.min(
+      100,
+      Math.max(
+        0,
+        (s.spent /
+         config.totalBudget) *
+        100
+      )
+    );
+
+
+  let paceChip;
+
+
+  if(
+    s.remainingCount === 0
+  ){
+
+    paceChip = `
+      <span
+        class="pace-chip pace-even"
+      >
+        Semester over
+      </span>
+    `;
+
+  }else if(
+    Math.abs(s.diff) < 3
+  ){
+
+    paceChip = `
+      <span
+        class="pace-chip pace-even"
+      >
+        On pace
+      </span>
+    `;
+
+  }else if(
+    s.diff > 0
+  ){
+
+    paceChip = `
+      <span
+        class="pace-chip pace-good"
+      >
+        +${fmtMoney(s.diff)}
+        ahead
+      </span>
+    `;
+
+  }else{
+
+    paceChip = `
+      <span
+        class="pace-chip pace-bad"
+      >
+        ${fmtMoney(
+          Math.abs(s.diff)
+        )}
+        behind
+      </span>
+    `;
+  }
+
+
+  const dayLabel =
+    s.dayOfClass
+      ? `Day ${s.dayOfClass} of ${s.totalDays}`
+      : `Not a class day`;
+
+
+  const historyRows =
+    history
+      .slice()
+      .reverse()
+      .slice(0,8)
+      .map(
+        h => {
+
+          const label =
+            h.type === 'setup'
+              ? 'Starting balance'
+              : h.type === 'spend'
+                ? `Logged purchase −${fmtMoney(h.amount)}`
+                : `Balance updated`;
+
+
+          return `
+
+            <div class="hrow">
+
+              <span>
+                ${label}
+              </span>
+
+              <span>
+
+                ${fmtMoney(
+                  h.balanceAfter
+                )}
+
+                <span class="d">
+                  · ${fmtDate(h.date)}
+                </span>
+
+              </span>
+
+            </div>
+
+          `;
+
+        }
+      )
+      .join('');
+
 
   return `
-    <div class="wrap" style="position:relative;">
-      <div class="eyebrow">Auburn University · Fall 2026</div>
-      <h1>Dining Dollars</h1>
-      <button class="gear" id="open-settings" aria-label="Settings">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#03244D" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+
+    <div
+      class="wrap"
+      style="position:relative;"
+    >
+
+      <div class="eyebrow">
+        Auburn University · Fall 2026
+      </div>
+
+      <h1>
+        Dining Dollars
+      </h1>
+
+
+      <button
+        class="gear"
+        id="open-settings"
+        aria-label="Settings"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#03244D"
+          stroke-width="2"
+        >
+
+          <circle
+            cx="12"
+            cy="12"
+            r="3"
+          />
+
+          <path
+            d="
+              M19.4 15
+              a1.65 1.65 0 0 0
+              .33 1.82
+              l.06.06
+              a2 2 0 1 1
+              -2.83 2.83
+              l-.06-.06
+              a1.65 1.65 0 0 0
+              -1.82-.33
+              1.65 1.65 0 0 0
+              -1 1.51
+              V21
+              a2 2 0 0 1
+              -4 0
+              v-.09
+              A1.65 1.65 0 0 0
+              9 19.4
+              a1.65 1.65 0 0 0
+              -1.82.33
+              l-.06.06
+              a2 2 0 1 1
+              -2.83-2.83
+              l.06-.06
+              A1.65 1.65 0 0 0
+              4.6 15
+              a1.65 1.65 0 0 0
+              -1.51-1H3
+              a2 2 0 0 1
+              0-4
+              h.09
+              A1.65 1.65 0 0 0
+              4.6 9
+              a1.65 1.65 0 0 0
+              -.33-1.82
+              l-.06-.06
+              a2 2 0 1 1
+              2.83-2.83
+              l.06.06
+              A1.65 1.65 0 0 0
+              9 4.6
+              a1.65 1.65 0 0 0
+              1-1.51
+              V3
+              a2 2 0 0 1
+              4 0
+              v.09
+              a1.65 1.65 0 0 0
+              1 1.51
+              a1.65 1.65 0 0 0
+              1.82-.33
+              l.06-.06
+              a2 2 0 1 1
+              2.83 2.83
+              l-.06.06
+              A1.65 1.65 0 0 0
+              19.4 9
+              a1.65 1.65 0 0 0
+              1.51 1H21
+              a2 2 0 0 1
+              0 4
+              h-.09
+              a1.65 1.65 0 0 0
+              -1.51 1z
+            "
+          />
+
+        </svg>
+
       </button>
 
+
       <div class="card">
+
         <div class="card-top">
+
           <div>
-            <div class="card-label">Current balance</div>
+
+            <div class="card-label">
+              Current balance
+            </div>
+
           </div>
+
           <div class="chip"></div>
+
         </div>
-        <div class="balance-num">${fmtMoney(config.balance)}</div>
-        <div class="balance-sub">of ${fmtMoney(config.totalBudget)} for the semester</div>
+
+
+        <div class="balance-num">
+          ${fmtMoney(config.balance)}
+        </div>
+
+
+        <div class="balance-sub">
+          of ${fmtMoney(config.totalBudget)}
+          for the semester
+        </div>
+
+
         <div class="card-bottom">
-          <div class="field">${dayLabel}<b>${fmtDate(s.today)}</b></div>
-          <div class="field" style="text-align:right;">Class days left<b>${s.remainingCount}</b></div>
+
+          <div class="field">
+
+            ${dayLabel}
+
+            <b>
+              ${fmtDate(s.today)}
+            </b>
+
+          </div>
+
+
+          <div
+            class="field"
+            style="text-align:right;"
+          >
+
+            Class days left
+
+            <b>
+              ${s.remainingCount}
+            </b>
+
+          </div>
+
         </div>
+
       </div>
+
 
       <div class="allowance">
+
         <div class="allowance-top">
-          <span class="allowance-label">Today's daily allowance</span>
+
+          <span class="allowance-label">
+            Today's daily allowance
+          </span>
+
           ${paceChip}
+
         </div>
-        <div class="allowance-num">${fmtMoney(s.dailyAllowance)}</div>
-        <div class="allowance-sub">${fmtMoney(config.balance)} ÷ ${s.remainingCount} class day${s.remainingCount===1?'':'s'} left</div>
+
+
+        <div class="allowance-num">
+          ${fmtMoney(s.dailyAllowance)}
+        </div>
+
+
+        <div class="allowance-sub">
+
+          ${fmtMoney(config.balance)}
+          ÷
+          ${s.remainingCount}
+          class day${s.remainingCount === 1 ? '' : 's'}
+          left
+
+        </div>
+
       </div>
+
 
       <div class="stat-row">
+
         <div class="stat">
-          <div class="n">${fmtMoney(s.spent)}</div>
-          <div class="l">Spent so far</div>
+
+          <div class="n">
+            ${fmtMoney(s.spent)}
+          </div>
+
+          <div class="l">
+            Spent so far
+          </div>
+
         </div>
+
+
         <div class="stat">
-          <div class="n">${fmtMoney(config.totalBudget / s.totalDays)}</div>
-          <div class="l">Avg / day budget</div>
+
+          <div class="n">
+            ${fmtMoney(
+              config.totalBudget /
+              s.totalDays
+            )}
+          </div>
+
+          <div class="l">
+            Avg / day budget
+          </div>
+
         </div>
+
       </div>
+
 
       <div class="progress-wrap">
+
         <div class="progress-head">
-          <span>${fmtMoney(s.spent)} used</span>
-          <span>${fmtMoney(config.totalBudget)} total</span>
+
+          <span>
+            ${fmtMoney(s.spent)}
+            used
+          </span>
+
+          <span>
+            ${fmtMoney(config.totalBudget)}
+            total
+          </span>
+
         </div>
-        <div class="bar"><div class="bar-fill" style="width:${pctUsed}%"></div></div>
+
+
+        <div class="bar">
+
+          <div
+            class="bar-fill"
+            style="width:${pctUsed}%"
+          ></div>
+
+        </div>
+
       </div>
+
 
       <div class="actions">
-        <button class="btn btn-primary" id="open-spend">Log purchase</button>
-        <button class="btn btn-secondary" id="open-update">Update balance</button>
+
+        <button
+          class="btn btn-primary"
+          id="open-spend"
+        >
+          Log purchase
+        </button>
+
+
+        <button
+          class="btn btn-secondary"
+          id="open-update"
+        >
+          Update balance
+        </button>
+
       </div>
 
+
       <div class="history">
-        <h3>Recent activity</h3>
-        ${history.length ? historyRows : '<div class="empty">Nothing logged yet</div>'}
+
+        <h3>
+          Recent activity
+        </h3>
+
+        ${
+          history.length
+            ? historyRows
+            : '<div class="empty">Nothing logged yet</div>'
+        }
+
       </div>
+
     </div>
+
   `;
 }
 
+
 function wireMain(){
-  document.getElementById('open-settings').onclick = () => showSettings();
-  document.getElementById('open-spend').onclick = () => showSpend();
-  document.getElementById('open-update').onclick = () => showUpdate();
+
+  document.getElementById(
+    'open-settings'
+  ).onclick =
+    () => showSettings();
+
+  document.getElementById(
+    'open-spend'
+  ).onclick =
+    () => showSpend();
+
+  document.getElementById(
+    'open-update'
+  ).onclick =
+    () => showUpdate();
+
 }
 
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+
 function overlay(innerHTML){
-  const div = document.createElement('div');
-  div.className = 'overlay';
-  div.innerHTML = `<div class="sheet center">${innerHTML}</div>`;
-  div.addEventListener('click', (e) => { if(e.target === div) div.remove(); });
+
+  const div =
+    document.createElement('div');
+
+  div.className =
+    'overlay';
+
+  div.innerHTML =
+    `<div class="sheet center">
+      ${innerHTML}
+     </div>`;
+
+  div.addEventListener(
+    'click',
+    e => {
+
+      if(
+        e.target === div
+      ){
+
+        div.remove();
+
+      }
+
+    }
+  );
+
   document.body.appendChild(div);
+
   return div;
 }
 
+
+/* ============================================================
+   LOG PURCHASE
+   ============================================================ */
+
 function showSpend(){
-  const ov = overlay(`
-    <button class="close-x" id="close-spend">×</button>
-    <h2>Log a purchase</h2>
-    <p class="hint">Enter how much you just spent — I'll subtract it from your balance.</p>
-    <label>Amount spent</label>
-    <input type="number" id="spend-amount" inputmode="decimal" step="0.01" min="0" placeholder="0.00" autofocus>
-    <div class="sheet-actions">
-      <button class="btn btn-secondary" id="cancel-spend" style="flex:1;">Cancel</button>
-      <button class="btn btn-primary" id="confirm-spend" style="flex:1;">Log it</button>
-    </div>
-  `);
-  document.getElementById('close-spend').onclick = () => ov.remove();
-  document.getElementById('cancel-spend').onclick = () => ov.remove();
-  document.getElementById('confirm-spend').onclick = async () => {
-    const amt = parseFloat(document.getElementById('spend-amount').value);
-    if(isNaN(amt) || amt <= 0){ alert('Enter a valid amount.'); return; }
-    config.balance = Math.max(0, config.balance - amt);
-    history.push({ date: todayISO(), type: 'spend', amount: amt, balanceAfter: config.balance });
-    await saveConfig();
-    await saveHistory();
+
+  const ov =
+    overlay(`
+
+      <button
+        class="close-x"
+        id="close-spend"
+      >
+        ×
+      </button>
+
+      <h2>
+        Log a purchase
+      </h2>
+
+      <p class="hint">
+        Enter how much you just spent —
+        I'll subtract it from your balance.
+      </p>
+
+      <label>
+        Amount spent
+      </label>
+
+      <input
+        type="number"
+        id="spend-amount"
+        inputmode="decimal"
+        step="0.01"
+        min="0"
+        placeholder="0.00"
+        autofocus
+      >
+
+
+      <div class="sheet-actions">
+
+        <button
+          class="btn btn-secondary"
+          id="cancel-spend"
+        >
+          Cancel
+        </button>
+
+        <button
+          class="btn btn-primary"
+          id="confirm-spend"
+        >
+          Log it
+        </button>
+
+      </div>
+
+    `);
+
+
+  document.getElementById(
+    'close-spend'
+  ).onclick =
+    () => ov.remove();
+
+
+  document.getElementById(
+    'cancel-spend'
+  ).onclick =
+    () => ov.remove();
+
+
+  document.getElementById(
+    'confirm-spend'
+  ).onclick = () => {
+
+    const amt =
+      parseFloat(
+        document.getElementById(
+          'spend-amount'
+        ).value
+      );
+
+
+    if(
+      isNaN(amt) ||
+      amt <= 0
+    ){
+
+      alert(
+        'Enter a valid amount.'
+      );
+
+      return;
+    }
+
+
+    config.balance =
+      Math.max(
+        0,
+        config.balance - amt
+      );
+
+
+    history.push({
+
+      date:todayISO(),
+
+      type:'spend',
+
+      amount:amt,
+
+      balanceAfter:
+        config.balance
+
+    });
+
+
+    saveConfig();
+    saveHistory();
+
     ov.remove();
+
     render();
+
   };
+
 }
+
+
+/* ============================================================
+   UPDATE BALANCE
+   ============================================================ */
 
 function showUpdate(){
-  const ov = overlay(`
-    <button class="close-x" id="close-update">×</button>
-    <h2>Update balance</h2>
-    <p class="hint">Checked the actual number in the Auburn app? Enter it here to re-sync.</p>
-    <label>Current balance</label>
-    <input type="number" id="update-amount" inputmode="decimal" step="0.01" min="0" value="${config.balance.toFixed(2)}" autofocus>
-    <div class="sheet-actions">
-      <button class="btn btn-secondary" id="cancel-update" style="flex:1;">Cancel</button>
-      <button class="btn btn-primary" id="confirm-update" style="flex:1;">Save</button>
-    </div>
-  `);
-  document.getElementById('close-update').onclick = () => ov.remove();
-  document.getElementById('cancel-update').onclick = () => ov.remove();
-  document.getElementById('confirm-update').onclick = async () => {
-    const amt = parseFloat(document.getElementById('update-amount').value);
-    if(isNaN(amt) || amt < 0){ alert('Enter a valid amount.'); return; }
-    config.balance = amt;
-    history.push({ date: todayISO(), type: 'update', amount: null, balanceAfter: amt });
-    await saveConfig();
-    await saveHistory();
+
+  const ov =
+    overlay(`
+
+      <button
+        class="close-x"
+        id="close-update"
+      >
+        ×
+      </button>
+
+      <h2>
+        Update balance
+      </h2>
+
+      <p class="hint">
+        Checked the actual number in the
+        Auburn app? Enter it here to re-sync.
+      </p>
+
+      <label>
+        Current balance
+      </label>
+
+      <input
+        type="number"
+        id="update-amount"
+        inputmode="decimal"
+        step="0.01"
+        min="0"
+        value="${config.balance.toFixed(2)}"
+        autofocus
+      >
+
+
+      <div class="sheet-actions">
+
+        <button
+          class="btn btn-secondary"
+          id="cancel-update"
+        >
+          Cancel
+        </button>
+
+        <button
+          class="btn btn-primary"
+          id="confirm-update"
+        >
+          Save
+        </button>
+
+      </div>
+
+    `);
+
+
+  document.getElementById(
+    'close-update'
+  ).onclick =
+    () => ov.remove();
+
+
+  document.getElementById(
+    'cancel-update'
+  ).onclick =
+    () => ov.remove();
+
+
+  document.getElementById(
+    'confirm-update'
+  ).onclick = () => {
+
+    const amt =
+      parseFloat(
+        document.getElementById(
+          'update-amount'
+        ).value
+      );
+
+
+    if(
+      isNaN(amt) ||
+      amt < 0
+    ){
+
+      alert(
+        'Enter a valid amount.'
+      );
+
+      return;
+    }
+
+
+    config.balance =
+      amt;
+
+
+    history.push({
+
+      date:todayISO(),
+
+      type:'update',
+
+      amount:null,
+
+      balanceAfter:amt
+
+    });
+
+
+    saveConfig();
+    saveHistory();
+
     ov.remove();
+
     render();
+
   };
+
 }
+
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
 
 function showSettings(){
-  const ov = overlay(`
-    <button class="close-x" id="close-settings">×</button>
-    <h2>Settings</h2>
-    <p class="hint">Adjust your semester dates, budget, or holidays.</p>
 
-    <div class="row2">
-      <div>
-        <label>Total budget</label>
-        <input type="number" id="set-total" value="${config.totalBudget}" step="1" min="1">
+  const ov =
+    overlay(`
+
+      <button
+        class="close-x"
+        id="close-settings"
+      >
+        ×
+      </button>
+
+      <h2>
+        Settings
+      </h2>
+
+      <p class="hint">
+        Adjust your semester dates,
+        budget, or holidays.
+      </p>
+
+
+      <div class="row2">
+
+        <div>
+
+          <label>
+            Total budget
+          </label>
+
+          <input
+            type="number"
+            id="set-total"
+            value="${config.totalBudget}"
+            step="1"
+            min="1"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label>
+            Last day to use it
+          </label>
+
+          <input
+            type="date"
+            id="set-end"
+            value="${config.semesterEnd}"
+          >
+
+        </div>
+
       </div>
-      <div>
-        <label>Last day to use it</label>
-        <input type="date" id="set-end" value="${config.semesterEnd}">
+
+
+      <label>
+        First day of class
+      </label>
+
+      <input
+        type="date"
+        id="set-start"
+        value="${config.semesterStart}"
+      >
+
+
+      <label>
+        Holidays / no-class weekdays
+      </label>
+
+      <div
+        class="holiday-list"
+        id="set-holiday-list"
+      ></div>
+
+
+      <div class="add-holiday-row">
+
+        <input
+          type="date"
+          id="set-holiday-input"
+        >
+
+        <button
+          type="button"
+          id="set-add-holiday"
+        >
+          Add
+        </button>
+
       </div>
-    </div>
-    <label>First day of class</label>
-    <input type="date" id="set-start" value="${config.semesterStart}">
 
-    <label>Holidays / no-class weekdays</label>
-    <div class="holiday-list" id="set-holiday-list"></div>
-    <div class="add-holiday-row">
-      <input type="date" id="set-holiday-input">
-      <button type="button" id="set-add-holiday">Add</button>
-    </div>
 
-    <div class="sheet-actions">
-      <button class="btn btn-secondary" id="cancel-settings" style="flex:1;">Cancel</button>
-      <button class="btn btn-primary" id="save-settings" style="flex:1;">Save</button>
-    </div>
-    <button class="link" id="reset-all">Reset all data and start over</button>
-  `);
+      <div class="sheet-actions">
+
+        <button
+          class="btn btn-secondary"
+          id="cancel-settings"
+        >
+          Cancel
+        </button>
+
+        <button
+          class="btn btn-primary"
+          id="save-settings"
+        >
+          Save
+        </button>
+
+      </div>
+
+
+      <button
+        class="link"
+        id="reset-all"
+      >
+        Reset all data and start over
+      </button>
+
+    `);
+
 
   const refreshList = () => {
-    document.getElementById('set-holiday-list').innerHTML = holidayListHTML();
+
+    document.getElementById(
+      'set-holiday-list'
+    ).innerHTML =
+      holidayListHTML();
+
   };
+
+
   refreshList();
 
-  document.getElementById('close-settings').onclick = () => ov.remove();
-  document.getElementById('cancel-settings').onclick = () => ov.remove();
 
-  document.getElementById('set-add-holiday').onclick = () => {
-    const val = document.getElementById('set-holiday-input').value;
-    if(val && !config.holidays.includes(val)){
+  document.getElementById(
+    'close-settings'
+  ).onclick =
+    () => ov.remove();
+
+
+  document.getElementById(
+    'cancel-settings'
+  ).onclick =
+    () => ov.remove();
+
+
+  document.getElementById(
+    'set-add-holiday'
+  ).onclick = () => {
+
+    const val =
+      document.getElementById(
+        'set-holiday-input'
+      ).value;
+
+
+    if(
+      val &&
+      !config.holidays.includes(val)
+    ){
+
       config.holidays.push(val);
-      refreshList();
-    }
-  };
-  document.getElementById('set-holiday-list').addEventListener('click', (e) => {
-    if(e.target.classList.contains('rm-holiday')){
-      config.holidays = config.holidays.filter(x => x !== e.target.dataset.date);
-      refreshList();
-    }
-  });
 
-  document.getElementById('save-settings').onclick = async () => {
-    const total = parseFloat(document.getElementById('set-total').value);
-    const start = document.getElementById('set-start').value;
-    const end = document.getElementById('set-end').value;
-    if(!isNaN(total) && total > 0) config.totalBudget = total;
-    if(start) config.semesterStart = start;
-    if(end) config.semesterEnd = end;
-    await saveConfig();
+      refreshList();
+
+    }
+
+  };
+
+
+  document.getElementById(
+    'set-holiday-list'
+  ).addEventListener(
+    'click',
+    e => {
+
+      if(
+        e.target.classList.contains(
+          'rm-holiday'
+        )
+      ){
+
+        config.holidays =
+          config.holidays.filter(
+            x =>
+              x !==
+              e.target.dataset.date
+          );
+
+        refreshList();
+
+      }
+
+    }
+  );
+
+
+  document.getElementById(
+    'save-settings'
+  ).onclick = () => {
+
+    const total =
+      parseFloat(
+        document.getElementById(
+          'set-total'
+        ).value
+      );
+
+    const start =
+      document.getElementById(
+        'set-start'
+      ).value;
+
+    const end =
+      document.getElementById(
+        'set-end'
+      ).value;
+
+
+    if(
+      !isNaN(total) &&
+      total > 0
+    ){
+
+      config.totalBudget =
+        total;
+
+    }
+
+
+    if(start){
+
+      config.semesterStart =
+        start;
+
+    }
+
+
+    if(end){
+
+      config.semesterEnd =
+        end;
+
+    }
+
+
+    saveConfig();
+
     ov.remove();
+
     render();
+
   };
 
-  document.getElementById('reset-all').onclick = async () => {
-    if(confirm('This clears your balance, history, and settings. Continue?')){
-      config = {...DEFAULTS};
+
+  document.getElementById(
+    'reset-all'
+  ).onclick = () => {
+
+    if(
+      confirm(
+        'This clears your balance, history, and settings. Continue?'
+      )
+    ){
+
+      localStorage.removeItem(
+        CONFIG_KEY
+      );
+
+      localStorage.removeItem(
+        HISTORY_KEY
+      );
+
+
+      config = {
+
+        ...DEFAULTS,
+
+        holidays:[
+          ...DEFAULTS.holidays
+        ]
+
+      };
+
       history = [];
-      await saveConfig();
-      await saveHistory();
+
+
       ov.remove();
+
       render();
+
     }
+
   };
+
 }
 
-(async function init(){
-  await loadState();
+
+/* ============================================================
+   START APP
+   ============================================================ */
+
+(function init(){
+
+  loadState();
+
   render();
+
 })();
+
 </script>
+
 </body>
 </html>
