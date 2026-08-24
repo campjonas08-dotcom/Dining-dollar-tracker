@@ -1,7 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
+
+<!-- iPhone / Home Screen -->
+<link rel="apple-touch-icon" href="dining-icon.png">
+<link rel="icon" type="image/png" href="dining-icon.png">
+<link rel="manifest" href="manifest.json">
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Dining Dollars">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <meta name="viewport"
       content="width=device-width,
@@ -9,35 +20,40 @@
                maximum-scale=1,
                viewport-fit=cover">
 
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Dining Dollars">
-
 <meta name="theme-color" content="#03244D">
 
-<title>Dining Dollars</title>
+<title>Auburn Dining Dollars</title>
 
 <style>
+
+/* =========================================================
+   AUBURN THEME
+   ========================================================= */
+
 :root{
+
   --navy:#03244D;
-  --navy-soft:#0B3868;
-  --navy-light:#EAF0F7;
+  --navy-soft:#0A315C;
+  --navy-light:#E8EEF5;
+  --navy-dark:#021B38;
 
-  --orange:#DD550C;
-  --orange-bright:#F4772A;
-  --orange-light:#FFF1E8;
+  --orange:#F26522;
+  --orange-bright:#FF7A2F;
+  --orange-light:#FFF0E7;
 
-  --cream:#FBF8F2;
+  --cream:#F7F8FA;
   --white:#FFFFFF;
 
-  --card-line:#E4DDD2;
-  --ink:#1C1A17;
-  --muted:#6B6559;
+  --card-line:#DDE4EC;
+  --ink:#18212B;
+  --muted:#65717D;
 
   --good:#2E7D4F;
   --bad:#C23B22;
 
-  --shadow:0 8px 24px rgba(3,36,77,0.08);
+  --shadow:
+    0 8px 24px rgba(3,36,77,0.10);
+
   --radius:18px;
 
   font-family:
@@ -47,6 +63,11 @@
     "Segoe UI",
     sans-serif;
 }
+
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
 
 *{
   box-sizing:border-box;
@@ -58,17 +79,25 @@ html{
 }
 
 body{
+
   margin:0;
+
   background:
     radial-gradient(
       circle at 100% 0%,
-      rgba(221,85,12,0.06),
-      transparent 30%
+      rgba(242,101,34,.08),
+      transparent 32%
     ),
-    var(--cream);
+    linear-gradient(
+      180deg,
+      #F7F8FA 0%,
+      #F3F6F9 100%
+    );
 
   color:var(--ink);
+
   -webkit-font-smoothing:antialiased;
+
   padding-bottom:48px;
 }
 
@@ -81,48 +110,113 @@ button{
   cursor:pointer;
 }
 
+
+/* =========================================================
+   APP CONTAINER
+   ========================================================= */
+
 .wrap{
+
   width:100%;
   max-width:480px;
+
   margin:0 auto;
+
   padding:
     calc(20px + env(safe-area-inset-top))
     18px
     8px;
 }
 
-/* ---------- HEADER ---------- */
+
+/* =========================================================
+   AUBURN ACCENT
+   ========================================================= */
+
+.wrap::before{
+
+  content:"";
+
+  display:block;
+
+  width:48px;
+  height:4px;
+
+  border-radius:999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--orange),
+      var(--orange-bright)
+    );
+
+  margin-bottom:16px;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 .eyebrow{
+
   font-size:11px;
+
   letter-spacing:.15em;
+
   text-transform:uppercase;
-  color:var(--muted);
-  font-weight:700;
+
+  color:var(--orange);
+
+  font-weight:800;
+
   margin:0 0 4px 2px;
 }
 
 h1{
+
   font-size:24px;
+
   margin:0 0 18px 2px;
-  font-weight:750;
-  letter-spacing:-.02em;
+
+  font-weight:800;
+
+  letter-spacing:-.025em;
+
   color:var(--navy);
 }
 
+
+/* =========================================================
+   SETTINGS BUTTON
+   ========================================================= */
+
 .gear{
+
   position:absolute;
-  top:calc(22px + env(safe-area-inset-top));
+
+  top:
+    calc(
+      22px +
+      env(safe-area-inset-top)
+    );
+
   right:18px;
 
   width:40px;
   height:40px;
 
   border-radius:50%;
+
   background:var(--navy-light);
-  border:1px solid rgba(3,36,77,.08);
+
+  border:
+    1px solid
+    rgba(3,36,77,.08);
 
   display:flex;
+
   align-items:center;
   justify-content:center;
 
@@ -132,66 +226,61 @@ h1{
 }
 
 .gear:active{
+
   transform:scale(.92);
-  background:#DDE7F2;
+
+  background:#D7E2EE;
 }
 
 .gear svg{
+
   width:18px;
   height:18px;
 }
 
-/* ---------- MAIN BALANCE CARD ---------- */
+
+/* =========================================================
+   MAIN BALANCE CARD
+   ========================================================= */
 
 .card{
+
   position:relative;
 
   border-radius:23px;
+
   padding:23px 22px 20px;
 
   background:
     linear-gradient(
       135deg,
-      var(--navy) 0%,
-      #073466 58%,
-      #0D4176 100%
+      #03244D 0%,
+      #063568 52%,
+      #0A447A 100%
     );
 
   color:white;
 
   box-shadow:
-    0 15px 35px rgba(3,36,77,.18);
+    0 16px 38px
+    rgba(3,36,77,.20);
 
   overflow:hidden;
+
   margin-bottom:16px;
 }
 
+
+/* Orange Auburn glow */
+
 .card::before{
+
   content:"";
+
   position:absolute;
 
   right:-45px;
   top:-70px;
-
-  width:190px;
-  height:190px;
-
-  border-radius:50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(221,85,12,.35),
-      transparent 70%
-    );
-}
-
-.card::after{
-  content:"";
-  position:absolute;
-
-  left:-80px;
-  bottom:-100px;
 
   width:200px;
   height:200px;
@@ -201,21 +290,56 @@ h1{
   background:
     radial-gradient(
       circle,
-      rgba(255,255,255,.05),
+      rgba(242,101,34,.48),
       transparent 70%
     );
 }
 
+
+/* Navy/white secondary glow */
+
+.card::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-80px;
+  bottom:-100px;
+
+  width:210px;
+  height:210px;
+
+  border-radius:50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,255,255,.06),
+      transparent 70%
+    );
+}
+
+
+/* =========================================================
+   CARD CONTENT
+   ========================================================= */
+
 .card-top{
+
   display:flex;
+
   justify-content:space-between;
+
   align-items:flex-start;
 
   position:relative;
+
   z-index:1;
 }
 
 .chip{
+
   width:35px;
   height:27px;
 
@@ -224,100 +348,146 @@ h1{
   background:
     linear-gradient(
       135deg,
-      #F7D49D,
-      #DD550C
+      #FFD28F,
+      #F26522
     );
 
   box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.25);
+    inset 0 0 0 1px
+    rgba(255,255,255,.25);
 }
 
 .card-label{
+
   font-size:11px;
+
   letter-spacing:.12em;
+
   text-transform:uppercase;
-  opacity:.7;
+
+  opacity:.72;
+
   margin-top:2px;
 }
 
 .balance-num{
+
   font-size:43px;
-  font-weight:750;
+
+  font-weight:800;
+
   letter-spacing:-.025em;
 
   margin:10px 0 2px;
 
   position:relative;
+
   z-index:1;
 }
 
 .balance-sub{
+
   font-size:13px;
+
   opacity:.75;
 
   position:relative;
+
   z-index:1;
 }
 
 .card-bottom{
+
   display:flex;
+
   justify-content:space-between;
+
   align-items:flex-end;
 
   margin-top:19px;
 
   position:relative;
+
   z-index:1;
 }
 
 .card-bottom .field{
+
   font-size:12px;
+
   opacity:.7;
 }
 
 .card-bottom .field b{
+
   display:block;
 
   font-size:15px;
-  font-weight:600;
+
+  font-weight:650;
 
   opacity:1;
+
   color:white;
 
   margin-top:2px;
 }
 
-/* ---------- WHITE CARDS ---------- */
+
+/* =========================================================
+   WHITE CARDS
+   ========================================================= */
 
 .allowance,
 .stat,
 .progress-wrap,
 .history{
+
   background:var(--white);
-  border:1px solid var(--card-line);
+
+  border:
+    1px solid
+    var(--card-line);
+
   box-shadow:var(--shadow);
 }
 
+
+/* =========================================================
+   ALLOWANCE CARD
+   ========================================================= */
+
 .allowance{
+
   border-radius:var(--radius);
+
   padding:20px;
+
   margin-bottom:14px;
 }
 
 .allowance-top{
+
   display:flex;
+
   justify-content:space-between;
+
   align-items:center;
 }
 
 .allowance-label{
+
   font-size:13px;
+
   color:var(--muted);
-  font-weight:650;
+
+  font-weight:700;
 }
 
 .allowance-num{
+
   font-size:40px;
+
   font-weight:800;
 
   color:var(--orange);
@@ -328,12 +498,16 @@ h1{
 }
 
 .allowance-sub{
+
   font-size:13px;
+
   color:var(--muted);
 }
 
 .allowance-note{
+
   display:inline-flex;
+
   align-items:center;
 
   margin-top:10px;
@@ -343,73 +517,101 @@ h1{
   border-radius:999px;
 
   background:var(--orange-light);
+
   color:var(--orange);
 
   font-size:11px;
-  font-weight:700;
+
+  font-weight:800;
 }
 
-/* ---------- STATS ---------- */
+
+/* =========================================================
+   STATS
+   ========================================================= */
 
 .stat-row{
+
   display:flex;
+
   gap:12px;
+
   margin-bottom:14px;
 }
 
 .stat{
+
   flex:1;
 
   border-radius:14px;
+
   padding:15px;
 
   text-align:center;
 }
 
 .stat .n{
+
   font-size:22px;
-  font-weight:700;
+
+  font-weight:750;
+
   color:var(--navy);
 }
 
 .stat .l{
+
   font-size:11px;
+
   color:var(--muted);
 
   text-transform:uppercase;
+
   letter-spacing:.06em;
 
   margin-top:2px;
 }
 
-/* ---------- PROGRESS ---------- */
+
+/* =========================================================
+   PROGRESS
+   ========================================================= */
 
 .progress-wrap{
+
   border-radius:14px;
+
   padding:16px;
+
   margin-bottom:18px;
 }
 
 .progress-head{
+
   display:flex;
+
   justify-content:space-between;
 
   font-size:12px;
+
   color:var(--muted);
 
   margin-bottom:8px;
 }
 
 .bar{
+
   height:8px;
 
-  background:#EFE8D9;
+  background:#E7ECF1;
 
   border-radius:999px;
+
   overflow:hidden;
 }
 
 .bar-fill{
+
   height:100%;
 
   background:
@@ -421,27 +623,37 @@ h1{
 
   border-radius:999px;
 
-  transition:width .4s ease;
+  transition:
+    width .4s ease;
 }
 
-/* ---------- BUTTONS ---------- */
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
 
 .actions{
+
   display:flex;
+
   gap:10px;
+
   margin-bottom:18px;
 }
 
 .btn{
+
   flex:1;
 
   padding:14px 10px;
 
   border-radius:14px;
+
   border:none;
 
   font-size:14px;
-  font-weight:700;
+
+  font-weight:750;
 
   transition:
     transform .12s ease,
@@ -449,36 +661,57 @@ h1{
 }
 
 .btn:active{
+
   transform:scale(.97);
+
   opacity:.9;
 }
 
 .btn-primary{
-  background:var(--orange);
+
+  background:
+    linear-gradient(
+      135deg,
+      #F26522,
+      #DD4F12
+    );
+
   color:white;
 
   box-shadow:
-    0 5px 14px rgba(221,85,12,.18);
+    0 6px 16px
+    rgba(242,101,34,.25);
 }
 
 .btn-secondary{
-  background:white;
+
+  background:#E8EEF5;
+
   color:var(--navy);
 
-  border:1px solid var(--card-line);
+  border:
+    1px solid
+    #D5DFEA;
 }
 
-/* ---------- HISTORY ---------- */
+
+/* =========================================================
+   HISTORY
+   ========================================================= */
 
 .history{
+
   border-radius:var(--radius);
+
   padding:16px 18px;
 }
 
 .history h3{
+
   font-size:13px;
 
   text-transform:uppercase;
+
   letter-spacing:.08em;
 
   color:var(--muted);
@@ -487,42 +720,61 @@ h1{
 }
 
 .hrow{
+
   display:flex;
+
   justify-content:space-between;
+
   align-items:center;
 
   padding:10px 0;
 
-  border-bottom:1px solid #F1EBDD;
+  border-bottom:
+    1px solid
+    #E9EDF1;
 
   font-size:13.5px;
 }
 
 .hrow:last-child{
+
   border-bottom:none;
 }
 
 .hrow .d{
+
   color:var(--muted);
+
   font-size:12px;
 }
 
 .empty{
+
   color:var(--muted);
+
   font-size:13px;
+
   padding:6px 0;
 }
 
-/* ---------- MODALS ---------- */
+
+/* =========================================================
+   MODALS
+   ========================================================= */
 
 .overlay{
+
   position:fixed;
+
   inset:0;
 
-  background:rgba(3,36,77,.45);
+  background:
+    rgba(3,36,77,.48);
 
   display:flex;
+
   align-items:flex-end;
+
   justify-content:center;
 
   z-index:50;
@@ -534,70 +786,95 @@ h1{
 }
 
 .sheet{
+
   position:relative;
 
   background:var(--cream);
 
   width:100%;
+
   max-width:480px;
 
-  border-radius:22px 22px 0 0;
+  border-radius:
+    22px 22px 0 0;
 
   padding:
     22px
     20px
-    calc(24px + env(safe-area-inset-bottom));
+    calc(
+      24px +
+      env(safe-area-inset-bottom)
+    );
 
   max-height:88vh;
+
   overflow-y:auto;
 }
 
 .sheet.center{
+
   border-radius:22px;
 
   margin-top:auto;
+
   margin-bottom:auto;
 
   width:calc(100% - 24px);
 }
 
 .sheet h2{
+
   margin:0 0 4px;
+
   font-size:19px;
+
   color:var(--navy);
 }
 
 .sheet p.hint{
+
   margin:0 0 16px;
 
   font-size:13px;
+
   color:var(--muted);
 }
 
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
 label{
+
   display:block;
 
   font-size:12px;
-  font-weight:600;
+
+  font-weight:650;
 
   color:var(--muted);
 
   margin:14px 0 6px;
 
   text-transform:uppercase;
+
   letter-spacing:.04em;
 }
 
 input[type=number],
 input[type=date],
 input[type=text]{
+
   width:100%;
 
   padding:12px 14px;
 
   border-radius:12px;
 
-  border:1px solid var(--card-line);
+  border:
+    1px solid
+    var(--card-line);
 
   font-size:16px;
 
@@ -611,38 +888,55 @@ input[type=text]{
 }
 
 input:focus{
+
   border-color:var(--orange);
 
   box-shadow:
-    0 0 0 3px rgba(221,85,12,.10);
+    0 0 0 3px
+    rgba(242,101,34,.12);
 }
 
 .row2{
+
   display:flex;
+
   gap:10px;
 }
 
 .row2 > div{
+
   flex:1;
 }
 
+
+/* =========================================================
+   MODAL BUTTONS
+   ========================================================= */
+
 .sheet-actions{
+
   display:flex;
+
   gap:10px;
+
   margin-top:22px;
 }
 
 .sheet-actions .btn{
+
   padding:14px;
 }
 
 .close-x{
+
   position:absolute;
 
   top:14px;
+
   right:16px;
 
   background:none;
+
   border:none;
 
   font-size:22px;
@@ -653,9 +947,11 @@ input:focus{
 }
 
 .link{
+
   display:block;
 
   background:none;
+
   border:none;
 
   color:var(--bad);
@@ -670,11 +966,13 @@ input:focus{
 }
 
 .note{
+
   font-size:11.5px;
 
   color:var(--muted);
 
-  background:rgba(221,85,12,.08);
+  background:
+    rgba(242,101,34,.08);
 
   border-radius:10px;
 
@@ -685,11 +983,17 @@ input:focus{
   line-height:1.4;
 }
 
-/* ---------- LOADING ---------- */
+
+/* =========================================================
+   LOADING
+   ========================================================= */
 
 .loading{
+
   display:flex;
+
   align-items:center;
+
   justify-content:center;
 
   min-height:60vh;
@@ -699,70 +1003,73 @@ input:focus{
   font-size:14px;
 }
 
-/* ---------- MOBILE ---------- */
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
 @media(max-width:380px){
 
   .balance-num{
+
     font-size:38px;
   }
 
   .allowance-num{
+
     font-size:36px;
   }
 
   .card{
+
     padding:20px;
   }
 }
+
 </style>
 </head>
+
 
 <body>
 
 <div id="app">
-  <div class="loading">Loading…</div>
+
+  <div class="loading">
+    Loading…
+  </div>
+
 </div>
+
 
 <script>
 
 /* =========================================================
-   DINING DOLLARS TRACKER
+   AUBURN DINING DOLLARS TRACKER
+   FALL 2026
    =========================================================
 
-   STORAGE:
+   Persistent storage:
    localStorage
 
-   ALLOWANCE SYSTEM:
+   Semester:
+   August 17, 2026 → December 11, 2026
 
-   Your total budget is divided across all class days.
+   No class:
+   September 7
+   October 8–9
+   November 23–27
 
-   Every class day you EARN one daily allowance.
+   Weekends automatically excluded.
 
-   Example:
-
-   Day 1:
-   Earn $6
-   Spend $0
-   Available = $6
-
-   Day 2:
-   Earn another $6
-   Spend $0
-   Available = $12
-
-   Day 3:
-   Earn another $6
-   Spend $3
-   Available = $15
-
-   The app calculates this from the semester start date,
-   NOT from the day you install/open the app.
+   The app calculates class days from the actual
+   semester start date — NOT from the installation date.
 
    ========================================================= */
 
 
-/* ---------- STORAGE KEYS ---------- */
+/* =========================================================
+   STORAGE KEYS
+   ========================================================= */
 
 const CONFIG_KEY =
   'auburn_dining_dollars_config_v3';
@@ -771,7 +1078,9 @@ const HISTORY_KEY =
   'auburn_dining_dollars_history_v3';
 
 
-/* ---------- SEMESTER CONFIG ---------- */
+/* =========================================================
+   SEMESTER CONFIGURATION
+   ========================================================= */
 
 const DEFAULTS = {
 
@@ -782,10 +1091,6 @@ const DEFAULTS = {
   semesterStart:'2026-08-17',
 
   semesterEnd:'2026-12-11',
-
-  /*
-    These dates are permanently built into the app.
-  */
 
   holidays:[
 
@@ -803,12 +1108,16 @@ const DEFAULTS = {
   ],
 
   setupComplete:false
+
 };
 
 
-/* ---------- CURRENT STATE ---------- */
+/* =========================================================
+   CURRENT STATE
+   ========================================================= */
 
 let config = null;
+
 let history = [];
 
 
@@ -932,11 +1241,6 @@ function schoolDays(cfg){
         cur.getDate()
       ).padStart(2,'0');
 
-
-    /*
-      Exclude weekends and built-in holidays.
-    */
-
     if(
       dow !== 0 &&
       dow !== 6 &&
@@ -946,7 +1250,6 @@ function schoolDays(cfg){
       days.push(iso);
 
     }
-
 
     cur.setDate(
       cur.getDate() + 1
@@ -1070,11 +1373,7 @@ function loadState(){
   }
 
 
-  /*
-    Safety check.
-
-    Always make sure the built-in holidays exist.
-  */
+  /* Make sure holidays always exist */
 
   if(
     !Array.isArray(config.holidays)
@@ -1105,7 +1404,8 @@ function loadState(){
 
 
   /*
-    Force Fall 2026 dates.
+    IMPORTANT:
+    Always lock the semester to Fall 2026.
   */
 
   config.semesterStart =
@@ -1154,9 +1454,7 @@ function loadState(){
   }
 
 
-  /*
-    Safety check for old/invalid balance.
-  */
+  /* Validate balance */
 
   if(
     config.balance !== null &&
@@ -1184,68 +1482,51 @@ function computeStats(){
   const today =
     todayISO();
 
-
   const totalDays =
     days.length;
 
 
   /*
-    ---------------------------------------------------------
-    HOW MANY CLASS DAYS HAVE OCCURRED?
-    ---------------------------------------------------------
+    CLASS DAYS THAT HAVE OCCURRED
 
-    This is based on August 17, 2026.
-
-    It does NOT care when the app was installed.
-
-    Example:
-
-    Aug 17 -> 1
-    Aug 18 -> 2
-    Aug 19 -> 3
-    Aug 20 -> 4
-    Aug 21 -> 5
-    Weekend
-    Aug 24 -> 6
-    */
+    Aug 17 = Day 1
+    Aug 18 = Day 2
+    Aug 19 = Day 3
+    Aug 20 = Day 4
+    Aug 21 = Day 5
+    Aug 24 = Day 6
+  */
 
   const earnedDays =
     days.filter(
       d => d <= today
     );
 
-
   const elapsedDays =
     earnedDays.length;
 
 
   /*
-    ---------------------------------------------------------
     REMAINING CLASS DAYS
-    ---------------------------------------------------------
 
-    Today counts as a remaining day.
-    */
+    Today counts as remaining.
+  */
 
   const remaining =
     days.filter(
       d => d >= today
     );
 
-
   const remainingCount =
     remaining.length;
 
 
   /*
-    ---------------------------------------------------------
     CURRENT CLASS DAY
-    ---------------------------------------------------------
-    */
+  */
 
   const dayIndex =
     days.indexOf(today);
-
 
   const dayOfClass =
     dayIndex >= 0
@@ -1254,18 +1535,13 @@ function computeStats(){
 
 
   /*
-    ---------------------------------------------------------
     DAILY RATE
-    ---------------------------------------------------------
 
-    $475 / total number of class days.
-
-    This is the amount earned every class day.
-    */
+    $475 divided by all class days.
+  */
 
   const totalBudget =
     Number(config.totalBudget) || 0;
-
 
   const dailyRate =
     totalDays > 0
@@ -1274,31 +1550,16 @@ function computeStats(){
 
 
   /*
-    ---------------------------------------------------------
     ACCUMULATED ALLOWANCE
-    ---------------------------------------------------------
-
-    If today is Day 6:
-
-      dailyRate × 6
-
-    This is the total amount you have earned
-    permission to spend so far.
-    */
+  */
 
   const accumulatedAllowance =
     dailyRate * elapsedDays;
 
 
   /*
-    ---------------------------------------------------------
-    TOTAL SPENDING
-    ---------------------------------------------------------
-
-    Only actual purchases count.
-
-    Balance updates do NOT count as purchases.
-    */
+    TOTAL ACTUAL SPENDING
+  */
 
   const totalSpent =
     history.reduce(
@@ -1323,29 +1584,8 @@ function computeStats(){
 
 
   /*
-    ---------------------------------------------------------
     AVAILABLE TO SPEND
-    ---------------------------------------------------------
-
-    Example:
-
-      Day 1:
-      $6 earned
-      $0 spent
-      = $6
-
-      Day 2:
-      $12 earned
-      $0 spent
-      = $12
-
-      Day 3:
-      $18 earned
-      $3 spent
-      = $15
-
-    EXACTLY the system requested.
-    */
+  */
 
   const availableToSpend =
     Math.max(
@@ -1356,19 +1596,8 @@ function computeStats(){
 
 
   /*
-    Actual account balance.
-
-    This is separate from allowance.
-
-    Example:
-
-      Actual balance = $472
-      Available to spend = $15
-
-    You have $472 in Dining Dollars,
-    but based on the semester schedule you've
-    only earned $15 worth of spending room so far.
-    */
+    ACTUAL ACCOUNT BALANCE
+  */
 
   const balance =
     Number(config.balance) || 0;
@@ -1408,6 +1637,7 @@ function computeStats(){
       dayIndex >= 0
 
   };
+
 }
 
 
@@ -1422,7 +1652,6 @@ function render(){
       'app'
     );
 
-
   if(
     !config.setupComplete
   ){
@@ -1435,7 +1664,6 @@ function render(){
     return;
 
   }
-
 
   app.innerHTML =
     mainView();
@@ -1452,8 +1680,10 @@ function onboardingView(){
 
   return `
 
-    <div class="wrap"
-         style="padding-top:36px;">
+    <div
+      class="wrap"
+      style="padding-top:36px;"
+    >
 
       <div class="eyebrow">
         Auburn University
@@ -1464,11 +1694,15 @@ function onboardingView(){
       </h1>
 
 
-      <div class="allowance"
-           style="margin-bottom:16px;">
+      <div
+        class="allowance"
+        style="margin-bottom:16px;"
+      >
 
-        <p class="hint"
-           style="margin-bottom:0;">
+        <p
+          class="hint"
+          style="margin-bottom:0;"
+        >
 
           Enter your
           <b>current</b>
@@ -1499,8 +1733,10 @@ function onboardingView(){
 
       <div class="allowance">
 
-        <p class="hint"
-           style="margin-bottom:2px;">
+        <p
+          class="hint"
+          style="margin-bottom:2px;"
+        >
 
           <b>Fall 2026 settings</b>
 
@@ -1564,15 +1800,17 @@ function onboardingView(){
           Weekends are automatically excluded.
 
           Labor Day, Fall Break, and Thanksgiving
-          Break are also built into the app automatically.
+          Break are built into the app automatically.
 
         </div>
 
       </div>
 
 
-      <div class="sheet-actions"
-           style="margin-top:4px;">
+      <div
+        class="sheet-actions"
+        style="margin-top:4px;"
+      >
 
         <button
           class="btn btn-primary"
@@ -1609,7 +1847,6 @@ function wireOnboarding(){
           ).value
         );
 
-
       const total =
         parseFloat(
           document.getElementById(
@@ -1643,10 +1880,6 @@ function wireOnboarding(){
       }
 
 
-      /*
-        Always use the correct Fall 2026 dates.
-      */
-
       config.semesterStart =
         DEFAULTS.semesterStart;
 
@@ -1658,22 +1891,12 @@ function wireOnboarding(){
           ...DEFAULTS.holidays
         ];
 
-
       config.balance =
         balance;
 
       config.setupComplete =
         true;
 
-
-      /*
-        Starting balance is recorded only for history.
-
-        It does NOT affect accumulated allowance.
-
-        The allowance is determined from the
-        semester calendar.
-      */
 
       history = [
 
@@ -1699,6 +1922,7 @@ function wireOnboarding(){
       render();
 
     };
+
 }
 
 
@@ -1710,21 +1934,6 @@ function mainView(){
 
   const s =
     computeStats();
-
-
-  const pctUsed =
-    s.totalBudget > 0
-      ? Math.min(
-          100,
-          Math.max(
-            0,
-            (
-              s.totalSpent /
-              s.totalBudget
-            ) * 100
-          )
-        )
-      : 0;
 
 
   const dayLabel =
@@ -1795,10 +2004,6 @@ function mainView(){
       .join('');
 
 
-  /*
-    Text underneath the large allowance number.
-  */
-
   let allowanceSub;
 
 
@@ -1812,7 +2017,11 @@ function mainView(){
   }else{
 
     allowanceSub =
-      `${fmtMoney(s.accumulatedAllowance)} earned − ${fmtMoney(s.totalSpent)} spent`;
+      `${fmtMoney(
+        s.accumulatedAllowance
+      )} earned − ${fmtMoney(
+        s.totalSpent
+      )} spent`;
 
   }
 
@@ -1832,6 +2041,8 @@ function mainView(){
         Dining Dollars
       </h1>
 
+
+      <!-- SETTINGS -->
 
       <button
         class="gear"
@@ -1950,7 +2161,7 @@ function mainView(){
       </div>
 
 
-      <!-- ACCUMULATED ALLOWANCE -->
+      <!-- AVAILABLE ALLOWANCE -->
 
       <div class="allowance">
 
@@ -1974,7 +2185,8 @@ function mainView(){
 
 
         <div class="allowance-note">
-          Earns ${fmtMoney(s.dailyRate)} each class day
+          Earns ${fmtMoney(s.dailyRate)}
+          each class day
         </div>
 
       </div>
@@ -2284,13 +2496,6 @@ function showSpend(){
         }
 
 
-        /*
-          Warn if they are spending more than
-          their earned allowance.
-
-          This does NOT prevent the purchase.
-        */
-
         const currentStats =
           computeStats();
 
@@ -2321,7 +2526,7 @@ function showSpend(){
 
 
         /*
-          Actual account balance decreases.
+          Decrease actual balance.
         */
 
         config.balance =
@@ -2333,10 +2538,7 @@ function showSpend(){
 
 
         /*
-          Record the purchase.
-
-          The allowance calculation will automatically
-          subtract this purchase from accumulated allowance.
+          Record purchase.
         */
 
         history.push({
@@ -2364,6 +2566,7 @@ function showSpend(){
         render();
 
       };
+
 }
 
 
@@ -2490,17 +2693,8 @@ function showUpdate(){
 
 
         /*
-          IMPORTANT:
-
-          Updating the balance does NOT add or remove
-          spending from the allowance calculation.
-
-          The allowance is based only on actual logged
-          purchases.
-
-          This allows you to correct your real Auburn
-          balance without destroying the semester
-          allowance calculation.
+          Updating the actual balance does NOT
+          affect earned allowance.
         */
 
         history.push({
@@ -2528,6 +2722,7 @@ function showUpdate(){
         render();
 
       };
+
 }
 
 
@@ -2674,7 +2869,7 @@ function showSettings(){
 
 
         /*
-          Keep semester dates locked.
+          Semester dates remain locked.
         */
 
         config.semesterStart =
@@ -2733,6 +2928,7 @@ function showSettings(){
         }
 
       };
+
 }
 
 
