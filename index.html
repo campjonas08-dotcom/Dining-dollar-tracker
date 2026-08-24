@@ -313,19 +313,23 @@ function loadState(){
   }
 }
 
+/* Total eligible class days is a fixed number — not derived from the
+   semester date range. The start/end dates below are only used to figure
+   out how many class days have passed as of today; they don't drive the total. */
+const TOTAL_CLASS_DAYS = 72;
+
 function computeStats(){
   const days = schoolDays(config);
   const today = todayISO();
-  const totalDays = days.length;
+  const totalDays = TOTAL_CLASS_DAYS;
 
-  const earnedDays = days.filter(d => d <= today);
+  const earnedDays = days.filter(d => d <= today).slice(0, totalDays);
   const elapsedDays = earnedDays.length;
 
-  const remaining = days.filter(d => d >= today);
-  const remainingCount = remaining.length;
-
   const dayIndex = days.indexOf(today);
-  const dayOfClass = dayIndex >= 0 ? dayIndex + 1 : null;
+  const dayOfClass = (dayIndex >= 0 && dayIndex < totalDays) ? dayIndex + 1 : null;
+
+  const remainingCount = Math.max(0, totalDays - elapsedDays);
 
   const totalBudget = Number(config.totalBudget) || 0;
   const dailyRate = totalDays > 0 ? totalBudget / totalDays : 0;
@@ -333,18 +337,19 @@ function computeStats(){
   const accumulatedAllowance = dailyRate * elapsedDays;
 
   const totalSpent = history.reduce((total, entry) => {
-    if(entry && entry.type === 'spend' && typeof entry.amount === 'number' && isFinite(entry.amount)){
+    const countsAsSpend = entry && (entry.type === 'spend' || entry.type === 'setup');
+    if(countsAsSpend && typeof entry.amount === 'number' && isFinite(entry.amount)){
       return total + entry.amount;
     }
     return total;
   }, 0);
 
-  const availableToSpend = Math.max(0, accumulatedAllowance - totalSpent);
+  const availableToSpend = accumulatedAllowance - totalSpent;
 
   const balance = Number(config.balance) || 0;
 
   return {
-    days, today, totalDays, earnedDays, elapsedDays, remaining, remainingCount,
+    days, today, totalDays, earnedDays, elapsedDays, remainingCount,
     dayOfClass, dailyRate, accumulatedAllowance, totalSpent, availableToSpend,
     balance, totalBudget, isClassToday: dayIndex >= 0
   };
@@ -379,7 +384,7 @@ function onboardingView(){
       <div class="allowance">
         <p class="hint" style="margin-bottom:2px;">
           <b>Fall 2026 settings</b>
-          These are already set to Auburn's Fall 2026 semester dates.
+          Budget is split across 72 eligible class days — dates below are just for reference.
         </p>
         <div class="row2">
           <div>
@@ -426,10 +431,15 @@ function wireOnboarding(){
     config.balance = balance;
     config.setupComplete = true;
 
+    /* Spending that happened before you started using the tracker
+       (e.g. you're entering this on day 6, not day 1) still counts
+       toward total_spent, or available_to_spend would be wrong. */
+    const spentBeforeSetup = Math.max(0, config.totalBudget - balance);
+
     history = [{
       date: todayISO(),
       type: 'setup',
-      amount: null,
+      amount: spentBeforeSetup > 0 ? spentBeforeSetup : null,
       balanceAfter: balance,
       note: 'Starting balance entered'
     }];
@@ -448,7 +458,9 @@ function mainView(){
   const historyRows = history.slice().reverse().slice(0,8).map(h => {
     let label;
     if(h.type === 'setup'){
-      label = 'Starting balance';
+      label = (typeof h.amount === 'number' && h.amount > 0)
+        ? `Starting balance (${fmtMoney(h.amount)} already spent)`
+        : 'Starting balance';
     }else if(h.type === 'spend'){
       label = `Purchase −${fmtMoney(h.amount)}`;
     }else{
@@ -496,9 +508,12 @@ function mainView(){
 
       <div class="allowance">
         <div class="allowance-top"><span class="allowance-label">Available to spend</span></div>
-        <div class="allowance-num">${fmtMoney(s.availableToSpend)}</div>
+        <div class="allowance-num" style="${s.availableToSpend < 0 ? 'color:var(--bad);' : ''}">${s.availableToSpend < 0 ? '−' : ''}${fmtMoney(Math.abs(s.availableToSpend))}</div>
         <div class="allowance-sub">${allowanceSub}</div>
-        <div class="allowance-note">Earns ${fmtMoney(s.dailyRate)} each class day</div>
+        ${s.availableToSpend < 0
+          ? `<div class="allowance-note" style="background:rgba(194,59,34,.10); color:var(--bad);">Spent ahead of what you've earned</div>`
+          : `<div class="allowance-note">Earns ${fmtMoney(s.dailyRate)} each class day</div>`
+        }
       </div>
 
       <div class="stat-row">
@@ -614,7 +629,7 @@ function showSettings(){
   const ov = overlay(`
     <button class="close-x" id="close-settings">×</button>
     <h2>Settings</h2>
-    <p class="hint">Your Fall 2026 semester dates and Auburn no-class dates are built in.</p>
+    <p class="hint">Budget is split across 72 fixed class days. Dates below are shown for reference only.</p>
     <label>Total budget</label>
     <input type="number" id="set-total" value="${config.totalBudget}" step="1" min="1">
     <label>Semester dates</label>
