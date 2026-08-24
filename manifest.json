@@ -1,0 +1,23 @@
+{
+  "name": "Auburn Dining Dollars",
+  "short_name": "Dining Dollars",
+  "description": "Auburn University Dining Dollars tracker",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F7F8FA",
+  "theme_color": "#03244D",
+  "icons": [
+    {
+      "src": "dining-icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "dining-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
