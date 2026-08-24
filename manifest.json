@@ -1,0 +1,12 @@
+{
+  "name": "Auburn Dining Dollars",
+  "short_name": "Dining Dollars",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F7F8FA",
+  "theme_color": "#03244D",
+  "icons": [
+    { "src": "dining-icon.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "dining-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
