@@ -7,10 +7,10 @@
    Rules (set in the Firebase console, not this file) are what actually
    protect each user's data. See SYNC_SETUP.md for the full walkthrough. */
 export const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDpbMarmjRviCH_KMK1Zb_KP7RxXqpSI3Q",
+  authDomain: "dining-dollars.firebaseapp.com",
+  projectId: "dining-dollars",
+  storageBucket: "dining-dollars.firebasestorage.app",
+  messagingSenderId: "626405374967",
+  appId: "1:626405374967:web:2d92777be090d683db8cf2"
 };
