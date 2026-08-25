@@ -70,34 +70,65 @@ body{
     linear-gradient(180deg, var(--cream) 0%, var(--white) 120%);
   color:var(--ink);
   -webkit-font-smoothing:antialiased;
-  padding-bottom:48px;
+  padding-bottom:96px;
   transition: background-color .2s ease, color .2s ease;
 }
 button, input{ font-family:inherit; }
 button{ cursor:pointer; }
 
-.wrap{ width:100%; max-width:480px; margin:0 auto; padding: calc(20px + env(safe-area-inset-top)) 18px 8px; }
-.wrap::before{
-  content:""; display:block; width:48px; height:4px; border-radius:999px;
-  background: linear-gradient(90deg, var(--orange), var(--orange-bright));
-  margin-bottom:16px;
+.wrap{ width:100%; max-width:480px; margin:0 auto; padding: 18px 18px 8px; }
+
+/* Hero banner — echoes Auburn's own app header: a navy band with a
+   diagonal accent, title, and icon actions, edge-to-edge above the content. */
+.hero{
+  position:relative; overflow:hidden;
+  background: linear-gradient(135deg, #03244D 0%, #063568 55%, #0A447A 100%);
+  padding: calc(16px + env(safe-area-inset-top)) 18px 22px;
 }
+.hero::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background: linear-gradient(115deg, transparent 55%, rgba(242,101,34,.32) 72%, rgba(255,122,47,.14) 100%);
+}
+.hero::after{
+  content:""; position:absolute; right:-60px; top:-90px; width:230px; height:230px; pointer-events:none;
+  border-radius:50%; background: radial-gradient(circle, rgba(242,101,34,.42), transparent 70%);
+}
+.hero-inner{ max-width:480px; margin:0 auto; position:relative; z-index:1; }
+.hero-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+.hero .eyebrow{ color:rgba(255,255,255,.72); margin-bottom:3px; }
+.hero h1{ color:#fff; margin-bottom:0; }
+.hero-actions{ display:flex; gap:8px; flex-shrink:0; margin-top:1px; }
 
 .eyebrow{ font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--orange); font-weight:800; margin:0 0 4px 2px; }
 h1{ font-size:24px; margin:0 0 18px 2px; font-weight:800; letter-spacing:-.025em; color:var(--navy); }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) h1{ color:#EAF0F7; } }
 
-.header-actions{ position:absolute; top: calc(22px + env(safe-area-inset-top)); right:18px; display:flex; gap:8px; z-index:2; }
 .icon-btn{
-  width:40px; height:40px; border-radius:50%; background:var(--navy-light);
-  border: 1px solid rgba(3,36,77,.08);
+  width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.24);
   display:flex; align-items:center; justify-content:center;
-  color:var(--navy);
+  color:#fff;
   transition: transform .15s ease, background .15s ease;
 }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .icon-btn{ color:#EAF0F7; border-color:#2c405c; } }
-.icon-btn:active{ transform:scale(.92); background:#D7E2EE; }
+.icon-btn:active{ transform:scale(.92); background:rgba(255,255,255,.26); }
 .icon-btn svg{ width:18px; height:18px; display:block; }
+
+/* Bottom tab bar — mirrors Auburn's own app navigation. */
+.tabbar{
+  position:fixed; left:0; right:0; bottom:0; z-index:40;
+  background:var(--white); border-top:1px solid var(--card-line);
+  padding: 7px 6px calc(7px + env(safe-area-inset-bottom));
+  display:flex; justify-content:space-around;
+  box-shadow: 0 -6px 18px rgba(3,36,77,.06);
+}
+.tabbar-btn{
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  background:none; border:none; color:var(--muted); font-size:10.5px; font-weight:700;
+  padding:5px 8px; flex:1; letter-spacing:.01em;
+}
+.tabbar-btn svg{ width:22px; height:22px; display:block; }
+.tabbar-btn.active{ color:var(--navy); }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .tabbar-btn.active{ color:#EAF0F7; } }
 
 /* Banners */
 .banner{
@@ -137,14 +168,32 @@ h1{ font-size:24px; margin:0 0 18px 2px; font-weight:800; letter-spacing:-.025em
 .budget-tab.active{ background:var(--navy); border-color:var(--navy); color:white; }
 .budget-tab.add{ color:var(--orange); border-color:rgba(242,101,34,.35); border-style:dashed; background:transparent; }
 
-.budget-list{ border:1px solid var(--card-line); border-radius:14px; overflow:hidden; background:var(--white); }
-.budget-row{
-  width:100%; display:flex; justify-content:space-between; align-items:center; gap:8px;
-  padding:14px 15px; border:none; background:none; border-bottom:1px solid var(--card-line); text-align:left;
+/* Elevated list-row card — echoes Auburn's own card-list pattern:
+   a circular icon badge, a bold label, and trailing meta, each row its
+   own floating card rather than one shared bordered block. Used for
+   both recent-activity entries and the budgets list. */
+.activity-section{ margin-top:4px; }
+.activity-title{ font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:4px 2px 10px; font-weight:700; }
+.activity-row{
+  width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px;
+  background:var(--white); border:1px solid var(--card-line); border-radius:16px;
+  padding:12px 15px; margin-bottom:10px; box-shadow:var(--shadow);
+  text-align:left; font-family:inherit;
 }
-.budget-row:last-child{ border-bottom:none; }
-.budget-row-name{ font-size:14px; font-weight:650; color:var(--ink); }
-.budget-row-total{ font-size:13px; color:var(--muted); font-weight:650; flex-shrink:0; }
+.activity-row:last-child{ margin-bottom:0; }
+.activity-row:active{ transform:scale(.99); }
+button.activity-row{ transition: transform .1s ease; }
+.activity-left{ display:flex; align-items:center; gap:12px; min-width:0; }
+.activity-icon{
+  width:38px; height:38px; border-radius:50%; background:var(--navy-light); color:var(--navy);
+  display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .activity-icon{ color:#EAF0F7; } }
+.activity-icon svg{ width:18px; height:18px; }
+.activity-label{ font-size:13.5px; font-weight:700; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.activity-right{ text-align:right; flex-shrink:0; }
+.activity-amt{ font-size:13.5px; font-weight:800; color:var(--ink); }
+.activity-sub{ font-size:11.5px; color:var(--muted); margin-top:1px; }
 
 .card{
   position:relative; border-radius:23px; padding:23px 22px 20px;
@@ -169,7 +218,7 @@ h1{ font-size:24px; margin:0 0 18px 2px; font-weight:800; letter-spacing:-.025em
 .card-bottom .field{ font-size:12px; opacity:.7; }
 .card-bottom .field b{ display:block; font-size:15px; font-weight:650; opacity:1; color:white; margin-top:2px; }
 
-.allowance, .stat, .progress-wrap, .history{ background:var(--white); border: 1px solid var(--card-line); box-shadow:var(--shadow); }
+.allowance, .stat, .progress-wrap{ background:var(--white); border: 1px solid var(--card-line); box-shadow:var(--shadow); }
 
 .allowance{ border-radius:var(--radius); padding:20px; margin-bottom:14px; }
 .allowance-top{ display:flex; justify-content:space-between; align-items:center; }
@@ -215,18 +264,6 @@ h1{ font-size:24px; margin:0 0 18px 2px; font-weight:800; letter-spacing:-.025em
 
 .btn-wide{ width:100%; display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:18px; }
 
-.history{ border-radius:var(--radius); padding:16px 18px; }
-.history h3{ font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:0 0 10px; }
-.hrow{ display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom: 1px solid var(--card-line); font-size:13.5px; gap:10px; }
-.hrow:last-child{ border-bottom:none; }
-.hrow .left{ display:flex; align-items:center; min-width:0; }
-.hrow .left span.label{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.hrow .right{ text-align:right; flex-shrink:0; }
-.hrow .d{ color:var(--muted); font-size:12px; }
-.hcat{
-  display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
-  border-radius:50%; background:var(--navy-light); font-size:12px; margin-right:9px; flex-shrink:0;
-}
 .empty{ color:var(--muted); font-size:13px; padding:6px 0; }
 
 .overlay{
@@ -263,7 +300,27 @@ input:focus{ border-color:var(--orange); box-shadow: 0 0 0 3px rgba(242,101,34,.
 .chip:active{ transform:scale(.94); }
 .qa-chip{ color:var(--orange); border-color:rgba(242,101,34,.3); font-weight:800; }
 .qa-chip:active{ background:var(--orange-light); }
-.cat-chip.active{ background:var(--navy); border-color:var(--navy); color:white; }
+
+/* Icon-tile grid — echoes Auburn's own icon-menu grid: an outlined
+   circular icon above a centered label, used for category pickers and
+   for the Data tools. */
+.tile-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
+.tile-grid.cols-2{ grid-template-columns:repeat(2, 1fr); }
+.tile{
+  display:flex; flex-direction:column; align-items:center; gap:7px;
+  padding:14px 6px; border-radius:14px; border:1px solid var(--card-line); background:var(--white);
+  font-size:11px; font-weight:700; color:var(--ink); text-align:center; line-height:1.25;
+  transition: transform .1s ease, border-color .15s ease, background .15s ease;
+}
+.tile:active{ transform:scale(.95); }
+.tile-icon{
+  width:38px; height:38px; border-radius:50%; background:var(--navy-light); color:var(--navy);
+  display:flex; align-items:center; justify-content:center; font-size:17px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .tile-icon{ color:#EAF0F7; } }
+.tile-icon svg{ width:18px; height:18px; }
+.tile.active{ border-color:var(--navy); background:var(--navy); color:white; }
+.tile.active .tile-icon{ background:rgba(255,255,255,.18); color:white; }
 
 .section-title{ font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:20px 0 10px; display:flex; align-items:center; }
 
@@ -272,9 +329,6 @@ input:focus{ border-color:var(--orange); box-shadow: 0 0 0 3px rgba(242,101,34,.
 .bar-track{ flex:1; height:8px; background:var(--track); border-radius:999px; overflow:hidden; }
 .bar-track-fill{ height:100%; background:linear-gradient(90deg,var(--orange),var(--orange-bright)); border-radius:999px; transition:width .4s ease; }
 .bar-row-amt{ width:86px; text-align:right; flex-shrink:0; font-weight:650; color:var(--ink); }
-
-.tool-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px; }
-.tool-btn{ font-size:12.5px; padding:12px 8px; }
 
 .sheet-actions{ display:flex; gap:10px; margin-top:22px; }
 .sheet-actions .btn{ padding:14px; }
@@ -1103,11 +1157,18 @@ function wireBanners(){
 
 function onboardingView(){
   return `
-    <div class="wrap" style="padding-top:36px;">
+    <div class="hero">
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div>
+            <div class="eyebrow">Auburn University</div>
+            <h1>Dining Dollars</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wrap">
       ${bannersHtml()}
-      <div class="eyebrow">Auburn University</div>
-      <h1>Dining Dollars</h1>
-
       <div class="allowance" style="margin-bottom:16px;">
         <p class="hint" style="margin-bottom:0;">
           Enter your <b>current</b> Dining Dollars balance.
@@ -1228,9 +1289,15 @@ function mainView(){
   const historyRows = budget.history.slice().reverse().slice(0,8).map(h => {
     const meta = historyRowMeta(h);
     return `
-      <div class="hrow">
-        <span class="left"><span class="hcat">${meta.icon}</span><span class="label">${meta.label}</span></span>
-        <span class="right">${fmtMoney(h.balanceAfter)} <span class="d">· ${fmtDate(h.date)}</span></span>
+      <div class="activity-row">
+        <div class="activity-left">
+          <div class="activity-icon">${meta.icon}</div>
+          <div class="activity-label">${meta.label}</div>
+        </div>
+        <div class="activity-right">
+          <div class="activity-amt">${fmtMoney(h.balanceAfter)}</div>
+          <div class="activity-sub">${fmtDate(h.date)}</div>
+        </div>
       </div>
     `;
   }).join('');
@@ -1264,26 +1331,28 @@ function mainView(){
   }
 
   return `
-    <div class="wrap" style="position:relative;">
-      ${bannersHtml()}
-      <div class="header-actions">
-        <button class="icon-btn" id="open-tutorial" aria-label="How this works">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="16" x2="12" y2="11.5"/>
-            <circle cx="12" cy="8" r="0.6" fill="currentColor" stroke="none"/>
-          </svg>
-        </button>
-        <button class="icon-btn" id="open-settings" aria-label="Settings">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a2 2 0 0 0-1.51 1z"/>
-          </svg>
-        </button>
+    <div class="hero">
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div>
+            <div class="eyebrow">Auburn University · Fall 2026</div>
+            <h1>Dining Dollars</h1>
+          </div>
+          <div class="hero-actions">
+            <button class="icon-btn" id="open-tutorial" aria-label="How this works">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="16" x2="12" y2="11.5"/>
+                <circle cx="12" cy="8" r="0.6" fill="currentColor" stroke="none"/>
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
+    </div>
 
-      <div class="eyebrow">Auburn University · Fall 2026</div>
-      <h1>Dining Dollars</h1>
+    <div class="wrap">
+      ${bannersHtml()}
 
       ${budgetTabsHtml()}
 
@@ -1325,27 +1394,57 @@ function mainView(){
         <div class="bar"><div class="bar-fill" style="width:${s.totalDays > 0 ? (s.elapsedDays / s.totalDays) * 100 : 0}%"></div></div>
       </div>
 
-      <div class="actions">
-        <button class="btn btn-primary" id="open-spend">Log purchase</button>
-        <button class="btn btn-secondary" id="open-update">Update balance</button>
-      </div>
+      <button class="btn btn-secondary btn-wide" id="open-update" style="margin-bottom:20px;">Update balance</button>
 
-      <button class="btn btn-secondary btn-wide" id="open-insights">📊 Insights &amp; Tools<span class="pro-chip">PRO</span></button>
-
-      <div class="history">
-        <h3>Recent activity${multi ? ` · ${escapeHtml(budget.name)}` : ''}</h3>
-        ${budget.history.length ? historyRows : '<div class="empty">Nothing logged yet</div>'}
+      <div class="activity-section">
+        <div class="activity-title">Recent activity${multi ? ` · ${escapeHtml(budget.name)}` : ''}</div>
+        ${budget.history.length ? historyRows : '<div class="activity-row" style="justify-content:center;"><span class="empty" style="padding:0;">Nothing logged yet</span></div>'}
       </div>
+    </div>
+
+    <div class="tabbar">
+      <button class="tabbar-btn active" id="tab-home" aria-label="Home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 11l9-8 9 8"/>
+          <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/>
+        </svg>
+        Home
+      </button>
+      <button class="tabbar-btn" id="tab-log" aria-label="Log purchase">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/>
+          <line x1="12" y1="8" x2="12" y2="16"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        Log
+      </button>
+      <button class="tabbar-btn" id="tab-insights" aria-label="Insights">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="6" y1="20" x2="6" y2="12"/>
+          <line x1="12" y1="20" x2="12" y2="6"/>
+          <line x1="18" y1="20" x2="18" y2="15"/>
+        </svg>
+        Insights
+      </button>
+      <button class="tabbar-btn" id="tab-settings" aria-label="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a2 2 0 0 0-1.51 1z"/>
+        </svg>
+        Settings
+      </button>
     </div>
   `;
 }
 
 function wireMain(){
-  document.getElementById('open-settings').onclick = () => showSettings();
   document.getElementById('open-tutorial').onclick = () => showTutorial();
-  document.getElementById('open-spend').onclick = () => showSpend();
   document.getElementById('open-update').onclick = () => showUpdate();
-  document.getElementById('open-insights').onclick = () => showInsights();
+
+  document.getElementById('tab-home').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
+  document.getElementById('tab-log').onclick = () => showSpend();
+  document.getElementById('tab-insights').onclick = () => showInsights();
+  document.getElementById('tab-settings').onclick = () => showSettings();
 
   document.querySelectorAll('.budget-tab[data-budget]').forEach(btn => {
     btn.onclick = () => {
@@ -1378,8 +1477,10 @@ function showSpend(){
     `<button type="button" class="chip qa-chip" data-amt="${amt}">${fmtMoney(amt).replace(/\.00$/, '')}</button>`
   ).join('');
 
-  const catChips = CATEGORIES.map(c =>
-    `<button type="button" class="chip cat-chip${c.key === selectedCategory ? ' active' : ''}" data-cat="${c.key}">${c.emoji} ${c.label}</button>`
+  const catTiles = CATEGORIES.map(c =>
+    `<button type="button" class="tile cat-tile${c.key === selectedCategory ? ' active' : ''}" data-cat="${c.key}">
+      <span class="tile-icon">${c.emoji}</span>${c.label}
+    </button>`
   ).join('');
 
   const ov = overlay(`
@@ -1394,7 +1495,7 @@ function showSpend(){
     <input type="number" id="spend-amount" inputmode="decimal" step="0.01" min="0" placeholder="0.00" autofocus>
 
     <label>Category <span class="pro-chip">PRO</span></label>
-    <div class="chip-row" id="cat-chip-row">${catChips}</div>
+    <div class="tile-grid" id="cat-tile-grid">${catTiles}</div>
 
     <div class="sheet-actions">
       <button class="btn btn-secondary" id="cancel-spend">Cancel</button>
@@ -1406,9 +1507,9 @@ function showSpend(){
     btn.onclick = () => { document.getElementById('spend-amount').value = btn.dataset.amt; };
   });
 
-  ov.querySelectorAll('.cat-chip').forEach(btn => {
+  ov.querySelectorAll('.cat-tile').forEach(btn => {
     btn.onclick = () => {
-      ov.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('active'));
+      ov.querySelectorAll('.cat-tile').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       selectedCategory = btn.dataset.cat;
     };
@@ -1537,10 +1638,29 @@ function showInsights(){
 }
 
 function showSettings(){
+  const walletIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><circle cx="17" cy="14.2" r="1.1" fill="currentColor" stroke="none"/></svg>`;
+
   const budgetRows = config.budgets.map(b => `
-    <button type="button" class="budget-row" data-edit-budget="${b.id}">
-      <span class="budget-row-name">${escapeHtml(b.name)}${b.id === config.activeBudgetId ? '<span class="active-chip">ACTIVE</span>' : ''}</span>
-      <span class="budget-row-total">${fmtMoney(b.totalBudget)}</span>
+    <button type="button" class="activity-row" data-edit-budget="${b.id}">
+      <div class="activity-left">
+        <div class="activity-icon">${walletIcon}</div>
+        <div class="activity-label">${escapeHtml(b.name)}${b.id === config.activeBudgetId ? '<span class="active-chip">ACTIVE</span>' : ''}</div>
+      </div>
+      <div class="activity-right">
+        <div class="activity-amt">${fmtMoney(b.totalBudget)}</div>
+      </div>
+    </button>
+  `).join('');
+
+  const dataTiles = [
+    { id:'btn-export-csv', label:'Export CSV', icon:'<path d="M12 3v10"/><path d="M8 9l4 4 4-4"/><path d="M5 21h14"/>' },
+    { id:'btn-export-backup', label:'Backup', icon:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M3 7l2-4h14l2 4"/><line x1="9" y1="12" x2="15" y2="12"/>' },
+    { id:'btn-import-backup', label:'Restore', icon:'<path d="M12 16V6"/><path d="M8 10l4-4 4 4"/><path d="M5 21h14"/>' },
+    { id:'btn-share-summary', label:'Share', icon:'<path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>' }
+  ].map(t => `
+    <button type="button" class="tile" id="${t.id}">
+      <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${t.icon}</svg></span>
+      ${t.label}
     </button>
   `).join('');
 
@@ -1555,16 +1675,11 @@ function showSettings(){
     </div>
 
     <div class="section-title">Budgets <span class="pro-chip">PRO</span></div>
-    <div class="budget-list">${budgetRows}</div>
-    <button class="btn btn-secondary btn-wide" id="add-budget-btn" style="margin-top:12px;">+ Add a budget</button>
+    <div>${budgetRows}</div>
+    <button class="btn btn-secondary btn-wide" id="add-budget-btn" style="margin-top:2px;">+ Add a budget</button>
 
     <div class="section-title">Data <span class="pro-chip">PRO</span></div>
-    <div class="tool-grid">
-      <button class="btn btn-secondary tool-btn" id="btn-export-csv">⬇️ Export CSV</button>
-      <button class="btn btn-secondary tool-btn" id="btn-export-backup">🗂️ Backup</button>
-      <button class="btn btn-secondary tool-btn" id="btn-import-backup">📥 Restore</button>
-      <button class="btn btn-secondary tool-btn" id="btn-share-summary">📤 Share</button>
-    </div>
+    <div class="tile-grid cols-2">${dataTiles}</div>
     <input type="file" id="import-file-input" accept="application/json" style="display:none;">
 
     <div class="sheet-actions">
