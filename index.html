@@ -20,7 +20,9 @@
                maximum-scale=1,
                viewport-fit=cover">
 
-<meta name="theme-color" content="#03244D">
+<meta name="theme-color" content="#03244D" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#021B38" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
 
 <title>Auburn Dining Dollars</title>
 
@@ -40,20 +42,36 @@
   --muted:#65717D;
   --good:#2E7D4F;
   --bad:#C23B22;
+  --track:#E7ECF1;
   --shadow: 0 8px 24px rgba(3,36,77,0.10);
   --radius:18px;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --navy-light:#1B2A3E;
+    --cream:#0B1420;
+    --white:#141F2E;
+    --card-line:#25344A;
+    --ink:#EAF0F7;
+    --muted:#8CA0B6;
+    --track:#1E2C40;
+    --shadow: 0 8px 24px rgba(0,0,0,.35);
+  }
 }
 *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html{ background:var(--cream); }
 body{
   margin:0;
-  background:
+  min-height:100vh;
+  background:var(--cream);
+  background-image:
     radial-gradient(circle at 100% 0%, rgba(242,101,34,.08), transparent 32%),
-    linear-gradient(180deg, #F7F8FA 0%, #F3F6F9 100%);
+    linear-gradient(180deg, var(--cream) 0%, var(--white) 120%);
   color:var(--ink);
   -webkit-font-smoothing:antialiased;
   padding-bottom:48px;
+  transition: background-color .2s ease, color .2s ease;
 }
 button, input{ font-family:inherit; }
 button{ cursor:pointer; }
@@ -67,16 +85,41 @@ button{ cursor:pointer; }
 
 .eyebrow{ font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--orange); font-weight:800; margin:0 0 4px 2px; }
 h1{ font-size:24px; margin:0 0 18px 2px; font-weight:800; letter-spacing:-.025em; color:var(--navy); }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) h1{ color:#EAF0F7; } }
 
 .gear{
   position:absolute; top: calc(22px + env(safe-area-inset-top)); right:18px;
   width:40px; height:40px; border-radius:50%; background:var(--navy-light);
   border: 1px solid rgba(3,36,77,.08);
   display:flex; align-items:center; justify-content:center;
+  color:var(--navy);
   transition: transform .15s ease, background .15s ease;
 }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .gear{ color:#EAF0F7; border-color:#2c405c; } }
 .gear:active{ transform:scale(.92); background:#D7E2EE; }
-.gear svg{ width:18px; height:18px; }
+.gear svg{ width:18px; height:18px; display:block; }
+
+/* Banners */
+.banner{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:11px 13px; border-radius:14px; font-size:12.5px; line-height:1.4;
+  margin-bottom:10px; animation: fadeSlideIn .3s ease;
+}
+.banner b{ font-weight:800; }
+.banner-x{ background:none; border:none; font-size:17px; line-height:1; color:inherit; opacity:.55; flex-shrink:0; padding:2px 4px; }
+.banner-x:active{ opacity:1; }
+.install-banner{ background:var(--navy-light); color:var(--navy); border:1px solid rgba(3,36,77,.10); }
+.pro-banner{ background:var(--orange-light); color:#9c3d0f; border:1px solid rgba(242,101,34,.18); }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .install-banner{ color:#EAF0F7; border-color:#2c405c; }
+  :root:not([data-theme="light"]) .pro-banner{ background:rgba(242,101,34,.14); color:#ffb37a; border-color:rgba(242,101,34,.25); }
+}
+
+.pro-chip{
+  display:inline-flex; align-items:center; font-size:10px; font-weight:800; letter-spacing:.04em;
+  color:white; background:linear-gradient(135deg,var(--orange),var(--orange-bright));
+  padding:2px 7px; border-radius:999px; margin-left:6px; vertical-align:middle; white-space:nowrap;
+}
 
 .card{
   position:relative; border-radius:23px; padding:23px 22px 20px;
@@ -93,7 +136,7 @@ h1{ font-size:24px; margin:0 0 18px 2px; font-weight:800; letter-spacing:-.025em
   border-radius:50%; background: radial-gradient(circle, rgba(255,255,255,.06), transparent 70%);
 }
 .card-top{ display:flex; justify-content:space-between; align-items:flex-start; position:relative; z-index:1; }
-.chip{ width:35px; height:27px; border-radius:6px; background: linear-gradient(135deg, #FFD28F, #F26522); box-shadow: inset 0 0 0 1px rgba(255,255,255,.25); }
+.chip-emblem{ width:35px; height:27px; border-radius:6px; background: linear-gradient(135deg, #FFD28F, #F26522); box-shadow: inset 0 0 0 1px rgba(255,255,255,.25); }
 .card-label{ font-size:11px; letter-spacing:.12em; text-transform:uppercase; opacity:.72; margin-top:2px; }
 .balance-num{ font-size:43px; font-weight:800; letter-spacing:-.025em; margin:10px 0 2px; position:relative; z-index:1; }
 .balance-sub{ font-size:13px; opacity:.75; position:relative; z-index:1; }
@@ -112,65 +155,129 @@ h1{ font-size:24px; margin:0 0 18px 2px; font-weight:800; letter-spacing:-.025em
   display:inline-flex; align-items:center; margin-top:10px; padding:5px 9px; border-radius:999px;
   background:var(--orange-light); color:var(--orange); font-size:11px; font-weight:800;
 }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .allowance-note{ background:rgba(242,101,34,.16); } }
+
+.pace-card{
+  display:flex; align-items:center; gap:12px; border-radius:14px; padding:13px 15px;
+  margin-bottom:14px; font-size:13px; line-height:1.4; border:1px solid transparent;
+}
+.pace-card.pace-good{ background:rgba(46,125,79,.09); color:#1f5c3a; border-color:rgba(46,125,79,.16); }
+.pace-card.pace-bad{ background:rgba(194,59,34,.09); color:var(--bad); border-color:rgba(194,59,34,.16); }
+.pace-icon{ font-size:19px; flex-shrink:0; }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .pace-card.pace-good{ color:#7fd8a4; }
+  :root:not([data-theme="light"]) .pace-card.pace-bad{ color:#ff8a70; }
+}
 
 .stat-row{ display:flex; gap:12px; margin-bottom:14px; }
 .stat{ flex:1; border-radius:14px; padding:15px; text-align:center; }
 .stat .n{ font-size:22px; font-weight:750; color:var(--navy); }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .stat .n{ color:#EAF0F7; } }
 .stat .l{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-top:2px; }
 
 .progress-wrap{ border-radius:14px; padding:16px; margin-bottom:18px; }
 .progress-head{ display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-bottom:8px; }
-.bar{ height:8px; background:#E7ECF1; border-radius:999px; overflow:hidden; }
+.bar{ height:8px; background:var(--track); border-radius:999px; overflow:hidden; }
 .bar-fill{ height:100%; background: linear-gradient(90deg, var(--orange), var(--orange-bright)); border-radius:999px; transition: width .4s ease; }
 
-.actions{ display:flex; gap:10px; margin-bottom:18px; }
+.actions{ display:flex; gap:10px; margin-bottom:12px; }
 .btn{ flex:1; padding:14px 10px; border-radius:14px; border:none; font-size:14px; font-weight:750; transition: transform .12s ease, opacity .12s ease; }
 .btn:active{ transform:scale(.97); opacity:.9; }
 .btn-primary{ background: linear-gradient(135deg, #F26522, #DD4F12); color:white; box-shadow: 0 6px 16px rgba(242,101,34,.25); }
-.btn-secondary{ background:#E8EEF5; color:var(--navy); border: 1px solid #D5DFEA; }
+.btn-secondary{ background:var(--navy-light); color:var(--navy); border: 1px solid rgba(3,36,77,.08); }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .btn-secondary{ color:#EAF0F7; border-color:#2c405c; } }
+.btn-danger{ background:linear-gradient(135deg,#E0503A,#C23B22); color:white; box-shadow:0 6px 16px rgba(194,59,34,.25); }
+
+.btn-wide{ width:100%; display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:18px; }
 
 .history{ border-radius:var(--radius); padding:16px 18px; }
 .history h3{ font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:0 0 10px; }
-.hrow{ display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom: 1px solid #E9EDF1; font-size:13.5px; }
+.hrow{ display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom: 1px solid var(--card-line); font-size:13.5px; gap:10px; }
 .hrow:last-child{ border-bottom:none; }
+.hrow .left{ display:flex; align-items:center; min-width:0; }
+.hrow .left span.label{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.hrow .right{ text-align:right; flex-shrink:0; }
 .hrow .d{ color:var(--muted); font-size:12px; }
+.hcat{
+  display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+  border-radius:50%; background:var(--navy-light); font-size:12px; margin-right:9px; flex-shrink:0;
+}
 .empty{ color:var(--muted); font-size:13px; padding:6px 0; }
 
 .overlay{
   position:fixed; inset:0; background: rgba(3,36,77,.48);
   display:flex; align-items:flex-end; justify-content:center; z-index:50;
   padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  animation: fadeIn .18s ease;
 }
 .sheet{
   position:relative; background:var(--cream); width:100%; max-width:480px;
   border-radius: 22px 22px 0 0; padding: 22px 20px calc(24px + env(safe-area-inset-bottom));
   max-height:88vh; overflow-y:auto;
+  animation: slideUp .22s cubic-bezier(.2,.8,.2,1);
 }
 .sheet.center{ border-radius:22px; margin-top:auto; margin-bottom:auto; width:calc(100% - 24px); }
 .sheet h2{ margin:0 0 4px; font-size:19px; color:var(--navy); }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .sheet h2{ color:#EAF0F7; } }
 .sheet p.hint{ margin:0 0 16px; font-size:13px; color:var(--muted); }
 
 label{ display:block; font-size:12px; font-weight:650; color:var(--muted); margin:14px 0 6px; text-transform:uppercase; letter-spacing:.04em; }
 input[type=number], input[type=date], input[type=text]{
   width:100%; padding:12px 14px; border-radius:12px; border: 1px solid var(--card-line);
-  font-size:16px; background:white; font-family:inherit; color:var(--ink); outline:none;
+  font-size:16px; background:var(--white); font-family:inherit; color:var(--ink); outline:none;
 }
 input:focus{ border-color:var(--orange); box-shadow: 0 0 0 3px rgba(242,101,34,.12); }
 .row2{ display:flex; gap:10px; }
 .row2 > div{ flex:1; }
+
+.chip-row{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:4px; }
+.chip{
+  padding:8px 12px; border-radius:999px; border:1px solid var(--card-line); background:var(--white);
+  font-size:12.5px; font-weight:650; color:var(--ink); transition: transform .1s ease, background .1s ease;
+}
+.chip:active{ transform:scale(.94); }
+.qa-chip{ color:var(--orange); border-color:rgba(242,101,34,.3); font-weight:800; }
+.qa-chip:active{ background:var(--orange-light); }
+.cat-chip.active{ background:var(--navy); border-color:var(--navy); color:white; }
+
+.section-title{ font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:20px 0 10px; display:flex; align-items:center; }
+
+.bar-row{ display:flex; align-items:center; gap:8px; font-size:12px; margin-bottom:10px; }
+.bar-row-label{ width:76px; flex-shrink:0; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bar-track{ flex:1; height:8px; background:var(--track); border-radius:999px; overflow:hidden; }
+.bar-track-fill{ height:100%; background:linear-gradient(90deg,var(--orange),var(--orange-bright)); border-radius:999px; transition:width .4s ease; }
+.bar-row-amt{ width:86px; text-align:right; flex-shrink:0; font-weight:650; color:var(--ink); }
+
+.tool-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px; }
+.tool-btn{ font-size:12.5px; padding:12px 8px; }
 
 .sheet-actions{ display:flex; gap:10px; margin-top:22px; }
 .sheet-actions .btn{ padding:14px; }
 .close-x{ position:absolute; top:14px; right:16px; background:none; border:none; font-size:22px; color:var(--muted); padding:4px 8px; }
 .link{ display:block; background:none; border:none; color:var(--bad); font-size:12px; text-decoration:underline; padding:0; margin:16px auto 0; }
 .note{ font-size:11.5px; color:var(--muted); background: rgba(242,101,34,.08); border-radius:10px; padding:10px 12px; margin-top:14px; line-height:1.4; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .note{ background: rgba(242,101,34,.14); } }
+
+.toast{
+  position:fixed; left:50%; bottom:28px; transform:translate(-50%,12px); background:var(--navy); color:white;
+  font-size:13px; font-weight:650; padding:11px 18px; border-radius:999px; box-shadow:0 10px 26px rgba(3,36,77,.3);
+  opacity:0; transition: opacity .25s ease, transform .25s ease; z-index:90; max-width:88%; text-align:center;
+  pointer-events:none;
+}
+.toast.show{ opacity:1; transform:translate(-50%,0); }
 
 .loading{ display:flex; align-items:center; justify-content:center; min-height:60vh; color:var(--muted); font-size:14px; }
+
+@keyframes fadeIn{ from{ opacity:0; } to{ opacity:1; } }
+@keyframes fadeSlideIn{ from{ opacity:0; transform:translateY(-4px); } to{ opacity:1; transform:translateY(0); } }
+@keyframes slideUp{ from{ opacity:0; transform:translateY(18px); } to{ opacity:1; transform:translateY(0); } }
 
 @media(max-width:380px){
   .balance-num{ font-size:38px; }
   .allowance-num{ font-size:36px; }
   .card{ padding:20px; }
+  .bar-row-label{ width:58px; }
+  .bar-row-amt{ width:70px; }
 }
 </style>
 </head>
@@ -187,10 +294,21 @@ input:focus{ border-color:var(--orange); box-shadow: 0 0 0 3px rgba(242,101,34,.
    Persistent storage: localStorage
    Semester: August 17, 2026 → December 11, 2026
    No class: Sep 7, Oct 8–9, Nov 23–27 (weekends auto-excluded)
+   Includes Pro-tier tools (Insights, categories, quick-log presets,
+   pace targeting, CSV/backup export & restore) — unlocked for this build.
    ========================================================= */
 
 const CONFIG_KEY = 'auburn_dining_dollars_config_v3';
 const HISTORY_KEY = 'auburn_dining_dollars_history_v3';
+
+const CATEGORIES = [
+  { key:'meal',    label:'Meal',      emoji:'🍽️', color:'#F26522' },
+  { key:'coffee',  label:'Coffee',    emoji:'☕', color:'#8B5E34' },
+  { key:'snack',   label:'Snack',     emoji:'🍪', color:'#D9A441' },
+  { key:'grocery', label:'Groceries', emoji:'🛒', color:'#2E7D4F' },
+  { key:'vending', label:'Vending',   emoji:'🥤', color:'#3B6EA5' },
+  { key:'other',   label:'Other',     emoji:'🧾', color:'#65717D' }
+];
 
 const DEFAULTS = {
   totalBudget:475,
@@ -202,7 +320,10 @@ const DEFAULTS = {
     '2026-10-08','2026-10-09',
     '2026-11-23','2026-11-24','2026-11-25','2026-11-26','2026-11-27'
   ],
-  setupComplete:false
+  setupComplete:false,
+  quickAmounts:[5,8,12,15],
+  proBannerDismissed:false,
+  installBannerDismissed:false
 };
 
 let config = null;
@@ -224,6 +345,12 @@ function fmtDate(iso){
 function fmtMoney(n){
   if(typeof n !== 'number' || !isFinite(n)){ n = 0; }
   return '$' + n.toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 });
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, ch => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  }[ch]));
 }
 
 function schoolDays(cfg){
@@ -251,7 +378,10 @@ function cloneDefaults(){
     semesterStart: DEFAULTS.semesterStart,
     semesterEnd: DEFAULTS.semesterEnd,
     holidays:[...DEFAULTS.holidays],
-    setupComplete: DEFAULTS.setupComplete
+    setupComplete: DEFAULTS.setupComplete,
+    quickAmounts:[...DEFAULTS.quickAmounts],
+    proBannerDismissed: DEFAULTS.proBannerDismissed,
+    installBannerDismissed: DEFAULTS.installBannerDismissed
   };
 }
 
@@ -297,6 +427,14 @@ function loadState(){
   /* Always lock the semester to Fall 2026. */
   config.semesterStart = DEFAULTS.semesterStart;
   config.semesterEnd = DEFAULTS.semesterEnd;
+
+  /* Additive migration for Pro-tier fields — safe for accounts created
+     before these existed. */
+  if(!Array.isArray(config.quickAmounts) || !config.quickAmounts.length){
+    config.quickAmounts = [...DEFAULTS.quickAmounts];
+  }
+  if(typeof config.proBannerDismissed !== 'boolean'){ config.proBannerDismissed = false; }
+  if(typeof config.installBannerDismissed !== 'boolean'){ config.installBannerDismissed = false; }
 
   try{
     const savedHistory = localStorage.getItem(HISTORY_KEY);
@@ -355,20 +493,280 @@ function computeStats(){
   };
 }
 
+/* ---------- Pro: today's pace target ---------- */
+function computeTodayTarget(s){
+  if(s.availableToSpend <= 0) return null;
+  const divisor = Math.max(1, s.remainingCount + (s.isClassToday ? 1 : 0));
+  return s.availableToSpend / divisor;
+}
+
+/* ---------- Pro: insights (weekly trend, category mix, projection) ---------- */
+function mondayOf(iso){
+  const [y,m,d] = iso.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  const dow = (dt.getDay() + 6) % 7;
+  dt.setDate(dt.getDate() - dow);
+  return dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0');
+}
+
+function computeInsights(){
+  const s = computeStats();
+
+  const weekTotals = {};
+  history.forEach(h => {
+    if(!h || h.type !== 'spend' || typeof h.amount !== 'number') return;
+    const key = mondayOf(h.date);
+    weekTotals[key] = (weekTotals[key] || 0) + h.amount;
+  });
+  const weekKeys = Object.keys(weekTotals).sort().slice(-6);
+  const maxWeek = Math.max(1, ...weekKeys.map(k => weekTotals[k]));
+
+  const catTotals = {};
+  history.forEach(h => {
+    if(!h || typeof h.amount !== 'number') return;
+    if(h.type !== 'spend' && h.type !== 'setup') return;
+    const key = h.category || 'other';
+    catTotals[key] = (catTotals[key] || 0) + h.amount;
+  });
+  const catEntries = Object.entries(catTotals).sort((a,b) => b[1] - a[1]);
+  const maxCat = Math.max(1, ...catEntries.map(e => e[1]));
+
+  const avgPerClassDay = s.elapsedDays > 0 ? s.totalSpent / s.elapsedDays : 0;
+
+  let projection;
+  if(s.elapsedDays === 0){
+    projection = { status:'none' };
+  }else if(avgPerClassDay <= s.dailyRate + 0.005){
+    projection = { status:'good', projectedLeftover: s.totalBudget - (avgPerClassDay * s.totalDays) };
+  }else{
+    const daysUntilExhausted = avgPerClassDay > 0 ? s.balance / avgPerClassDay : Infinity;
+    const futureDays = s.days.filter(d => d > s.today);
+    const idx = Math.min(futureDays.length - 1, Math.max(0, Math.floor(daysUntilExhausted) - 1));
+    const runOutDate = (isFinite(daysUntilExhausted) && futureDays.length) ? futureDays[idx] : null;
+    projection = { status:'warn', runOutDate, avgPerClassDay };
+  }
+
+  return { s, weekKeys, weekTotals, maxWeek, catEntries, maxCat, avgPerClassDay, projection };
+}
+
+/* ---------- Pro: export / share / backup ---------- */
+function csvEscape(v){
+  const str = String(v);
+  return /[",\n]/.test(str) ? '"' + str.replace(/"/g, '""') + '"' : str;
+}
+
+function toCSV(){
+  const header = ['date','type','category','amount','balance_after'];
+  const rows = history.map(h => [
+    h.date || '',
+    h.type || '',
+    h.category || '',
+    (typeof h.amount === 'number' ? h.amount.toFixed(2) : ''),
+    (typeof h.balanceAfter === 'number' ? h.balanceAfter.toFixed(2) : '')
+  ]);
+  return [header, ...rows].map(r => r.map(csvEscape).join(',')).join('\n');
+}
+
+function downloadBlob(content, filename, mime){
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function exportCSV(){
+  downloadBlob(toCSV(), 'dining-dollars-history.csv', 'text/csv');
+  showToast('History exported as CSV');
+}
+
+function exportBackup(){
+  const payload = JSON.stringify({ version:1, exportedAt: todayISO(), config, history }, null, 2);
+  downloadBlob(payload, 'dining-dollars-backup.json', 'application/json');
+  showToast('Backup file downloaded');
+}
+
+async function shareSummary(){
+  const s = computeStats();
+  const text = `Auburn Dining Dollars — ${fmtDate(s.today)}\n` +
+    `Balance: ${fmtMoney(s.balance)}\n` +
+    `Available to spend: ${fmtMoney(s.availableToSpend)}\n` +
+    `Class days completed: ${s.elapsedDays}/${s.totalDays}`;
+
+  if(navigator.share){
+    try{ await navigator.share({ title:'Dining Dollars summary', text }); }
+    catch(e){ /* user cancelled the share sheet — nothing to do */ }
+  }else if(navigator.clipboard && navigator.clipboard.writeText){
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast('Summary copied to clipboard');
+    }catch(e){
+      await showAlert(text);
+    }
+  }else{
+    await showAlert(text);
+  }
+}
+
+function importBackupFile(file){
+  const reader = new FileReader();
+  reader.onload = async () => {
+    let data;
+    try{
+      data = JSON.parse(reader.result);
+      if(!data || typeof data !== 'object' || !data.config || !Array.isArray(data.history)){
+        throw new Error('Unrecognized backup format');
+      }
+    }catch(e){
+      await showAlert("That file doesn't look like a valid Dining Dollars backup.");
+      return;
+    }
+
+    const ok = await showConfirm(
+      'This will replace your current balance, settings, and history with the contents of this backup file.',
+      { title:'Restore backup?', okLabel:'Restore' }
+    );
+    if(!ok) return;
+
+    config = Object.assign(cloneDefaults(), data.config);
+    config.semesterStart = DEFAULTS.semesterStart;
+    config.semesterEnd = DEFAULTS.semesterEnd;
+    if(!Array.isArray(config.quickAmounts) || !config.quickAmounts.length){
+      config.quickAmounts = [...DEFAULTS.quickAmounts];
+    }
+    history = data.history;
+
+    saveConfig();
+    saveHistory();
+    document.querySelectorAll('.overlay').forEach(o => o.remove());
+    showToast('Backup restored');
+    render();
+  };
+  reader.readAsText(file);
+}
+
+/* ---------- Home-screen install detection (Safari on iOS) ---------- */
+function isStandalone(){
+  return window.navigator.standalone === true ||
+    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+}
+function isIOS(){
+  return /iP(hone|od|ad)/.test(navigator.platform || '') ||
+    (navigator.userAgent.includes('Mac') && 'ontouchend' in document);
+}
+function isSafariBrowser(){
+  const ua = navigator.userAgent || '';
+  return /^((?!chrome|android|crios|fxios|edgios).)*safari/i.test(ua);
+}
+function shouldShowInstallBanner(){
+  return isIOS() && isSafariBrowser() && !isStandalone() && !config.installBannerDismissed;
+}
+
+/* ---------- Lightweight in-app dialogs (replace native alert/confirm) ---------- */
+function showAlert(message){
+  return new Promise(resolve => {
+    const ov = overlay(`
+      <h2>Heads up</h2>
+      <p class="hint">${escapeHtml(message)}</p>
+      <div class="sheet-actions">
+        <button class="btn btn-primary" id="alert-ok" style="flex:1;">OK</button>
+      </div>
+    `);
+    document.getElementById('alert-ok').onclick = () => { ov.remove(); resolve(); };
+  });
+}
+
+function showConfirm(message, opts){
+  opts = opts || {};
+  return new Promise(resolve => {
+    const ov = overlay(`
+      <h2>${escapeHtml(opts.title || 'Please confirm')}</h2>
+      <p class="hint">${escapeHtml(message)}</p>
+      <div class="sheet-actions">
+        <button class="btn btn-secondary" id="cf-cancel">Cancel</button>
+        <button class="btn ${opts.danger ? 'btn-danger' : 'btn-primary'}" id="cf-ok">${escapeHtml(opts.okLabel || 'Confirm')}</button>
+      </div>
+    `);
+    const finish = (val) => { ov.remove(); resolve(val); };
+    document.getElementById('cf-cancel').onclick = () => finish(false);
+    document.getElementById('cf-ok').onclick = () => finish(true);
+    ov.addEventListener('click', e => { if(e.target === ov){ finish(false); } });
+  });
+}
+
+function showToast(message){
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = message;
+  document.body.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('show'));
+  setTimeout(() => {
+    t.classList.remove('show');
+    setTimeout(() => t.remove(), 300);
+  }, 2200);
+}
+
 function render(){
   const app = document.getElementById('app');
   if(!config.setupComplete){
     app.innerHTML = onboardingView();
     wireOnboarding();
+    wireBanners();
     return;
   }
   app.innerHTML = mainView();
   wireMain();
+  wireBanners();
+}
+
+function bannersHtml(){
+  let html = '';
+  if(shouldShowInstallBanner()){
+    html += `
+      <div class="banner install-banner" id="install-banner">
+        <span>📲 Add this to your Home Screen: tap <b>Share</b>, then <b>“Add to Home Screen”</b> for the full-screen app.</span>
+        <button class="banner-x" id="dismiss-install" aria-label="Dismiss">×</button>
+      </div>`;
+  }
+  if(!config.proBannerDismissed){
+    html += `
+      <div class="banner pro-banner" id="pro-banner">
+        <span>✨ <b>Pro features unlocked</b> — Insights, categories, backups &amp; more are free in this build.</span>
+        <button class="banner-x" id="dismiss-pro" aria-label="Dismiss">×</button>
+      </div>`;
+  }
+  return html;
+}
+
+function wireBanners(){
+  const installBtn = document.getElementById('dismiss-install');
+  if(installBtn){
+    installBtn.onclick = () => {
+      config.installBannerDismissed = true;
+      saveConfig();
+      const el = document.getElementById('install-banner');
+      if(el) el.remove();
+    };
+  }
+  const proBtn = document.getElementById('dismiss-pro');
+  if(proBtn){
+    proBtn.onclick = () => {
+      config.proBannerDismissed = true;
+      saveConfig();
+      const el = document.getElementById('pro-banner');
+      if(el) el.remove();
+    };
+  }
 }
 
 function onboardingView(){
   return `
     <div class="wrap" style="padding-top:36px;">
+      ${bannersHtml()}
       <div class="eyebrow">Auburn University</div>
       <h1>Dining Dollars</h1>
 
@@ -412,12 +810,12 @@ function onboardingView(){
 }
 
 function wireOnboarding(){
-  document.getElementById('ob-start-btn').onclick = () => {
+  document.getElementById('ob-start-btn').onclick = async () => {
     const balance = parseFloat(document.getElementById('ob-balance').value);
     const total = parseFloat(document.getElementById('ob-total').value);
 
     if(isNaN(balance) || balance < 0){
-      alert('Enter your current balance to continue.');
+      await showAlert('Enter your current balance to continue.');
       return;
     }
 
@@ -440,6 +838,7 @@ function wireOnboarding(){
       date: todayISO(),
       type: 'setup',
       amount: spentBeforeSetup > 0 ? spentBeforeSetup : null,
+      category: 'other',
       balanceAfter: balance,
       note: 'Starting balance entered'
     }];
@@ -450,26 +849,32 @@ function wireOnboarding(){
   };
 }
 
+function historyRowMeta(h){
+  if(h.type === 'spend'){
+    const meta = CATEGORIES.find(c => c.key === (h.category || 'other')) || CATEGORIES[CATEGORIES.length - 1];
+    return { icon: meta.emoji, label: `Purchase −${fmtMoney(h.amount)} · ${meta.label}` };
+  }
+  if(h.type === 'setup'){
+    const label = (typeof h.amount === 'number' && h.amount > 0)
+      ? `Starting balance (${fmtMoney(h.amount)} already spent)`
+      : 'Starting balance';
+    return { icon:'🏁', label };
+  }
+  return { icon:'🔄', label:'Balance updated' };
+}
+
 function mainView(){
   const s = computeStats();
 
   const dayLabel = s.dayOfClass ? `Day ${s.dayOfClass} of ${s.totalDays}` : `Not a class day`;
+  const target = computeTodayTarget(s);
 
   const historyRows = history.slice().reverse().slice(0,8).map(h => {
-    let label;
-    if(h.type === 'setup'){
-      label = (typeof h.amount === 'number' && h.amount > 0)
-        ? `Starting balance (${fmtMoney(h.amount)} already spent)`
-        : 'Starting balance';
-    }else if(h.type === 'spend'){
-      label = `Purchase −${fmtMoney(h.amount)}`;
-    }else{
-      label = 'Balance updated';
-    }
+    const meta = historyRowMeta(h);
     return `
       <div class="hrow">
-        <span>${label}</span>
-        <span>${fmtMoney(h.balanceAfter)} <span class="d">· ${fmtDate(h.date)}</span></span>
+        <span class="left"><span class="hcat">${meta.icon}</span><span class="label">${meta.label}</span></span>
+        <span class="right">${fmtMoney(h.balanceAfter)} <span class="d">· ${fmtDate(h.date)}</span></span>
       </div>
     `;
   }).join('');
@@ -481,13 +886,35 @@ function mainView(){
     allowanceSub = `${fmtMoney(s.accumulatedAllowance)} earned − ${fmtMoney(s.totalSpent)} spent`;
   }
 
+  let paceHtml;
+  if(s.availableToSpend < 0){
+    paceHtml = `
+      <div class="pace-card pace-bad">
+        <div class="pace-icon">⚠️</div>
+        <div><b>Over pace</b> — you've spent ${fmtMoney(Math.abs(s.availableToSpend))} more than you've earned so far.</div>
+      </div>`;
+  }else if(target !== null){
+    paceHtml = `
+      <div class="pace-card pace-good">
+        <div class="pace-icon">🎯</div>
+        <div><b>Today's target:</b> keep purchases under ${fmtMoney(target)} to stay on pace through Dec 11.</div>
+      </div>`;
+  }else{
+    paceHtml = `
+      <div class="pace-card pace-good">
+        <div class="pace-icon">🎯</div>
+        <div>Nothing earned to spend yet — check back once class days start accruing.</div>
+      </div>`;
+  }
+
   return `
     <div class="wrap" style="position:relative;">
+      ${bannersHtml()}
       <div class="eyebrow">Auburn University · Fall 2026</div>
       <h1>Dining Dollars</h1>
 
       <button class="gear" id="open-settings" aria-label="Settings">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#03244D" stroke-width="2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="3"/>
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a2 2 0 0 0-1.51 1z"/>
         </svg>
@@ -496,7 +923,7 @@ function mainView(){
       <div class="card">
         <div class="card-top">
           <div><div class="card-label">Current balance</div></div>
-          <div class="chip"></div>
+          <div class="chip-emblem"></div>
         </div>
         <div class="balance-num">${fmtMoney(s.balance)}</div>
         <div class="balance-sub">of ${fmtMoney(s.totalBudget)} for the semester</div>
@@ -516,6 +943,8 @@ function mainView(){
         }
       </div>
 
+      ${paceHtml}
+
       <div class="stat-row">
         <div class="stat"><div class="n">${fmtMoney(s.totalSpent)}</div><div class="l">Spent so far</div></div>
         <div class="stat"><div class="n">${fmtMoney(s.accumulatedAllowance)}</div><div class="l">Earned so far</div></div>
@@ -534,6 +963,8 @@ function mainView(){
         <button class="btn btn-secondary" id="open-update">Update balance</button>
       </div>
 
+      <button class="btn btn-secondary btn-wide" id="open-insights">📊 Insights &amp; Tools<span class="pro-chip">PRO</span></button>
+
       <div class="history">
         <h3>Recent activity</h3>
         ${history.length ? historyRows : '<div class="empty">Nothing logged yet</div>'}
@@ -546,6 +977,7 @@ function wireMain(){
   document.getElementById('open-settings').onclick = () => showSettings();
   document.getElementById('open-spend').onclick = () => showSpend();
   document.getElementById('open-update').onclick = () => showUpdate();
+  document.getElementById('open-insights').onclick = () => showInsights();
 }
 
 function overlay(innerHTML){
@@ -559,38 +991,72 @@ function overlay(innerHTML){
 
 function showSpend(){
   const s = computeStats();
+  let selectedCategory = 'meal';
+
+  const quickChips = (config.quickAmounts || DEFAULTS.quickAmounts).map(amt =>
+    `<button type="button" class="chip qa-chip" data-amt="${amt}">${fmtMoney(amt).replace(/\.00$/, '')}</button>`
+  ).join('');
+
+  const catChips = CATEGORIES.map(c =>
+    `<button type="button" class="chip cat-chip${c.key === selectedCategory ? ' active' : ''}" data-cat="${c.key}">${c.emoji} ${c.label}</button>`
+  ).join('');
+
   const ov = overlay(`
     <button class="close-x" id="close-spend">×</button>
     <h2>Log a purchase</h2>
     <p class="hint">You currently have <b>${fmtMoney(s.availableToSpend)}</b> available to spend.</p>
+
+    <label>Quick amount</label>
+    <div class="chip-row">${quickChips}</div>
+
     <label>Amount spent</label>
     <input type="number" id="spend-amount" inputmode="decimal" step="0.01" min="0" placeholder="0.00" autofocus>
+
+    <label>Category <span class="pro-chip">PRO</span></label>
+    <div class="chip-row" id="cat-chip-row">${catChips}</div>
+
     <div class="sheet-actions">
       <button class="btn btn-secondary" id="cancel-spend">Cancel</button>
       <button class="btn btn-primary" id="confirm-spend">Log it</button>
     </div>
   `);
 
+  ov.querySelectorAll('.qa-chip').forEach(btn => {
+    btn.onclick = () => { document.getElementById('spend-amount').value = btn.dataset.amt; };
+  });
+
+  ov.querySelectorAll('.cat-chip').forEach(btn => {
+    btn.onclick = () => {
+      ov.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedCategory = btn.dataset.cat;
+    };
+  });
+
   document.getElementById('close-spend').onclick = () => ov.remove();
   document.getElementById('cancel-spend').onclick = () => ov.remove();
-  document.getElementById('confirm-spend').onclick = () => {
+  document.getElementById('confirm-spend').onclick = async () => {
     const amt = parseFloat(document.getElementById('spend-amount').value);
-    if(isNaN(amt) || amt <= 0){ alert('Enter a valid amount.'); return; }
+    if(isNaN(amt) || amt <= 0){ await showAlert('Enter a valid amount.'); return; }
 
     const currentStats = computeStats();
     if(amt > currentStats.availableToSpend){
-      const proceed = confirm(`This purchase is ${fmtMoney(amt - currentStats.availableToSpend)} more than your currently earned allowance of ${fmtMoney(currentStats.availableToSpend)}. Continue?`);
+      const proceed = await showConfirm(
+        `This purchase is ${fmtMoney(amt - currentStats.availableToSpend)} more than your currently earned allowance of ${fmtMoney(currentStats.availableToSpend)}. Continue?`,
+        { title:'Over your pace', okLabel:'Log it anyway' }
+      );
       if(!proceed){ return; }
     }
 
     config.balance = Math.max(0, Number(config.balance) - amt);
 
-    history.push({ date: todayISO(), type: 'spend', amount: amt, balanceAfter: config.balance });
+    history.push({ date: todayISO(), type: 'spend', amount: amt, category: selectedCategory, balanceAfter: config.balance });
 
     saveConfig();
     saveHistory();
     ov.remove();
     render();
+    showToast('Purchase logged');
   };
 }
 
@@ -609,9 +1075,9 @@ function showUpdate(){
 
   document.getElementById('close-update').onclick = () => ov.remove();
   document.getElementById('cancel-update').onclick = () => ov.remove();
-  document.getElementById('confirm-update').onclick = () => {
+  document.getElementById('confirm-update').onclick = async () => {
     const amt = parseFloat(document.getElementById('update-amount').value);
-    if(isNaN(amt) || amt < 0){ alert('Enter a valid amount.'); return; }
+    if(isNaN(amt) || amt < 0){ await showAlert('Enter a valid amount.'); return; }
 
     config.balance = amt;
 
@@ -622,7 +1088,67 @@ function showUpdate(){
     saveHistory();
     ov.remove();
     render();
+    showToast('Balance updated');
   };
+}
+
+function showInsights(){
+  const { s, weekKeys, weekTotals, maxWeek, catEntries, maxCat, projection } = computeInsights();
+
+  const weekRows = weekKeys.length ? weekKeys.map(k => {
+    const amt = weekTotals[k];
+    const pct = Math.max(4, (amt / maxWeek) * 100);
+    return `
+      <div class="bar-row">
+        <span class="bar-row-label">${fmtDate(k)}</span>
+        <div class="bar-track"><div class="bar-track-fill" style="width:${pct}%"></div></div>
+        <span class="bar-row-amt">${fmtMoney(amt)}</span>
+      </div>`;
+  }).join('') : '<div class="empty">Log a few purchases to see weekly trends</div>';
+
+  const catRows = catEntries.length ? catEntries.map(([key, amt]) => {
+    const meta = CATEGORIES.find(c => c.key === key) || CATEGORIES[CATEGORIES.length - 1];
+    const pct = Math.max(4, (amt / maxCat) * 100);
+    const share = s.totalSpent > 0 ? Math.round((amt / s.totalSpent) * 100) : 0;
+    return `
+      <div class="bar-row">
+        <span class="bar-row-label">${meta.emoji} ${meta.label}</span>
+        <div class="bar-track"><div class="bar-track-fill" style="width:${pct}%; background:${meta.color};"></div></div>
+        <span class="bar-row-amt">${fmtMoney(amt)} · ${share}%</span>
+      </div>`;
+  }).join('') : '<div class="empty">No categorized purchases yet</div>';
+
+  let projectionHtml;
+  if(projection.status === 'none'){
+    projectionHtml = `<div class="note">Log some purchases to see your spending projection.</div>`;
+  }else if(projection.status === 'good'){
+    projectionHtml = `<div class="note" style="background:rgba(46,125,79,.10); color:var(--good);">On pace — projected to finish the semester with about <b>${fmtMoney(Math.max(0, projection.projectedLeftover))}</b> left over.</div>`;
+  }else{
+    const when = projection.runOutDate ? `around <b>${fmtDate(projection.runOutDate)}</b>` : 'before the semester ends';
+    projectionHtml = `<div class="note" style="background:rgba(194,59,34,.10); color:var(--bad);">At your current pace (${fmtMoney(projection.avgPerClassDay)}/class day) you're projected to run out ${when}.</div>`;
+  }
+
+  const ov = overlay(`
+    <button class="close-x" id="close-insights">×</button>
+    <span class="pro-chip">✨ PRO</span>
+    <h2 style="margin-top:8px;">Insights</h2>
+    <p class="hint">A closer look at your spending pace and habits.</p>
+
+    ${projectionHtml}
+
+    <div class="section-title">Weekly spending</div>
+    ${weekRows}
+
+    <div class="section-title">By category</div>
+    ${catRows}
+
+    <div class="sheet-actions">
+      <button class="btn btn-primary" id="close-insights-2" style="flex:1;">Done</button>
+    </div>
+  `);
+
+  document.getElementById('close-insights').onclick = () => ov.remove();
+  document.getElementById('close-insights-2').onclick = () => ov.remove();
 }
 
 function showSettings(){
@@ -634,9 +1160,21 @@ function showSettings(){
     <input type="number" id="set-total" value="${config.totalBudget}" step="1" min="1">
     <label>Semester dates</label>
     <input type="text" value="Aug 17 – Dec 11, 2026" disabled style="opacity:.65;">
+    <label>Quick log amounts <span class="pro-chip">PRO</span></label>
+    <input type="text" id="set-quick" value="${(config.quickAmounts || DEFAULTS.quickAmounts).join(', ')}" placeholder="5, 8, 12, 15">
     <div class="note">
       Automatically excluded: Labor Day — Sep 7 · Fall Break — Oct 8–9 · Thanksgiving Break — Nov 23–27
     </div>
+
+    <div class="section-title">Data <span class="pro-chip">PRO</span></div>
+    <div class="tool-grid">
+      <button class="btn btn-secondary tool-btn" id="btn-export-csv">⬇️ Export CSV</button>
+      <button class="btn btn-secondary tool-btn" id="btn-export-backup">🗂️ Backup</button>
+      <button class="btn btn-secondary tool-btn" id="btn-import-backup">📥 Restore</button>
+      <button class="btn btn-secondary tool-btn" id="btn-share-summary">📤 Share</button>
+    </div>
+    <input type="file" id="import-file-input" accept="application/json" style="display:none;">
+
     <div class="sheet-actions">
       <button class="btn btn-secondary" id="cancel-settings">Cancel</button>
       <button class="btn btn-primary" id="save-settings">Save</button>
@@ -647,9 +1185,25 @@ function showSettings(){
   document.getElementById('close-settings').onclick = () => ov.remove();
   document.getElementById('cancel-settings').onclick = () => ov.remove();
 
+  document.getElementById('btn-export-csv').onclick = () => exportCSV();
+  document.getElementById('btn-export-backup').onclick = () => exportBackup();
+  document.getElementById('btn-share-summary').onclick = () => shareSummary();
+  document.getElementById('btn-import-backup').onclick = () => document.getElementById('import-file-input').click();
+  document.getElementById('import-file-input').onchange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if(file){ importBackupFile(file); }
+    e.target.value = '';
+  };
+
   document.getElementById('save-settings').onclick = () => {
     const total = parseFloat(document.getElementById('set-total').value);
     if(!isNaN(total) && total > 0){ config.totalBudget = total; }
+
+    const quickRaw = document.getElementById('set-quick').value;
+    const parsedQuick = quickRaw.split(',')
+      .map(v => parseFloat(v.trim()))
+      .filter(v => !isNaN(v) && v > 0);
+    config.quickAmounts = parsedQuick.length ? parsedQuick : [...DEFAULTS.quickAmounts];
 
     config.semesterStart = DEFAULTS.semesterStart;
     config.semesterEnd = DEFAULTS.semesterEnd;
@@ -658,10 +1212,15 @@ function showSettings(){
     saveConfig();
     ov.remove();
     render();
+    showToast('Settings saved');
   };
 
-  document.getElementById('reset-all').onclick = () => {
-    if(confirm('This clears your balance, history, and settings. Continue?')){
+  document.getElementById('reset-all').onclick = async () => {
+    const ok = await showConfirm(
+      'This clears your balance, history, and settings. This cannot be undone.',
+      { title:'Reset all data?', okLabel:'Reset', danger:true }
+    );
+    if(ok){
       localStorage.removeItem(CONFIG_KEY);
       localStorage.removeItem(HISTORY_KEY);
       config = cloneDefaults();
@@ -670,6 +1229,12 @@ function showSettings(){
       render();
     }
   };
+}
+
+if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => { /* offline caching is a nice-to-have */ });
+  });
 }
 
 (function init(){
