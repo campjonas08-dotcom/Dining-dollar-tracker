@@ -1,12 +1,14 @@
 /* Offline app-shell cache for the Auburn Dining Dollars home-screen app.
    Bump CACHE_NAME whenever the app shell files change so clients pick up
    the new version instead of serving a stale cache. */
-const CACHE_NAME = 'dining-dollars-v1';
+const CACHE_NAME = 'dining-dollars-v2';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
-  './dining-icon.png'
+  './dining-icon.png',
+  './sync.js',
+  './firebase-config.js'
 ];
 
 self.addEventListener('install', (event) => {

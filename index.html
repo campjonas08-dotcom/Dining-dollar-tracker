@@ -8,6 +8,7 @@
 <link rel="apple-touch-icon" href="dining-icon.png">
 <link rel="icon" type="image/png" href="dining-icon.png">
 <link rel="manifest" href="manifest.json">
+<script type="module" src="sync.js"></script>
 
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -284,7 +285,7 @@ button.activity-row{ transition: transform .1s ease; }
 .sheet p.hint{ margin:0 0 16px; font-size:13px; color:var(--muted); }
 
 label{ display:block; font-size:12px; font-weight:650; color:var(--muted); margin:14px 0 6px; text-transform:uppercase; letter-spacing:.04em; }
-input[type=number], input[type=date], input[type=text]{
+input[type=number], input[type=date], input[type=text], input[type=email], input[type=password]{
   width:100%; padding:12px 14px; border-radius:12px; border: 1px solid var(--card-line);
   font-size:16px; background:var(--white); font-family:inherit; color:var(--ink); outline:none;
 }
@@ -510,7 +511,8 @@ function cloneDefaults(){
     installBannerDismissed:false,
     tutorialSeen:false,
     activeBudgetId: budget.id,
-    budgets:[budget]
+    budgets:[budget],
+    updatedAt:0
   };
 }
 
@@ -518,14 +520,16 @@ function activeBudget(){
   return config.budgets.find(b => b.id === config.activeBudgetId) || config.budgets[0];
 }
 
-function saveConfig(){
+function saveConfig(opts){
+  opts = opts || {};
   try{
     localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
-    return true;
   }catch(e){
     console.error('Could not save config:', e);
     return false;
   }
+  if(!opts.skipPush){ pushToCloud(); }
+  return true;
 }
 
 /* One-time upgrade from the single-budget release (config_v3 + history_v3)
@@ -562,7 +566,8 @@ function migrateLegacy(){
       /* Existing users already know the app — don't interrupt them with the tutorial. */
       tutorialSeen: !!legacy.setupComplete,
       activeBudgetId: budget.id,
-      budgets:[budget]
+      budgets:[budget],
+      updatedAt:0
     };
   }catch(e){
     console.error('Legacy migration failed:', e);
@@ -584,6 +589,7 @@ function normalizeConfig(){
   if(typeof config.proBannerDismissed !== 'boolean'){ config.proBannerDismissed = false; }
   if(typeof config.installBannerDismissed !== 'boolean'){ config.installBannerDismissed = false; }
   if(typeof config.tutorialSeen !== 'boolean'){ config.tutorialSeen = false; }
+  if(typeof config.updatedAt !== 'number' || !isFinite(config.updatedAt)){ config.updatedAt = 0; }
 
   if(!Array.isArray(config.budgets) || !config.budgets.length){
     config.budgets = [makeBudget({ id:'dining-dollars', name:'Dining Dollars' })];
@@ -617,6 +623,199 @@ function loadState(){
 
   normalizeConfig();
 }
+
+/* ---------- Pro: cross-device sync (Firebase Auth + Firestore) ----------
+   sync.js (an ES module, loaded separately) owns the actual Firebase
+   calls and talks back to this classic script via window events, since
+   module scripts are deferred and may finish loading after this script
+   has already run. */
+let syncReconciled = false;
+let lastPushedAt = 0;
+
+function pushToCloud(){
+  if(!window.DDSync || !window.DDSync.isConfigured || !window.DDSync.currentUser()) return;
+  const stamp = Date.now();
+  config.updatedAt = stamp;
+  lastPushedAt = stamp;
+  window.DDSync.pushConfig(config).catch(err => console.error('Cloud sync failed:', err));
+}
+
+function adoptRemoteConfig(remote){
+  config = Object.assign(cloneDefaults(), remote);
+  normalizeConfig();
+  saveConfig({ skipPush:true });
+  render();
+  showToast('Synced from your account');
+}
+
+function friendlySyncError(e){
+  const messages = {
+    'auth/invalid-email':'That email address looks invalid.',
+    'auth/user-not-found':'No account found with that email.',
+    'auth/wrong-password':'Incorrect password.',
+    'auth/invalid-credential':'Incorrect email or password.',
+    'auth/email-already-in-use':'An account with that email already exists — try signing in instead.',
+    'auth/weak-password':'Password should be at least 6 characters.',
+    'auth/network-request-failed':'Network error — check your connection and try again.',
+    'auth/too-many-requests':'Too many attempts — wait a bit and try again.',
+    'not-configured':"Sync isn't set up for this build yet."
+  };
+  const code = e && e.code;
+  return (code && messages[code]) || (e && e.message) || 'Something went wrong. Please try again.';
+}
+
+function accountSectionHtml(){
+  if(!window.DDSync || !window.DDSync.isConfigured){
+    return `<div class="note">Cross-device sync isn't set up for this build yet.</div>`;
+  }
+  const user = window.DDSync.currentUser();
+  if(user){
+    return `
+      <div class="activity-row" style="margin-bottom:10px;">
+        <div class="activity-left">
+          <div class="activity-icon">☁️</div>
+          <div>
+            <div class="activity-label">Synced</div>
+            <div class="activity-sub">${escapeHtml(user.email || '')}</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-wide" id="btn-sign-out" style="margin-bottom:4px;">Sign out</button>
+    `;
+  }
+  return `
+    <p class="hint" style="margin-top:0;">Sign in to keep your budgets and history in sync across every device.</p>
+    <label>Email</label>
+    <input type="email" id="auth-email" autocapitalize="off" autocomplete="email" placeholder="you@auburn.edu">
+    <label>Password</label>
+    <input type="password" id="auth-password" placeholder="At least 6 characters" autocomplete="current-password">
+    <div class="sheet-actions" style="margin-top:14px;">
+      <button class="btn btn-secondary" id="btn-sign-up">Create account</button>
+      <button class="btn btn-primary" id="btn-sign-in">Sign in</button>
+    </div>
+    <button class="link" id="btn-forgot-password" style="color:var(--muted);">Forgot password?</button>
+  `;
+}
+
+function wireAccountSection(container){
+  if(!container) return;
+
+  const emailInput = () => container.querySelector('#auth-email');
+  const passwordInput = () => container.querySelector('#auth-password');
+
+  const signInBtn = container.querySelector('#btn-sign-in');
+  const signUpBtn = container.querySelector('#btn-sign-up');
+  const forgotBtn = container.querySelector('#btn-forgot-password');
+  const signOutBtn = container.querySelector('#btn-sign-out');
+
+  if(signInBtn){
+    signInBtn.onclick = async () => {
+      const email = emailInput().value.trim();
+      const password = passwordInput().value;
+      if(!email || !password){ await showAlert('Enter your email and password.'); return; }
+      if(!window.DDSync){ await showAlert('Still loading — try again in a second.'); return; }
+      try{
+        await window.DDSync.signIn(email, password);
+        showToast('Signed in');
+      }catch(e){
+        await showAlert(friendlySyncError(e));
+      }
+    };
+  }
+  if(signUpBtn){
+    signUpBtn.onclick = async () => {
+      const email = emailInput().value.trim();
+      const password = passwordInput().value;
+      if(!email || !password){ await showAlert('Enter an email and password to create an account.'); return; }
+      if(!window.DDSync){ await showAlert('Still loading — try again in a second.'); return; }
+      try{
+        await window.DDSync.signUp(email, password);
+        showToast('Account created');
+      }catch(e){
+        await showAlert(friendlySyncError(e));
+      }
+    };
+  }
+  if(forgotBtn){
+    forgotBtn.onclick = async () => {
+      const email = emailInput().value.trim();
+      if(!email){ await showAlert('Enter your email above, then tap "Forgot password?" again.'); return; }
+      if(!window.DDSync){ await showAlert('Still loading — try again in a second.'); return; }
+      try{
+        await window.DDSync.resetPassword(email);
+        showToast('Password reset email sent');
+      }catch(e){
+        await showAlert(friendlySyncError(e));
+      }
+    };
+  }
+  if(signOutBtn){
+    signOutBtn.onclick = async () => {
+      const ok = await showConfirm(
+        'Your data stays on this device, but will stop syncing until you sign in again.',
+        { title:'Sign out?', okLabel:'Sign out' }
+      );
+      if(!ok || !window.DDSync) return;
+      await window.DDSync.signOut();
+      showToast('Signed out');
+    };
+  }
+}
+
+window.addEventListener('dd-auth-changed', (e) => {
+  /* Each sign-in needs its own fresh reconciliation against whatever is in
+     the cloud right now — without this reset, signing out and back in (or
+     switching accounts) would skip straight to treating the first update
+     as a "live edit from another device" and silently overwrite local data. */
+  if(!e.detail.user){ syncReconciled = false; }
+
+  const acctEl = document.getElementById('account-section');
+  if(acctEl){
+    acctEl.innerHTML = accountSectionHtml();
+    wireAccountSection(acctEl);
+  }
+});
+
+window.addEventListener('dd-remote-update', (e) => {
+  const remote = e.detail.data;
+
+  if(!remote){
+    if(config && config.setupComplete && window.DDSync && window.DDSync.currentUser()){
+      pushToCloud();
+    }
+    syncReconciled = true;
+    return;
+  }
+
+  if(remote.updatedAt && remote.updatedAt === lastPushedAt){
+    /* This snapshot is just our own write echoing back — nothing to do. */
+    syncReconciled = true;
+    return;
+  }
+
+  if(!syncReconciled){
+    syncReconciled = true;
+    if(!config.setupComplete){
+      adoptRemoteConfig(remote);
+      return;
+    }
+    const remoteTime = remote.updatedAt || 0;
+    const localTime = config.updatedAt || 0;
+    if(remoteTime > localTime){
+      showConfirm(
+        "Cloud data from your account is newer than what's on this device. Load it and replace what's here?",
+        { title:'Newer data found', okLabel:'Use cloud data' }
+      ).then(ok => { if(ok){ adoptRemoteConfig(remote); }else{ pushToCloud(); } });
+    }else{
+      pushToCloud();
+    }
+    return;
+  }
+
+  /* A live edit from another device, after this session's initial
+     reconciliation — apply it immediately, that's the whole point of sync. */
+  adoptRemoteConfig(remote);
+});
 
 /* Total eligible class days is a fixed number — not derived from the
    semester date range. The start/end dates below are only used to figure
@@ -1682,11 +1881,16 @@ function showSettings(){
     <div class="tile-grid cols-2">${dataTiles}</div>
     <input type="file" id="import-file-input" accept="application/json" style="display:none;">
 
+    <div class="section-title">Account &amp; Sync <span class="pro-chip">PRO</span></div>
+    <div id="account-section">${accountSectionHtml()}</div>
+
     <div class="sheet-actions">
       <button class="btn btn-primary" id="close-settings-2" style="flex:1;">Done</button>
     </div>
     <button class="link" id="reset-all">Reset all data and start over</button>
   `);
+
+  wireAccountSection(document.getElementById('account-section'));
 
   document.getElementById('close-settings').onclick = () => ov.remove();
   document.getElementById('close-settings-2').onclick = () => ov.remove();
