@@ -87,17 +87,17 @@ button{ cursor:pointer; }
 h1{ font-size:24px; margin:0 0 18px 2px; font-weight:800; letter-spacing:-.025em; color:var(--navy); }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) h1{ color:#EAF0F7; } }
 
-.gear{
-  position:absolute; top: calc(22px + env(safe-area-inset-top)); right:18px;
+.header-actions{ position:absolute; top: calc(22px + env(safe-area-inset-top)); right:18px; display:flex; gap:8px; z-index:2; }
+.icon-btn{
   width:40px; height:40px; border-radius:50%; background:var(--navy-light);
   border: 1px solid rgba(3,36,77,.08);
   display:flex; align-items:center; justify-content:center;
   color:var(--navy);
   transition: transform .15s ease, background .15s ease;
 }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .gear{ color:#EAF0F7; border-color:#2c405c; } }
-.gear:active{ transform:scale(.92); background:#D7E2EE; }
-.gear svg{ width:18px; height:18px; display:block; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .icon-btn{ color:#EAF0F7; border-color:#2c405c; } }
+.icon-btn:active{ transform:scale(.92); background:#D7E2EE; }
+.icon-btn svg{ width:18px; height:18px; display:block; }
 
 /* Banners */
 .banner{
@@ -120,6 +120,31 @@ h1{ font-size:24px; margin:0 0 18px 2px; font-weight:800; letter-spacing:-.025em
   color:white; background:linear-gradient(135deg,var(--orange),var(--orange-bright));
   padding:2px 7px; border-radius:999px; margin-left:6px; vertical-align:middle; white-space:nowrap;
 }
+.active-chip{
+  display:inline-flex; align-items:center; font-size:10px; font-weight:800; letter-spacing:.04em;
+  color:white; background:var(--navy);
+  padding:2px 7px; border-radius:999px; margin-left:6px; vertical-align:middle; white-space:nowrap;
+}
+
+.budget-tabs{ display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; margin-bottom:14px; scrollbar-width:none; }
+.budget-tabs::-webkit-scrollbar{ display:none; }
+.budget-tab{
+  flex-shrink:0; padding:9px 16px; border-radius:999px; border:1px solid var(--card-line);
+  background:var(--white); color:var(--ink); font-size:13px; font-weight:700; white-space:nowrap;
+  transition: transform .1s ease;
+}
+.budget-tab:active{ transform:scale(.95); }
+.budget-tab.active{ background:var(--navy); border-color:var(--navy); color:white; }
+.budget-tab.add{ color:var(--orange); border-color:rgba(242,101,34,.35); border-style:dashed; background:transparent; }
+
+.budget-list{ border:1px solid var(--card-line); border-radius:14px; overflow:hidden; background:var(--white); }
+.budget-row{
+  width:100%; display:flex; justify-content:space-between; align-items:center; gap:8px;
+  padding:14px 15px; border:none; background:none; border-bottom:1px solid var(--card-line); text-align:left;
+}
+.budget-row:last-child{ border-bottom:none; }
+.budget-row-name{ font-size:14px; font-weight:650; color:var(--ink); }
+.budget-row-total{ font-size:13px; color:var(--muted); font-weight:650; flex-shrink:0; }
 
 .card{
   position:relative; border-radius:23px; padding:23px 22px 20px;
@@ -258,6 +283,19 @@ input:focus{ border-color:var(--orange); box-shadow: 0 0 0 3px rgba(242,101,34,.
 .note{ font-size:11.5px; color:var(--muted); background: rgba(242,101,34,.08); border-radius:10px; padding:10px 12px; margin-top:14px; line-height:1.4; }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .note{ background: rgba(242,101,34,.14); } }
 
+.tut-track{
+  display:flex; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
+  margin:0 -20px; scrollbar-width:none;
+}
+.tut-track::-webkit-scrollbar{ display:none; }
+.tut-slide{ flex:0 0 100%; scroll-snap-align:center; padding:8px 26px 4px; text-align:center; }
+.tut-emoji{ font-size:56px; margin-bottom:14px; }
+.tut-slide h2{ text-align:center; }
+.tut-slide p{ text-align:center; }
+.tut-dots{ display:flex; justify-content:center; gap:7px; margin-top:16px; }
+.tut-dot{ width:7px; height:7px; border-radius:50%; background:var(--card-line); transition:background .2s ease, width .2s ease; }
+.tut-dot.active{ background:var(--orange); width:18px; border-radius:999px; }
+
 .toast{
   position:fixed; left:50%; bottom:28px; transform:translate(-50%,12px); background:var(--navy); color:white;
   font-size:13px; font-weight:650; padding:11px 18px; border-radius:999px; box-shadow:0 10px 26px rgba(3,36,77,.3);
@@ -295,11 +333,14 @@ input:focus{ border-color:var(--orange); box-shadow: 0 0 0 3px rgba(242,101,34,.
    Semester: August 17, 2026 → December 11, 2026
    No class: Sep 7, Oct 8–9, Nov 23–27 (weekends auto-excluded)
    Includes Pro-tier tools (Insights, categories, quick-log presets,
-   pace targeting, CSV/backup export & restore) — unlocked for this build.
+   pace targeting, multiple budgets, a swipeable tutorial, a
+   shareable stats-card image, and CSV/backup export & restore) —
+   unlocked for this build.
    ========================================================= */
 
-const CONFIG_KEY = 'auburn_dining_dollars_config_v3';
-const HISTORY_KEY = 'auburn_dining_dollars_history_v3';
+const CONFIG_KEY = 'auburn_dining_dollars_config_v4';
+const LEGACY_CONFIG_KEY = 'auburn_dining_dollars_config_v3';
+const LEGACY_HISTORY_KEY = 'auburn_dining_dollars_history_v3';
 
 const CATEGORIES = [
   { key:'meal',    label:'Meal',      emoji:'🍽️', color:'#F26522' },
@@ -312,7 +353,6 @@ const CATEGORIES = [
 
 const DEFAULTS = {
   totalBudget:475,
-  balance:null,
   semesterStart:'2026-08-17',
   semesterEnd:'2026-12-11',
   holidays:[
@@ -320,14 +360,28 @@ const DEFAULTS = {
     '2026-10-08','2026-10-09',
     '2026-11-23','2026-11-24','2026-11-25','2026-11-26','2026-11-27'
   ],
-  setupComplete:false,
-  quickAmounts:[5,8,12,15],
-  proBannerDismissed:false,
-  installBannerDismissed:false
+  quickAmounts:[5,8,12,15]
 };
 
+const TUTORIAL_SLIDES = [
+  {
+    emoji:'🌱',
+    title:'Earned so far',
+    body:"Your budget doesn't arrive all at once — it accrues a little on every class day. This is how much has “unlocked” so far."
+  },
+  {
+    emoji:'🎯',
+    title:'Available to spend',
+    body:"Earned so far, minus what you've logged as spent. Stay under this number and you're on pace to make it to December 11."
+  },
+  {
+    emoji:'💳',
+    title:'Balance',
+    body:"Your actual Dining Dollars balance from the dining office. It only changes when you log a purchase, or update it here to match the real account."
+  }
+];
+
 let config = null;
-let history = [];
 
 function todayISO(){
   const d = new Date();
@@ -353,6 +407,10 @@ function escapeHtml(str){
   }[ch]));
 }
 
+function slugify(str){
+  return String(str).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'budget';
+}
+
 function schoolDays(cfg){
   const days = [];
   const [sy,sm,sd] = cfg.semesterStart.split('-').map(Number);
@@ -371,18 +429,39 @@ function schoolDays(cfg){
   return days;
 }
 
-function cloneDefaults(){
-  return {
+/* ---------- Budgets (Pro: multiple budgets) ---------- */
+function makeBudgetId(){
+  return 'b-' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+}
+
+function makeBudget(overrides){
+  return Object.assign({
+    id: makeBudgetId(),
+    name: 'Dining Dollars',
     totalBudget: DEFAULTS.totalBudget,
-    balance: DEFAULTS.balance,
+    balance: null,
+    quickAmounts:[...DEFAULTS.quickAmounts],
+    history:[]
+  }, overrides || {});
+}
+
+function cloneDefaults(){
+  const budget = makeBudget({ id:'dining-dollars', name:'Dining Dollars' });
+  return {
     semesterStart: DEFAULTS.semesterStart,
     semesterEnd: DEFAULTS.semesterEnd,
     holidays:[...DEFAULTS.holidays],
-    setupComplete: DEFAULTS.setupComplete,
-    quickAmounts:[...DEFAULTS.quickAmounts],
-    proBannerDismissed: DEFAULTS.proBannerDismissed,
-    installBannerDismissed: DEFAULTS.installBannerDismissed
+    setupComplete:false,
+    proBannerDismissed:false,
+    installBannerDismissed:false,
+    tutorialSeen:false,
+    activeBudgetId: budget.id,
+    budgets:[budget]
   };
+}
+
+function activeBudget(){
+  return config.budgets.find(b => b.id === config.activeBudgetId) || config.budgets[0];
 }
 
 function saveConfig(){
@@ -395,60 +474,94 @@ function saveConfig(){
   }
 }
 
-function saveHistory(){
+/* One-time upgrade from the single-budget release (config_v3 + history_v3)
+   into the multi-budget shape, so existing balances/history survive. */
+function migrateLegacy(){
   try{
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-    return true;
+    const legacyConfigRaw = localStorage.getItem(LEGACY_CONFIG_KEY);
+    if(!legacyConfigRaw) return null;
+    const legacy = JSON.parse(legacyConfigRaw);
+
+    let legacyHistory = [];
+    try{
+      const legacyHistoryRaw = localStorage.getItem(LEGACY_HISTORY_KEY);
+      legacyHistory = legacyHistoryRaw ? JSON.parse(legacyHistoryRaw) : [];
+    }catch(e){ legacyHistory = []; }
+    if(!Array.isArray(legacyHistory)){ legacyHistory = []; }
+
+    const budget = makeBudget({
+      id:'dining-dollars',
+      name:'Dining Dollars',
+      totalBudget: (typeof legacy.totalBudget === 'number' && legacy.totalBudget > 0) ? legacy.totalBudget : DEFAULTS.totalBudget,
+      balance: legacy.balance,
+      quickAmounts: (Array.isArray(legacy.quickAmounts) && legacy.quickAmounts.length) ? legacy.quickAmounts : [...DEFAULTS.quickAmounts],
+      history: legacyHistory
+    });
+
+    return {
+      semesterStart: DEFAULTS.semesterStart,
+      semesterEnd: DEFAULTS.semesterEnd,
+      holidays:[...DEFAULTS.holidays],
+      setupComplete: !!legacy.setupComplete,
+      proBannerDismissed: !!legacy.proBannerDismissed,
+      installBannerDismissed: !!legacy.installBannerDismissed,
+      /* Existing users already know the app — don't interrupt them with the tutorial. */
+      tutorialSeen: !!legacy.setupComplete,
+      activeBudgetId: budget.id,
+      budgets:[budget]
+    };
   }catch(e){
-    console.error('Could not save history:', e);
-    return false;
+    console.error('Legacy migration failed:', e);
+    return null;
   }
 }
 
-function loadState(){
-  try{
-    const savedConfig = localStorage.getItem(CONFIG_KEY);
-    config = savedConfig ? JSON.parse(savedConfig) : cloneDefaults();
-  }catch(e){
-    console.error('Config loading error:', e);
-    config = cloneDefaults();
-  }
-
+function normalizeConfig(){
   if(!Array.isArray(config.holidays)){
     config.holidays = [...DEFAULTS.holidays];
   }else{
-    DEFAULTS.holidays.forEach(date => {
-      if(!config.holidays.includes(date)){
-        config.holidays.push(date);
-      }
-    });
+    DEFAULTS.holidays.forEach(date => { if(!config.holidays.includes(date)){ config.holidays.push(date); } });
   }
-
   /* Always lock the semester to Fall 2026. */
   config.semesterStart = DEFAULTS.semesterStart;
   config.semesterEnd = DEFAULTS.semesterEnd;
 
-  /* Additive migration for Pro-tier fields — safe for accounts created
-     before these existed. */
-  if(!Array.isArray(config.quickAmounts) || !config.quickAmounts.length){
-    config.quickAmounts = [...DEFAULTS.quickAmounts];
-  }
+  if(typeof config.setupComplete !== 'boolean'){ config.setupComplete = false; }
   if(typeof config.proBannerDismissed !== 'boolean'){ config.proBannerDismissed = false; }
   if(typeof config.installBannerDismissed !== 'boolean'){ config.installBannerDismissed = false; }
+  if(typeof config.tutorialSeen !== 'boolean'){ config.tutorialSeen = false; }
 
-  try{
-    const savedHistory = localStorage.getItem(HISTORY_KEY);
-    history = savedHistory ? JSON.parse(savedHistory) : [];
-  }catch(e){
-    console.error('History loading error:', e);
-    history = [];
+  if(!Array.isArray(config.budgets) || !config.budgets.length){
+    config.budgets = [makeBudget({ id:'dining-dollars', name:'Dining Dollars' })];
+  }
+  config.budgets.forEach(b => {
+    if(!b.id){ b.id = makeBudgetId(); }
+    if(typeof b.name !== 'string' || !b.name.trim()){ b.name = 'Dining Dollars'; }
+    if(typeof b.totalBudget !== 'number' || !isFinite(b.totalBudget) || b.totalBudget <= 0){ b.totalBudget = DEFAULTS.totalBudget; }
+    if(b.balance === undefined){ b.balance = null; }
+    if(b.balance !== null && (typeof b.balance !== 'number' || !isFinite(b.balance))){ b.balance = 0; }
+    if(!Array.isArray(b.quickAmounts) || !b.quickAmounts.length){ b.quickAmounts = [...DEFAULTS.quickAmounts]; }
+    if(!Array.isArray(b.history)){ b.history = []; }
+  });
+  if(!config.budgets.find(b => b.id === config.activeBudgetId)){
+    config.activeBudgetId = config.budgets[0].id;
+  }
+}
+
+function loadState(){
+  let raw = null;
+  try{ raw = localStorage.getItem(CONFIG_KEY); }catch(e){ raw = null; }
+
+  if(raw){
+    try{ config = JSON.parse(raw); }
+    catch(e){ console.error('Config loading error:', e); config = null; }
   }
 
-  if(!Array.isArray(history)){ history = []; }
-
-  if(config.balance !== null && (typeof config.balance !== 'number' || !isFinite(config.balance))){
-    config.balance = 0;
+  if(!config){
+    config = migrateLegacy() || cloneDefaults();
   }
+
+  normalizeConfig();
 }
 
 /* Total eligible class days is a fixed number — not derived from the
@@ -456,7 +569,8 @@ function loadState(){
    out how many class days have passed as of today; they don't drive the total. */
 const TOTAL_CLASS_DAYS = 72;
 
-function computeStats(){
+function computeStats(budget){
+  budget = budget || activeBudget();
   const days = schoolDays(config);
   const today = todayISO();
   const totalDays = TOTAL_CLASS_DAYS;
@@ -469,12 +583,12 @@ function computeStats(){
 
   const remainingCount = Math.max(0, totalDays - elapsedDays);
 
-  const totalBudget = Number(config.totalBudget) || 0;
+  const totalBudget = Number(budget.totalBudget) || 0;
   const dailyRate = totalDays > 0 ? totalBudget / totalDays : 0;
 
   const accumulatedAllowance = dailyRate * elapsedDays;
 
-  const totalSpent = history.reduce((total, entry) => {
+  const totalSpent = budget.history.reduce((total, entry) => {
     const countsAsSpend = entry && (entry.type === 'spend' || entry.type === 'setup');
     if(countsAsSpend && typeof entry.amount === 'number' && isFinite(entry.amount)){
       return total + entry.amount;
@@ -484,10 +598,10 @@ function computeStats(){
 
   const availableToSpend = accumulatedAllowance - totalSpent;
 
-  const balance = Number(config.balance) || 0;
+  const balance = Number(budget.balance) || 0;
 
   return {
-    days, today, totalDays, earnedDays, elapsedDays, remainingCount,
+    budget, days, today, totalDays, earnedDays, elapsedDays, remainingCount,
     dayOfClass, dailyRate, accumulatedAllowance, totalSpent, availableToSpend,
     balance, totalBudget, isClassToday: dayIndex >= 0
   };
@@ -509,11 +623,12 @@ function mondayOf(iso){
   return dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0');
 }
 
-function computeInsights(){
-  const s = computeStats();
+function computeInsights(budget){
+  budget = budget || activeBudget();
+  const s = computeStats(budget);
 
   const weekTotals = {};
-  history.forEach(h => {
+  budget.history.forEach(h => {
     if(!h || h.type !== 'spend' || typeof h.amount !== 'number') return;
     const key = mondayOf(h.date);
     weekTotals[key] = (weekTotals[key] || 0) + h.amount;
@@ -522,7 +637,7 @@ function computeInsights(){
   const maxWeek = Math.max(1, ...weekKeys.map(k => weekTotals[k]));
 
   const catTotals = {};
-  history.forEach(h => {
+  budget.history.forEach(h => {
     if(!h || typeof h.amount !== 'number') return;
     if(h.type !== 'spend' && h.type !== 'setup') return;
     const key = h.category || 'other';
@@ -555,9 +670,10 @@ function csvEscape(v){
   return /[",\n]/.test(str) ? '"' + str.replace(/"/g, '""') + '"' : str;
 }
 
-function toCSV(){
+function toCSV(budget){
+  budget = budget || activeBudget();
   const header = ['date','type','category','amount','balance_after'];
-  const rows = history.map(h => [
+  const rows = budget.history.map(h => [
     h.date || '',
     h.type || '',
     h.category || '',
@@ -580,25 +696,27 @@ function downloadBlob(content, filename, mime){
 }
 
 function exportCSV(){
-  downloadBlob(toCSV(), 'dining-dollars-history.csv', 'text/csv');
+  const budget = activeBudget();
+  downloadBlob(toCSV(budget), `dining-dollars-${slugify(budget.name)}-history.csv`, 'text/csv');
   showToast('History exported as CSV');
 }
 
 function exportBackup(){
-  const payload = JSON.stringify({ version:1, exportedAt: todayISO(), config, history }, null, 2);
+  const payload = JSON.stringify({ version:2, exportedAt: todayISO(), config }, null, 2);
   downloadBlob(payload, 'dining-dollars-backup.json', 'application/json');
   showToast('Backup file downloaded');
 }
 
 async function shareSummary(){
-  const s = computeStats();
-  const text = `Auburn Dining Dollars — ${fmtDate(s.today)}\n` +
+  const budget = activeBudget();
+  const s = computeStats(budget);
+  const text = `${budget.name} — ${fmtDate(s.today)}\n` +
     `Balance: ${fmtMoney(s.balance)}\n` +
     `Available to spend: ${fmtMoney(s.availableToSpend)}\n` +
     `Class days completed: ${s.elapsedDays}/${s.totalDays}`;
 
   if(navigator.share){
-    try{ await navigator.share({ title:'Dining Dollars summary', text }); }
+    try{ await navigator.share({ title: `${budget.name} summary`, text }); }
     catch(e){ /* user cancelled the share sheet — nothing to do */ }
   }else if(navigator.clipboard && navigator.clipboard.writeText){
     try{
@@ -618,7 +736,7 @@ function importBackupFile(file){
     let data;
     try{
       data = JSON.parse(reader.result);
-      if(!data || typeof data !== 'object' || !data.config || !Array.isArray(data.history)){
+      if(!data || typeof data !== 'object' || !data.config || typeof data.config !== 'object'){
         throw new Error('Unrecognized backup format');
       }
     }catch(e){
@@ -627,26 +745,184 @@ function importBackupFile(file){
     }
 
     const ok = await showConfirm(
-      'This will replace your current balance, settings, and history with the contents of this backup file.',
+      'This will replace your current budgets, settings, and history with the contents of this backup file.',
       { title:'Restore backup?', okLabel:'Restore' }
     );
     if(!ok) return;
 
-    config = Object.assign(cloneDefaults(), data.config);
-    config.semesterStart = DEFAULTS.semesterStart;
-    config.semesterEnd = DEFAULTS.semesterEnd;
-    if(!Array.isArray(config.quickAmounts) || !config.quickAmounts.length){
-      config.quickAmounts = [...DEFAULTS.quickAmounts];
+    let restored;
+    if(Array.isArray(data.config.budgets) && data.config.budgets.length){
+      /* v2+ backup — already in the multi-budget shape. */
+      restored = data.config;
+    }else{
+      /* v1 backup from the earlier single-budget release. */
+      const legacyHistory = Array.isArray(data.history) ? data.history : [];
+      const budget = makeBudget({
+        id:'dining-dollars',
+        name:'Dining Dollars',
+        totalBudget: (typeof data.config.totalBudget === 'number' && data.config.totalBudget > 0) ? data.config.totalBudget : DEFAULTS.totalBudget,
+        balance: data.config.balance,
+        quickAmounts: (Array.isArray(data.config.quickAmounts) && data.config.quickAmounts.length) ? data.config.quickAmounts : [...DEFAULTS.quickAmounts],
+        history: legacyHistory
+      });
+      restored = {
+        setupComplete: !!data.config.setupComplete,
+        proBannerDismissed: !!data.config.proBannerDismissed,
+        installBannerDismissed: !!data.config.installBannerDismissed,
+        tutorialSeen: true,
+        activeBudgetId: budget.id,
+        budgets:[budget]
+      };
     }
-    history = data.history;
 
+    config = restored;
+    normalizeConfig();
     saveConfig();
-    saveHistory();
+
     document.querySelectorAll('.overlay').forEach(o => o.remove());
     showToast('Backup restored');
     render();
   };
   reader.readAsText(file);
+}
+
+/* ---------- Pro: shareable budget-card image ---------- */
+function roundRectPath(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function fitFontSize(ctx, text, weight, font, maxWidth, startSize, minSize){
+  let size = startSize;
+  while(size > minSize){
+    ctx.font = `${weight} ${size}px ${font}`;
+    if(ctx.measureText(text).width <= maxWidth) break;
+    size -= 2;
+  }
+  return size;
+}
+
+function drawBudgetCard(budget, s){
+  const W = 1080, H = 1080;
+  const FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#03244D');
+  bg.addColorStop(0.55, '#063568');
+  bg.addColorStop(1, '#0A447A');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  const glow = ctx.createRadialGradient(W - 40, 40, 20, W - 40, 40, 460);
+  glow.addColorStop(0, 'rgba(242,101,34,.55)');
+  glow.addColorStop(1, 'rgba(242,101,34,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.textBaseline = 'alphabetic';
+
+  ctx.fillStyle = 'rgba(255,255,255,.7)';
+  ctx.font = `700 30px ${FONT}`;
+  ctx.fillText('AUBURN UNIVERSITY · FALL 2026', 70, 120);
+
+  const nameSize = fitFontSize(ctx, budget.name, 800, FONT, W - 140, 56, 30);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = `800 ${nameSize}px ${FONT}`;
+  ctx.fillText(budget.name, 70, 195);
+
+  ctx.fillStyle = 'rgba(255,255,255,.68)';
+  ctx.font = `700 26px ${FONT}`;
+  ctx.fillText('AVAILABLE TO SPEND', 70, 360);
+
+  const amountText = (s.availableToSpend < 0 ? '−' : '') + fmtMoney(Math.abs(s.availableToSpend));
+  const amtSize = fitFontSize(ctx, amountText, 800, FONT, W - 132, 128, 64);
+  ctx.fillStyle = s.availableToSpend < 0 ? '#FF8A70' : '#FF9A52';
+  ctx.font = `800 ${amtSize}px ${FONT}`;
+  ctx.fillText(amountText, 66, 490);
+
+  const chips = [
+    { label:'BALANCE', value: fmtMoney(s.balance) },
+    { label:'SPENT', value: fmtMoney(s.totalSpent) },
+    { label:'DAYS LEFT', value: String(s.remainingCount) }
+  ];
+  const chipGap = 24;
+  const chipW = (W - 140 - chipGap * 2) / 3;
+  const chipY = 560;
+  const chipH = 150;
+  chips.forEach((c, i) => {
+    const x = 70 + i * (chipW + chipGap);
+    ctx.fillStyle = 'rgba(255,255,255,.08)';
+    roundRectPath(ctx, x, chipY, chipW, chipH, 20);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(255,255,255,.6)';
+    ctx.font = `700 20px ${FONT}`;
+    ctx.fillText(c.label, x + 24, chipY + 46);
+
+    const valSize = fitFontSize(ctx, c.value, 800, FONT, chipW - 48, 40, 22);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = `800 ${valSize}px ${FONT}`;
+    ctx.fillText(c.value, x + 24, chipY + 100);
+  });
+
+  const barX = 70, barY = 790, barW = W - 140, barH = 18;
+  ctx.fillStyle = 'rgba(255,255,255,.12)';
+  roundRectPath(ctx, barX, barY, barW, barH, 9);
+  ctx.fill();
+
+  const pct = s.totalDays > 0 ? Math.max(0, Math.min(1, s.elapsedDays / s.totalDays)) : 0;
+  const fillGrad = ctx.createLinearGradient(barX, 0, barX + barW, 0);
+  fillGrad.addColorStop(0, '#F26522');
+  fillGrad.addColorStop(1, '#FF7A2F');
+  ctx.fillStyle = fillGrad;
+  roundRectPath(ctx, barX, barY, Math.max(barH, barW * pct), barH, 9);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(255,255,255,.6)';
+  ctx.font = `600 24px ${FONT}`;
+  ctx.fillText(`${s.elapsedDays} of ${s.totalDays} class days completed`, barX, barY + 56);
+
+  ctx.fillStyle = 'rgba(255,255,255,.45)';
+  ctx.font = `500 22px ${FONT}`;
+  ctx.fillText(`Tracked with my Dining Dollars app · ${fmtDate(s.today)}`, 70, H - 60);
+
+  return canvas;
+}
+
+async function shareBudgetCardImage(budget, s){
+  budget = budget || activeBudget();
+  s = s || computeStats(budget);
+  const canvas = drawBudgetCard(budget, s);
+
+  canvas.toBlob(async (blob) => {
+    if(!blob){ showToast("Couldn't generate the image"); return; }
+    const filename = `dining-dollars-${slugify(budget.name)}.png`;
+    const file = new File([blob], filename, { type:'image/png' });
+
+    if(navigator.canShare && navigator.canShare({ files:[file] })){
+      try{ await navigator.share({ files:[file], title: `${budget.name} — Dining Dollars` }); }
+      catch(e){ /* user cancelled the share sheet */ }
+      return;
+    }
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+    showToast('Image saved');
+  }, 'image/png', 0.95);
 }
 
 /* ---------- Home-screen install detection (Safari on iOS) ---------- */
@@ -710,6 +986,68 @@ function showToast(message){
   }, 2200);
 }
 
+/* ---------- Pro: swipeable "how this works" tutorial ---------- */
+function showTutorial(){
+  let index = 0;
+
+  const slidesHtml = TUTORIAL_SLIDES.map(sl => `
+    <div class="tut-slide">
+      <div class="tut-emoji">${sl.emoji}</div>
+      <h2>${escapeHtml(sl.title)}</h2>
+      <p class="hint" style="margin-bottom:0;">${escapeHtml(sl.body)}</p>
+    </div>
+  `).join('');
+
+  const ov = overlay(`
+    <button class="close-x" id="close-tutorial">×</button>
+    <div class="tut-track" id="tut-track">${slidesHtml}</div>
+    <div class="tut-dots" id="tut-dots">${TUTORIAL_SLIDES.map((_, i) => `<span class="tut-dot${i === 0 ? ' active' : ''}"></span>`).join('')}</div>
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" id="tut-back" style="visibility:hidden;">Back</button>
+      <button class="btn btn-primary" id="tut-next">Next</button>
+    </div>
+  `);
+
+  const track = document.getElementById('tut-track');
+  const backBtn = document.getElementById('tut-back');
+  const nextBtn = document.getElementById('tut-next');
+  const dots = () => Array.from(ov.querySelectorAll('.tut-dot'));
+
+  function syncControls(){
+    dots().forEach((d, di) => d.classList.toggle('active', di === index));
+    backBtn.style.visibility = index === 0 ? 'hidden' : 'visible';
+    nextBtn.textContent = index === TUTORIAL_SLIDES.length - 1 ? 'Got it' : 'Next';
+  }
+
+  function finish(){
+    config.tutorialSeen = true;
+    saveConfig();
+    ov.remove();
+  }
+
+  function goTo(i){
+    index = Math.max(0, Math.min(TUTORIAL_SLIDES.length - 1, i));
+    track.scrollTo({ left: index * track.clientWidth, behavior:'smooth' });
+    syncControls();
+  }
+
+  let scrollTimer;
+  track.addEventListener('scroll', () => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      index = Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+      syncControls();
+    }, 80);
+  });
+
+  backBtn.onclick = () => goTo(index - 1);
+  nextBtn.onclick = () => {
+    if(index === TUTORIAL_SLIDES.length - 1){ finish(); }
+    else{ goTo(index + 1); }
+  };
+  document.getElementById('close-tutorial').onclick = finish;
+}
+
 function render(){
   const app = document.getElementById('app');
   if(!config.setupComplete){
@@ -735,7 +1073,7 @@ function bannersHtml(){
   if(!config.proBannerDismissed){
     html += `
       <div class="banner pro-banner" id="pro-banner">
-        <span>✨ <b>Pro features unlocked</b> — Insights, categories, backups &amp; more are free in this build.</span>
+        <span>✨ <b>Pro features unlocked</b> — Insights, categories, multiple budgets, backups &amp; more are free in this build.</span>
         <button class="banner-x" id="dismiss-pro" aria-label="Dismiss">×</button>
       </div>`;
   }
@@ -787,7 +1125,7 @@ function onboardingView(){
         <div class="row2">
           <div>
             <label>Total budget</label>
-            <input type="number" id="ob-total" value="${config.totalBudget}" step="1" min="1">
+            <input type="number" id="ob-total" value="${DEFAULTS.totalBudget}" step="1" min="1">
           </div>
           <div>
             <label>Last day</label>
@@ -819,33 +1157,38 @@ function wireOnboarding(){
       return;
     }
 
-    if(!isNaN(total) && total > 0){
-      config.totalBudget = total;
-    }
-
-    config.semesterStart = DEFAULTS.semesterStart;
-    config.semesterEnd = DEFAULTS.semesterEnd;
-    config.holidays = [...DEFAULTS.holidays];
-    config.balance = balance;
-    config.setupComplete = true;
+    const totalBudget = (!isNaN(total) && total > 0) ? total : DEFAULTS.totalBudget;
 
     /* Spending that happened before you started using the tracker
        (e.g. you're entering this on day 6, not day 1) still counts
        toward total_spent, or available_to_spend would be wrong. */
-    const spentBeforeSetup = Math.max(0, config.totalBudget - balance);
+    const spentBeforeSetup = Math.max(0, totalBudget - balance);
 
-    history = [{
-      date: todayISO(),
-      type: 'setup',
-      amount: spentBeforeSetup > 0 ? spentBeforeSetup : null,
-      category: 'other',
-      balanceAfter: balance,
-      note: 'Starting balance entered'
-    }];
+    const budget = makeBudget({
+      id:'dining-dollars',
+      name:'Dining Dollars',
+      totalBudget,
+      balance,
+      history:[{
+        date: todayISO(),
+        type:'setup',
+        amount: spentBeforeSetup > 0 ? spentBeforeSetup : null,
+        category:'other',
+        balanceAfter: balance,
+        note:'Starting balance entered'
+      }]
+    });
+
+    config.budgets = [budget];
+    config.activeBudgetId = budget.id;
+    config.setupComplete = true;
 
     saveConfig();
-    saveHistory();
     render();
+
+    if(!config.tutorialSeen){
+      showTutorial();
+    }
   };
 }
 
@@ -863,13 +1206,26 @@ function historyRowMeta(h){
   return { icon:'🔄', label:'Balance updated' };
 }
 
+function budgetTabsHtml(){
+  const tabs = config.budgets.map(b =>
+    `<button type="button" class="budget-tab${b.id === config.activeBudgetId ? ' active' : ''}" data-budget="${b.id}">${escapeHtml(b.name)}</button>`
+  ).join('');
+  return `
+    <div class="budget-tabs">
+      ${tabs}
+      <button type="button" class="budget-tab add" id="add-budget-tab">+ Add</button>
+    </div>`;
+}
+
 function mainView(){
-  const s = computeStats();
+  const budget = activeBudget();
+  const s = computeStats(budget);
+  const multi = config.budgets.length > 1;
 
   const dayLabel = s.dayOfClass ? `Day ${s.dayOfClass} of ${s.totalDays}` : `Not a class day`;
   const target = computeTodayTarget(s);
 
-  const historyRows = history.slice().reverse().slice(0,8).map(h => {
+  const historyRows = budget.history.slice().reverse().slice(0,8).map(h => {
     const meta = historyRowMeta(h);
     return `
       <div class="hrow">
@@ -910,19 +1266,30 @@ function mainView(){
   return `
     <div class="wrap" style="position:relative;">
       ${bannersHtml()}
+      <div class="header-actions">
+        <button class="icon-btn" id="open-tutorial" aria-label="How this works">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="11.5"/>
+            <circle cx="12" cy="8" r="0.6" fill="currentColor" stroke="none"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="open-settings" aria-label="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a2 2 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+
       <div class="eyebrow">Auburn University · Fall 2026</div>
       <h1>Dining Dollars</h1>
 
-      <button class="gear" id="open-settings" aria-label="Settings">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a2 2 0 0 0-1.51 1z"/>
-        </svg>
-      </button>
+      ${budgetTabsHtml()}
 
       <div class="card">
         <div class="card-top">
-          <div><div class="card-label">Current balance</div></div>
+          <div><div class="card-label">${escapeHtml(budget.name)} balance</div></div>
           <div class="chip-emblem"></div>
         </div>
         <div class="balance-num">${fmtMoney(s.balance)}</div>
@@ -966,8 +1333,8 @@ function mainView(){
       <button class="btn btn-secondary btn-wide" id="open-insights">📊 Insights &amp; Tools<span class="pro-chip">PRO</span></button>
 
       <div class="history">
-        <h3>Recent activity</h3>
-        ${history.length ? historyRows : '<div class="empty">Nothing logged yet</div>'}
+        <h3>Recent activity${multi ? ` · ${escapeHtml(budget.name)}` : ''}</h3>
+        ${budget.history.length ? historyRows : '<div class="empty">Nothing logged yet</div>'}
       </div>
     </div>
   `;
@@ -975,9 +1342,21 @@ function mainView(){
 
 function wireMain(){
   document.getElementById('open-settings').onclick = () => showSettings();
+  document.getElementById('open-tutorial').onclick = () => showTutorial();
   document.getElementById('open-spend').onclick = () => showSpend();
   document.getElementById('open-update').onclick = () => showUpdate();
   document.getElementById('open-insights').onclick = () => showInsights();
+
+  document.querySelectorAll('.budget-tab[data-budget]').forEach(btn => {
+    btn.onclick = () => {
+      if(btn.dataset.budget === config.activeBudgetId) return;
+      config.activeBudgetId = btn.dataset.budget;
+      saveConfig();
+      render();
+    };
+  });
+  const addTab = document.getElementById('add-budget-tab');
+  if(addTab){ addTab.onclick = () => showBudgetForm(null); }
 }
 
 function overlay(innerHTML){
@@ -990,10 +1369,12 @@ function overlay(innerHTML){
 }
 
 function showSpend(){
-  const s = computeStats();
+  const budget = activeBudget();
+  const s = computeStats(budget);
+  const titleSuffix = config.budgets.length > 1 ? ` · ${escapeHtml(budget.name)}` : '';
   let selectedCategory = 'meal';
 
-  const quickChips = (config.quickAmounts || DEFAULTS.quickAmounts).map(amt =>
+  const quickChips = (budget.quickAmounts || DEFAULTS.quickAmounts).map(amt =>
     `<button type="button" class="chip qa-chip" data-amt="${amt}">${fmtMoney(amt).replace(/\.00$/, '')}</button>`
   ).join('');
 
@@ -1003,7 +1384,7 @@ function showSpend(){
 
   const ov = overlay(`
     <button class="close-x" id="close-spend">×</button>
-    <h2>Log a purchase</h2>
+    <h2>Log a purchase${titleSuffix}</h2>
     <p class="hint">You currently have <b>${fmtMoney(s.availableToSpend)}</b> available to spend.</p>
 
     <label>Quick amount</label>
@@ -1039,7 +1420,7 @@ function showSpend(){
     const amt = parseFloat(document.getElementById('spend-amount').value);
     if(isNaN(amt) || amt <= 0){ await showAlert('Enter a valid amount.'); return; }
 
-    const currentStats = computeStats();
+    const currentStats = computeStats(budget);
     if(amt > currentStats.availableToSpend){
       const proceed = await showConfirm(
         `This purchase is ${fmtMoney(amt - currentStats.availableToSpend)} more than your currently earned allowance of ${fmtMoney(currentStats.availableToSpend)}. Continue?`,
@@ -1048,12 +1429,10 @@ function showSpend(){
       if(!proceed){ return; }
     }
 
-    config.balance = Math.max(0, Number(config.balance) - amt);
-
-    history.push({ date: todayISO(), type: 'spend', amount: amt, category: selectedCategory, balanceAfter: config.balance });
+    budget.balance = Math.max(0, Number(budget.balance) - amt);
+    budget.history.push({ date: todayISO(), type:'spend', amount:amt, category:selectedCategory, balanceAfter: budget.balance });
 
     saveConfig();
-    saveHistory();
     ov.remove();
     render();
     showToast('Purchase logged');
@@ -1061,12 +1440,15 @@ function showSpend(){
 }
 
 function showUpdate(){
+  const budget = activeBudget();
+  const titleSuffix = config.budgets.length > 1 ? ` · ${escapeHtml(budget.name)}` : '';
+
   const ov = overlay(`
     <button class="close-x" id="close-update">×</button>
-    <h2>Update balance</h2>
-    <p class="hint">Checked your actual Dining Dollars balance? Enter the current number here to re-sync the account.</p>
+    <h2>Update balance${titleSuffix}</h2>
+    <p class="hint">Checked your actual balance? Enter the current number here to re-sync the account.</p>
     <label>Current balance</label>
-    <input type="number" id="update-amount" inputmode="decimal" step="0.01" min="0" value="${Number(config.balance).toFixed(2)}" autofocus>
+    <input type="number" id="update-amount" inputmode="decimal" step="0.01" min="0" value="${Number(budget.balance).toFixed(2)}" autofocus>
     <div class="sheet-actions">
       <button class="btn btn-secondary" id="cancel-update">Cancel</button>
       <button class="btn btn-primary" id="confirm-update">Save</button>
@@ -1079,13 +1461,12 @@ function showUpdate(){
     const amt = parseFloat(document.getElementById('update-amount').value);
     if(isNaN(amt) || amt < 0){ await showAlert('Enter a valid amount.'); return; }
 
-    config.balance = amt;
+    budget.balance = amt;
 
     /* Updating the actual balance does NOT affect earned allowance. */
-    history.push({ date: todayISO(), type: 'update', amount: null, balanceAfter: amt });
+    budget.history.push({ date: todayISO(), type:'update', amount:null, balanceAfter: amt });
 
     saveConfig();
-    saveHistory();
     ov.remove();
     render();
     showToast('Balance updated');
@@ -1093,7 +1474,9 @@ function showUpdate(){
 }
 
 function showInsights(){
-  const { s, weekKeys, weekTotals, maxWeek, catEntries, maxCat, projection } = computeInsights();
+  const budget = activeBudget();
+  const titleSuffix = config.budgets.length > 1 ? ` · ${escapeHtml(budget.name)}` : '';
+  const { s, weekKeys, weekTotals, maxWeek, catEntries, maxCat, projection } = computeInsights(budget);
 
   const weekRows = weekKeys.length ? weekKeys.map(k => {
     const amt = weekTotals[k];
@@ -1131,7 +1514,7 @@ function showInsights(){
   const ov = overlay(`
     <button class="close-x" id="close-insights">×</button>
     <span class="pro-chip">✨ PRO</span>
-    <h2 style="margin-top:8px;">Insights</h2>
+    <h2 style="margin-top:8px;">Insights${titleSuffix}</h2>
     <p class="hint">A closer look at your spending pace and habits.</p>
 
     ${projectionHtml}
@@ -1143,28 +1526,37 @@ function showInsights(){
     ${catRows}
 
     <div class="sheet-actions">
+      <button class="btn btn-secondary" id="share-card-btn" style="flex:1;">🖼️ Share card</button>
       <button class="btn btn-primary" id="close-insights-2" style="flex:1;">Done</button>
     </div>
   `);
 
   document.getElementById('close-insights').onclick = () => ov.remove();
   document.getElementById('close-insights-2').onclick = () => ov.remove();
+  document.getElementById('share-card-btn').onclick = () => shareBudgetCardImage(budget, s);
 }
 
 function showSettings(){
+  const budgetRows = config.budgets.map(b => `
+    <button type="button" class="budget-row" data-edit-budget="${b.id}">
+      <span class="budget-row-name">${escapeHtml(b.name)}${b.id === config.activeBudgetId ? '<span class="active-chip">ACTIVE</span>' : ''}</span>
+      <span class="budget-row-total">${fmtMoney(b.totalBudget)}</span>
+    </button>
+  `).join('');
+
   const ov = overlay(`
     <button class="close-x" id="close-settings">×</button>
     <h2>Settings</h2>
     <p class="hint">Budget is split across 72 fixed class days. Dates below are shown for reference only.</p>
-    <label>Total budget</label>
-    <input type="number" id="set-total" value="${config.totalBudget}" step="1" min="1">
     <label>Semester dates</label>
     <input type="text" value="Aug 17 – Dec 11, 2026" disabled style="opacity:.65;">
-    <label>Quick log amounts <span class="pro-chip">PRO</span></label>
-    <input type="text" id="set-quick" value="${(config.quickAmounts || DEFAULTS.quickAmounts).join(', ')}" placeholder="5, 8, 12, 15">
     <div class="note">
       Automatically excluded: Labor Day — Sep 7 · Fall Break — Oct 8–9 · Thanksgiving Break — Nov 23–27
     </div>
+
+    <div class="section-title">Budgets <span class="pro-chip">PRO</span></div>
+    <div class="budget-list">${budgetRows}</div>
+    <button class="btn btn-secondary btn-wide" id="add-budget-btn" style="margin-top:12px;">+ Add a budget</button>
 
     <div class="section-title">Data <span class="pro-chip">PRO</span></div>
     <div class="tool-grid">
@@ -1176,14 +1568,18 @@ function showSettings(){
     <input type="file" id="import-file-input" accept="application/json" style="display:none;">
 
     <div class="sheet-actions">
-      <button class="btn btn-secondary" id="cancel-settings">Cancel</button>
-      <button class="btn btn-primary" id="save-settings">Save</button>
+      <button class="btn btn-primary" id="close-settings-2" style="flex:1;">Done</button>
     </div>
     <button class="link" id="reset-all">Reset all data and start over</button>
   `);
 
   document.getElementById('close-settings').onclick = () => ov.remove();
-  document.getElementById('cancel-settings').onclick = () => ov.remove();
+  document.getElementById('close-settings-2').onclick = () => ov.remove();
+
+  ov.querySelectorAll('[data-edit-budget]').forEach(btn => {
+    btn.onclick = () => showBudgetForm(btn.dataset.editBudget);
+  });
+  document.getElementById('add-budget-btn').onclick = () => showBudgetForm(null);
 
   document.getElementById('btn-export-csv').onclick = () => exportCSV();
   document.getElementById('btn-export-backup').onclick = () => exportBackup();
@@ -1195,40 +1591,120 @@ function showSettings(){
     e.target.value = '';
   };
 
-  document.getElementById('save-settings').onclick = () => {
-    const total = parseFloat(document.getElementById('set-total').value);
-    if(!isNaN(total) && total > 0){ config.totalBudget = total; }
-
-    const quickRaw = document.getElementById('set-quick').value;
-    const parsedQuick = quickRaw.split(',')
-      .map(v => parseFloat(v.trim()))
-      .filter(v => !isNaN(v) && v > 0);
-    config.quickAmounts = parsedQuick.length ? parsedQuick : [...DEFAULTS.quickAmounts];
-
-    config.semesterStart = DEFAULTS.semesterStart;
-    config.semesterEnd = DEFAULTS.semesterEnd;
-    config.holidays = [...DEFAULTS.holidays];
-
-    saveConfig();
-    ov.remove();
-    render();
-    showToast('Settings saved');
-  };
-
   document.getElementById('reset-all').onclick = async () => {
     const ok = await showConfirm(
-      'This clears your balance, history, and settings. This cannot be undone.',
+      'This clears every budget, all history, and your settings. This cannot be undone.',
       { title:'Reset all data?', okLabel:'Reset', danger:true }
     );
     if(ok){
       localStorage.removeItem(CONFIG_KEY);
-      localStorage.removeItem(HISTORY_KEY);
       config = cloneDefaults();
-      history = [];
       ov.remove();
       render();
     }
   };
+}
+
+function showBudgetForm(budgetId){
+  const existing = budgetId ? config.budgets.find(b => b.id === budgetId) : null;
+  const isNew = !existing;
+
+  const ov = overlay(`
+    <button class="close-x" id="close-budget-form">×</button>
+    <h2>${isNew ? 'Add a budget' : 'Edit budget'}</h2>
+    <p class="hint">${isNew ? 'Track a separate pot — like Flex or meal swipes — alongside your other budgets.' : "Update this budget's name, total, and quick-log presets."}</p>
+    <label>Name</label>
+    <input type="text" id="bf-name" value="${existing ? escapeHtml(existing.name) : ''}" placeholder="e.g. Flex Dollars" maxlength="30">
+    <div class="row2">
+      <div>
+        <label>Total for semester</label>
+        <input type="number" id="bf-total" value="${existing ? existing.totalBudget : DEFAULTS.totalBudget}" step="1" min="1">
+      </div>
+      ${isNew ? `
+      <div>
+        <label>Current balance</label>
+        <input type="number" id="bf-balance" inputmode="decimal" step="0.01" min="0" placeholder="e.g. 200.00">
+      </div>` : ''}
+    </div>
+    <label>Quick log amounts</label>
+    <input type="text" id="bf-quick" value="${(existing ? existing.quickAmounts : DEFAULTS.quickAmounts).join(', ')}" placeholder="5, 8, 12, 15">
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" id="cancel-budget-form">Cancel</button>
+      <button class="btn btn-primary" id="save-budget-form">${isNew ? 'Add budget' : 'Save'}</button>
+    </div>
+    ${(!isNew && config.budgets.length > 1) ? `<button class="link" id="delete-budget-form">Delete this budget</button>` : ''}
+  `);
+
+  document.getElementById('close-budget-form').onclick = () => ov.remove();
+  document.getElementById('cancel-budget-form').onclick = () => ov.remove();
+
+  document.getElementById('save-budget-form').onclick = async () => {
+    const nameRaw = document.getElementById('bf-name').value.trim();
+    const totalRaw = parseFloat(document.getElementById('bf-total').value);
+    const quickRaw = document.getElementById('bf-quick').value;
+    const parsedQuick = quickRaw.split(',').map(v => parseFloat(v.trim())).filter(v => !isNaN(v) && v > 0);
+    const quickAmounts = parsedQuick.length ? parsedQuick : [...DEFAULTS.quickAmounts];
+
+    if(isNaN(totalRaw) || totalRaw <= 0){
+      await showAlert('Enter a valid total budget.');
+      return;
+    }
+
+    if(isNew){
+      const balanceRaw = parseFloat(document.getElementById('bf-balance').value);
+      if(isNaN(balanceRaw) || balanceRaw < 0){
+        await showAlert('Enter a starting balance to continue.');
+        return;
+      }
+      const name = nameRaw || `Budget ${config.budgets.length + 1}`;
+      const spentBeforeSetup = Math.max(0, totalRaw - balanceRaw);
+      const budget = makeBudget({
+        name, totalBudget: totalRaw, balance: balanceRaw, quickAmounts,
+        history:[{
+          date: todayISO(), type:'setup',
+          amount: spentBeforeSetup > 0 ? spentBeforeSetup : null,
+          category:'other', balanceAfter: balanceRaw, note:'Starting balance entered'
+        }]
+      });
+      config.budgets.push(budget);
+      config.activeBudgetId = budget.id;
+      saveConfig();
+      document.querySelectorAll('.overlay').forEach(o => o.remove());
+      render();
+      showToast('Budget added');
+    }else{
+      existing.name = nameRaw || existing.name;
+      existing.totalBudget = totalRaw;
+      existing.quickAmounts = quickAmounts;
+      saveConfig();
+      document.querySelectorAll('.overlay').forEach(o => o.remove());
+      render();
+      showToast('Budget updated');
+    }
+  };
+
+  const deleteBtn = document.getElementById('delete-budget-form');
+  if(deleteBtn){
+    deleteBtn.onclick = async () => {
+      const ok = await showConfirm(
+        `This deletes "${existing.name}" and its entire history. This cannot be undone.`,
+        { title:'Delete this budget?', okLabel:'Delete', danger:true }
+      );
+      if(!ok) return;
+
+      config.budgets = config.budgets.filter(b => b.id !== existing.id);
+      if(!config.budgets.length){
+        config.budgets = [makeBudget({ id:'dining-dollars', name:'Dining Dollars' })];
+      }
+      if(config.activeBudgetId === existing.id){
+        config.activeBudgetId = config.budgets[0].id;
+      }
+      saveConfig();
+      document.querySelectorAll('.overlay').forEach(o => o.remove());
+      render();
+      showToast('Budget deleted');
+    };
+  }
 }
 
 if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){
