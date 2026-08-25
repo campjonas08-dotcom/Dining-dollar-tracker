@@ -1,12 +1,18 @@
 {
-  "name": "Auburn Dining Dollars",
+  "name": "Auburn Dining Dollars Tracker",
   "short_name": "Dining Dollars",
+  "description": "Track your Auburn University Dining Dollars balance and spending pace across the Fall 2026 semester.",
+  "id": "./index.html",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
+  "lang": "en-US",
   "background_color": "#F7F8FA",
   "theme_color": "#03244D",
   "icons": [
-    { "src": "dining-icon.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "dining-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "dining-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
     { "src": "dining-icon.png", "sizes": "180x180", "type": "image/png" }
   ]
 }
