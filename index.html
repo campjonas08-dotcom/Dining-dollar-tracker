@@ -2078,9 +2078,28 @@ function showEditEntry(budget, entryId, onDone){
   };
 }
 
+/* Auto-update: the moment a new service worker takes control (because a
+   fresh deploy installed and activated), reload once to actually load the
+   new app code -- taking control alone doesn't replace what's already
+   running in the tab. The `refreshed` guard stops this from looping if
+   the browser fires controllerchange more than once. */
 if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){
+  let refreshed = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if(refreshed) return;
+    refreshed = true;
+    window.location.reload();
+  });
+
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => { /* offline caching is a nice-to-have */ });
+    navigator.serviceWorker.register('sw.js').then((reg) => {
+      /* Home-screen sessions can stay open a long time without a fresh
+         navigation, so also check for a newer service worker whenever the
+         app is brought back to the foreground. */
+      document.addEventListener('visibilitychange', () => {
+        if(document.visibilityState === 'visible'){ reg.update().catch(() => {}); }
+      });
+    }).catch(() => { /* offline caching is a nice-to-have */ });
   });
 }
 
