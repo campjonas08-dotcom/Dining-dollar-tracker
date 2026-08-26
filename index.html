@@ -664,7 +664,7 @@ function friendlySyncError(e){
   return (code && messages[code]) || (e && e.message) || 'Something went wrong. Please try again.';
 }
 
-function accountSectionHtml(){
+function accountSectionHtml(introText){
   if(!window.DDSync || !window.DDSync.isConfigured){
     return `<div class="note">Cross-device sync isn't set up for this build yet.</div>`;
   }
@@ -684,7 +684,7 @@ function accountSectionHtml(){
     `;
   }
   return `
-    <p class="hint" style="margin-top:0;">Sign in to keep your budgets and history in sync across every device.</p>
+    <p class="hint" style="margin-top:0;">${introText || "Sign in to keep your budgets and history in sync across every device."}</p>
     <label>Email</label>
     <input type="email" id="auth-email" autocapitalize="off" autocomplete="email" placeholder="you@auburn.edu">
     <label>Password</label>
@@ -1368,6 +1368,17 @@ function onboardingView(){
     </div>
     <div class="wrap">
       ${bannersHtml()}
+
+      <div class="allowance" style="margin-bottom:16px;">
+        <div id="account-section">${accountSectionHtml("Already syncing on another device? Sign in to pick up your budgets and history — no need to re-enter anything.")}</div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:10px; margin:4px 0 16px; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; font-weight:700;">
+        <div style="flex:1; height:1px; background:var(--card-line);"></div>
+        or start fresh
+        <div style="flex:1; height:1px; background:var(--card-line);"></div>
+      </div>
+
       <div class="allowance" style="margin-bottom:16px;">
         <p class="hint" style="margin-bottom:0;">
           Enter your <b>current</b> Dining Dollars balance.
@@ -1408,6 +1419,8 @@ function onboardingView(){
 }
 
 function wireOnboarding(){
+  wireAccountSection(document.getElementById('account-section'));
+
   document.getElementById('ob-start-btn').onclick = async () => {
     const balance = parseFloat(document.getElementById('ob-balance').value);
     const total = parseFloat(document.getElementById('ob-total').value);
