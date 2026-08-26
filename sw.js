@@ -1,7 +1,16 @@
 /* Offline app-shell cache for the Stipend home-screen app.
-   Bump CACHE_NAME whenever the app shell files change so clients pick up
-   the new version instead of serving a stale cache. */
-const CACHE_NAME = 'stipend-v1';
+
+   Network-first, falling back to cache only when offline: every request
+   tries the network first so an open app always picks up the latest
+   deploy, and the cache exists purely as an offline fallback -- not as
+   the primary source. (The previous cache-first strategy served stale
+   content instantly and only refreshed the cache quietly in the
+   background, which meant a normal reload -- sometimes several -- often
+   still showed old content until a hard refresh forced it.)
+
+   Bump CACHE_NAME whenever the app shell file list changes, so old
+   cached entries get swept on the next activate. */
+const CACHE_NAME = 'stipend-v2';
 const APP_SHELL = [
   './',
   './index.html',
@@ -32,16 +41,12 @@ self.addEventListener('fetch', (event) => {
   if(event.request.method !== 'GET') return;
 
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const network = fetch(event.request).then((response) => {
-        if(response && response.status === 200 && response.type === 'basic'){
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-        }
-        return response;
-      }).catch(() => cached);
-
-      return cached || network;
-    })
+    fetch(event.request).then((response) => {
+      if(response && response.status === 200 && response.type === 'basic'){
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+      }
+      return response;
+    }).catch(() => caches.match(event.request))
   );
 });
