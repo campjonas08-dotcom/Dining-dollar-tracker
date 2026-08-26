@@ -8,11 +8,12 @@
 <link rel="apple-touch-icon" href="dining-icon.png">
 <link rel="icon" type="image/png" href="dining-icon.png">
 <link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
 <script type="module" src="sync.js"></script>
 
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Dining Dollars">
+<meta name="apple-mobile-web-app-title" content="Stipend">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <meta name="viewport"
@@ -21,358 +22,12 @@
                maximum-scale=1,
                viewport-fit=cover">
 
-<meta name="theme-color" content="#03244D" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#021B38" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#1F4739" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1F19" media="(prefers-color-scheme: dark)">
 <meta name="color-scheme" content="light dark">
 
-<title>Auburn Dining Dollars</title>
+<title>Stipend</title>
 
-<style>
-:root{
-  --navy:#03244D;
-  --navy-soft:#0A315C;
-  --navy-light:#E8EEF5;
-  --navy-dark:#021B38;
-  --orange:#F26522;
-  --orange-bright:#FF7A2F;
-  --orange-light:#FFF0E7;
-  --cream:#F7F8FA;
-  --white:#FFFFFF;
-  --card-line:#DDE4EC;
-  --ink:#18212B;
-  --muted:#65717D;
-  --good:#2E7D4F;
-  --bad:#C23B22;
-  --track:#E7ECF1;
-  --shadow: 0 8px 24px rgba(3,36,77,0.10);
-  --radius:18px;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --navy-light:#1B2A3E;
-    --cream:#0B1420;
-    --white:#141F2E;
-    --card-line:#25344A;
-    --ink:#EAF0F7;
-    --muted:#8CA0B6;
-    --track:#1E2C40;
-    --shadow: 0 8px 24px rgba(0,0,0,.35);
-  }
-}
-*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html{ background:var(--cream); }
-body{
-  margin:0;
-  min-height:100vh;
-  background:var(--cream);
-  background-image:
-    radial-gradient(circle at 100% 0%, rgba(242,101,34,.08), transparent 32%),
-    linear-gradient(180deg, var(--cream) 0%, var(--white) 120%);
-  color:var(--ink);
-  -webkit-font-smoothing:antialiased;
-  padding-bottom:96px;
-  transition: background-color .2s ease, color .2s ease;
-}
-button, input{ font-family:inherit; }
-button{ cursor:pointer; }
-
-.wrap{ width:100%; max-width:480px; margin:0 auto; padding: 18px 18px 8px; }
-
-/* Hero banner — echoes Auburn's own app header: a navy band with a
-   diagonal accent, title, and icon actions, edge-to-edge above the content. */
-.hero{
-  position:relative; overflow:hidden;
-  background: linear-gradient(135deg, #03244D 0%, #063568 55%, #0A447A 100%);
-  padding: calc(16px + env(safe-area-inset-top)) 18px 22px;
-}
-.hero::before{
-  content:""; position:absolute; inset:0; pointer-events:none;
-  background: linear-gradient(115deg, transparent 55%, rgba(242,101,34,.32) 72%, rgba(255,122,47,.14) 100%);
-}
-.hero::after{
-  content:""; position:absolute; right:-60px; top:-90px; width:230px; height:230px; pointer-events:none;
-  border-radius:50%; background: radial-gradient(circle, rgba(242,101,34,.42), transparent 70%);
-}
-.hero-inner{ max-width:480px; margin:0 auto; position:relative; z-index:1; }
-.hero-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
-.hero .eyebrow{ color:rgba(255,255,255,.72); margin-bottom:3px; }
-.hero h1{ color:#fff; margin-bottom:0; }
-.hero-actions{ display:flex; gap:8px; flex-shrink:0; margin-top:1px; }
-
-.eyebrow{ font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--orange); font-weight:800; margin:0 0 4px 2px; }
-h1{ font-size:24px; margin:0 0 18px 2px; font-weight:800; letter-spacing:-.025em; color:var(--navy); }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) h1{ color:#EAF0F7; } }
-
-.icon-btn{
-  width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.14);
-  border: 1px solid rgba(255,255,255,.24);
-  display:flex; align-items:center; justify-content:center;
-  color:#fff;
-  transition: transform .15s ease, background .15s ease;
-}
-.icon-btn:active{ transform:scale(.92); background:rgba(255,255,255,.26); }
-.icon-btn svg{ width:18px; height:18px; display:block; }
-
-/* Bottom tab bar — mirrors Auburn's own app navigation. */
-.tabbar{
-  position:fixed; left:0; right:0; bottom:0; z-index:40;
-  background:var(--white); border-top:1px solid var(--card-line);
-  padding: 7px 6px calc(7px + env(safe-area-inset-bottom));
-  display:flex; justify-content:space-around;
-  box-shadow: 0 -6px 18px rgba(3,36,77,.06);
-}
-.tabbar-btn{
-  display:flex; flex-direction:column; align-items:center; gap:3px;
-  background:none; border:none; color:var(--muted); font-size:10.5px; font-weight:700;
-  padding:5px 8px; flex:1; letter-spacing:.01em;
-}
-.tabbar-btn svg{ width:22px; height:22px; display:block; }
-.tabbar-btn.active{ color:var(--navy); }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .tabbar-btn.active{ color:#EAF0F7; } }
-
-/* Banners */
-.banner{
-  display:flex; align-items:center; justify-content:space-between; gap:10px;
-  padding:11px 13px; border-radius:14px; font-size:12.5px; line-height:1.4;
-  margin-bottom:10px; animation: fadeSlideIn .3s ease;
-}
-.banner b{ font-weight:800; }
-.banner-x{ background:none; border:none; font-size:17px; line-height:1; color:inherit; opacity:.55; flex-shrink:0; padding:2px 4px; }
-.banner-x:active{ opacity:1; }
-.install-banner{ background:var(--navy-light); color:var(--navy); border:1px solid rgba(3,36,77,.10); }
-.pro-banner{ background:var(--orange-light); color:#9c3d0f; border:1px solid rgba(242,101,34,.18); }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]) .install-banner{ color:#EAF0F7; border-color:#2c405c; }
-  :root:not([data-theme="light"]) .pro-banner{ background:rgba(242,101,34,.14); color:#ffb37a; border-color:rgba(242,101,34,.25); }
-}
-
-.pro-chip{
-  display:inline-flex; align-items:center; font-size:10px; font-weight:800; letter-spacing:.04em;
-  color:white; background:linear-gradient(135deg,var(--orange),var(--orange-bright));
-  padding:2px 7px; border-radius:999px; margin-left:6px; vertical-align:middle; white-space:nowrap;
-}
-.active-chip{
-  display:inline-flex; align-items:center; font-size:10px; font-weight:800; letter-spacing:.04em;
-  color:white; background:var(--navy);
-  padding:2px 7px; border-radius:999px; margin-left:6px; vertical-align:middle; white-space:nowrap;
-}
-
-.budget-tabs{ display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; margin-bottom:14px; scrollbar-width:none; }
-.budget-tabs::-webkit-scrollbar{ display:none; }
-.budget-tab{
-  flex-shrink:0; padding:9px 16px; border-radius:999px; border:1px solid var(--card-line);
-  background:var(--white); color:var(--ink); font-size:13px; font-weight:700; white-space:nowrap;
-  transition: transform .1s ease;
-}
-.budget-tab:active{ transform:scale(.95); }
-.budget-tab.active{ background:var(--navy); border-color:var(--navy); color:white; }
-.budget-tab.add{ color:var(--orange); border-color:rgba(242,101,34,.35); border-style:dashed; background:transparent; }
-
-/* Elevated list-row card — echoes Auburn's own card-list pattern:
-   a circular icon badge, a bold label, and trailing meta, each row its
-   own floating card rather than one shared bordered block. Used for
-   both recent-activity entries and the budgets list. */
-.activity-section{ margin-top:4px; }
-.activity-title{ font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:4px 2px 10px; font-weight:700; }
-.activity-row{
-  width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px;
-  background:var(--white); border:1px solid var(--card-line); border-radius:16px;
-  padding:12px 15px; margin-bottom:10px; box-shadow:var(--shadow);
-  text-align:left; font-family:inherit;
-}
-.activity-row:last-child{ margin-bottom:0; }
-.activity-row:active{ transform:scale(.99); }
-button.activity-row{ transition: transform .1s ease; }
-.activity-left{ display:flex; align-items:center; gap:12px; min-width:0; }
-.activity-icon{
-  width:38px; height:38px; border-radius:50%; background:var(--navy-light); color:var(--navy);
-  display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;
-}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .activity-icon{ color:#EAF0F7; } }
-.activity-icon svg{ width:18px; height:18px; }
-.activity-label{ font-size:13.5px; font-weight:700; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.activity-right{ text-align:right; flex-shrink:0; }
-.activity-amt{ font-size:13.5px; font-weight:800; color:var(--ink); }
-.activity-sub{ font-size:11.5px; color:var(--muted); margin-top:1px; }
-
-.card{
-  position:relative; border-radius:23px; padding:23px 22px 20px;
-  background: linear-gradient(135deg, #03244D 0%, #063568 52%, #0A447A 100%);
-  color:white; box-shadow: 0 16px 38px rgba(3,36,77,.20);
-  overflow:hidden; margin-bottom:16px;
-}
-.card::before{
-  content:""; position:absolute; right:-45px; top:-70px; width:200px; height:200px;
-  border-radius:50%; background: radial-gradient(circle, rgba(242,101,34,.48), transparent 70%);
-}
-.card::after{
-  content:""; position:absolute; left:-80px; bottom:-100px; width:210px; height:210px;
-  border-radius:50%; background: radial-gradient(circle, rgba(255,255,255,.06), transparent 70%);
-}
-.card-top{ display:flex; justify-content:space-between; align-items:flex-start; position:relative; z-index:1; }
-.chip-emblem{ width:35px; height:27px; border-radius:6px; background: linear-gradient(135deg, #FFD28F, #F26522); box-shadow: inset 0 0 0 1px rgba(255,255,255,.25); }
-.card-label{ font-size:11px; letter-spacing:.12em; text-transform:uppercase; opacity:.72; margin-top:2px; }
-.balance-num{ font-size:43px; font-weight:800; letter-spacing:-.025em; margin:10px 0 2px; position:relative; z-index:1; }
-.balance-sub{ font-size:13px; opacity:.75; position:relative; z-index:1; }
-.card-bottom{ display:flex; justify-content:space-between; align-items:flex-end; margin-top:19px; position:relative; z-index:1; }
-.card-bottom .field{ font-size:12px; opacity:.7; }
-.card-bottom .field b{ display:block; font-size:15px; font-weight:650; opacity:1; color:white; margin-top:2px; }
-
-.allowance, .stat, .progress-wrap{ background:var(--white); border: 1px solid var(--card-line); box-shadow:var(--shadow); }
-
-.allowance{ border-radius:var(--radius); padding:20px; margin-bottom:14px; }
-.allowance-top{ display:flex; justify-content:space-between; align-items:center; }
-.allowance-label{ font-size:13px; color:var(--muted); font-weight:700; }
-.allowance-num{ font-size:40px; font-weight:800; color:var(--orange); margin:6px 0 2px; letter-spacing:-.025em; }
-.allowance-sub{ font-size:13px; color:var(--muted); }
-.allowance-note{
-  display:inline-flex; align-items:center; margin-top:10px; padding:5px 9px; border-radius:999px;
-  background:var(--orange-light); color:var(--orange); font-size:11px; font-weight:800;
-}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .allowance-note{ background:rgba(242,101,34,.16); } }
-
-.pace-card{
-  display:flex; align-items:center; gap:12px; border-radius:14px; padding:13px 15px;
-  margin-bottom:14px; font-size:13px; line-height:1.4; border:1px solid transparent;
-}
-.pace-card.pace-good{ background:rgba(46,125,79,.09); color:#1f5c3a; border-color:rgba(46,125,79,.16); }
-.pace-card.pace-bad{ background:rgba(194,59,34,.09); color:var(--bad); border-color:rgba(194,59,34,.16); }
-.pace-icon{ font-size:19px; flex-shrink:0; }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]) .pace-card.pace-good{ color:#7fd8a4; }
-  :root:not([data-theme="light"]) .pace-card.pace-bad{ color:#ff8a70; }
-}
-
-.stat-row{ display:flex; gap:12px; margin-bottom:14px; }
-.stat{ flex:1; border-radius:14px; padding:15px; text-align:center; }
-.stat .n{ font-size:22px; font-weight:750; color:var(--navy); }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .stat .n{ color:#EAF0F7; } }
-.stat .l{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-top:2px; }
-
-.progress-wrap{ border-radius:14px; padding:16px; margin-bottom:18px; }
-.progress-head{ display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-bottom:8px; }
-.bar{ height:8px; background:var(--track); border-radius:999px; overflow:hidden; }
-.bar-fill{ height:100%; background: linear-gradient(90deg, var(--orange), var(--orange-bright)); border-radius:999px; transition: width .4s ease; }
-
-.actions{ display:flex; gap:10px; margin-bottom:12px; }
-.btn{ flex:1; padding:14px 10px; border-radius:14px; border:none; font-size:14px; font-weight:750; transition: transform .12s ease, opacity .12s ease; }
-.btn:active{ transform:scale(.97); opacity:.9; }
-.btn-primary{ background: linear-gradient(135deg, #F26522, #DD4F12); color:white; box-shadow: 0 6px 16px rgba(242,101,34,.25); }
-.btn-secondary{ background:var(--navy-light); color:var(--navy); border: 1px solid rgba(3,36,77,.08); }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .btn-secondary{ color:#EAF0F7; border-color:#2c405c; } }
-.btn-danger{ background:linear-gradient(135deg,#E0503A,#C23B22); color:white; box-shadow:0 6px 16px rgba(194,59,34,.25); }
-
-.btn-wide{ width:100%; display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:18px; }
-
-.empty{ color:var(--muted); font-size:13px; padding:6px 0; }
-
-.overlay{
-  position:fixed; inset:0; background: rgba(3,36,77,.48);
-  display:flex; align-items:flex-end; justify-content:center; z-index:50;
-  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
-  animation: fadeIn .18s ease;
-}
-.sheet{
-  position:relative; background:var(--cream); width:100%; max-width:480px;
-  border-radius: 22px 22px 0 0; padding: 22px 20px calc(24px + env(safe-area-inset-bottom));
-  max-height:88vh; overflow-y:auto;
-  animation: slideUp .22s cubic-bezier(.2,.8,.2,1);
-}
-.sheet.center{ border-radius:22px; margin-top:auto; margin-bottom:auto; width:calc(100% - 24px); }
-.sheet h2{ margin:0 0 4px; font-size:19px; color:var(--navy); }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .sheet h2{ color:#EAF0F7; } }
-.sheet p.hint{ margin:0 0 16px; font-size:13px; color:var(--muted); }
-
-label{ display:block; font-size:12px; font-weight:650; color:var(--muted); margin:14px 0 6px; text-transform:uppercase; letter-spacing:.04em; }
-input[type=number], input[type=date], input[type=text], input[type=email], input[type=password]{
-  width:100%; padding:12px 14px; border-radius:12px; border: 1px solid var(--card-line);
-  font-size:16px; background:var(--white); font-family:inherit; color:var(--ink); outline:none;
-}
-input:focus{ border-color:var(--orange); box-shadow: 0 0 0 3px rgba(242,101,34,.12); }
-.row2{ display:flex; gap:10px; }
-.row2 > div{ flex:1; }
-
-.chip-row{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:4px; }
-.chip{
-  padding:8px 12px; border-radius:999px; border:1px solid var(--card-line); background:var(--white);
-  font-size:12.5px; font-weight:650; color:var(--ink); transition: transform .1s ease, background .1s ease;
-}
-.chip:active{ transform:scale(.94); }
-.qa-chip{ color:var(--orange); border-color:rgba(242,101,34,.3); font-weight:800; }
-.qa-chip:active{ background:var(--orange-light); }
-
-/* Icon-tile grid — echoes Auburn's own icon-menu grid: an outlined
-   circular icon above a centered label, used for category pickers and
-   for the Data tools. */
-.tile-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
-.tile-grid.cols-2{ grid-template-columns:repeat(2, 1fr); }
-.tile{
-  display:flex; flex-direction:column; align-items:center; gap:7px;
-  padding:14px 6px; border-radius:14px; border:1px solid var(--card-line); background:var(--white);
-  font-size:11px; font-weight:700; color:var(--ink); text-align:center; line-height:1.25;
-  transition: transform .1s ease, border-color .15s ease, background .15s ease;
-}
-.tile:active{ transform:scale(.95); }
-.tile-icon{
-  width:38px; height:38px; border-radius:50%; background:var(--navy-light); color:var(--navy);
-  display:flex; align-items:center; justify-content:center; font-size:17px;
-}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .tile-icon{ color:#EAF0F7; } }
-.tile-icon svg{ width:18px; height:18px; }
-.tile.active{ border-color:var(--navy); background:var(--navy); color:white; }
-.tile.active .tile-icon{ background:rgba(255,255,255,.18); color:white; }
-
-.section-title{ font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:20px 0 10px; display:flex; align-items:center; }
-
-.bar-row{ display:flex; align-items:center; gap:8px; font-size:12px; margin-bottom:10px; }
-.bar-row-label{ width:76px; flex-shrink:0; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.bar-track{ flex:1; height:8px; background:var(--track); border-radius:999px; overflow:hidden; }
-.bar-track-fill{ height:100%; background:linear-gradient(90deg,var(--orange),var(--orange-bright)); border-radius:999px; transition:width .4s ease; }
-.bar-row-amt{ width:86px; text-align:right; flex-shrink:0; font-weight:650; color:var(--ink); }
-
-.sheet-actions{ display:flex; gap:10px; margin-top:22px; }
-.sheet-actions .btn{ padding:14px; }
-.close-x{ position:absolute; top:14px; right:16px; background:none; border:none; font-size:22px; color:var(--muted); padding:4px 8px; }
-.link{ display:block; background:none; border:none; color:var(--bad); font-size:12px; text-decoration:underline; padding:0; margin:16px auto 0; }
-.note{ font-size:11.5px; color:var(--muted); background: rgba(242,101,34,.08); border-radius:10px; padding:10px 12px; margin-top:14px; line-height:1.4; }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .note{ background: rgba(242,101,34,.14); } }
-
-.tut-track{
-  display:flex; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
-  margin:0 -20px; scrollbar-width:none;
-}
-.tut-track::-webkit-scrollbar{ display:none; }
-.tut-slide{ flex:0 0 100%; scroll-snap-align:center; padding:8px 26px 4px; text-align:center; }
-.tut-emoji{ font-size:56px; margin-bottom:14px; }
-.tut-slide h2{ text-align:center; }
-.tut-slide p{ text-align:center; }
-.tut-dots{ display:flex; justify-content:center; gap:7px; margin-top:16px; }
-.tut-dot{ width:7px; height:7px; border-radius:50%; background:var(--card-line); transition:background .2s ease, width .2s ease; }
-.tut-dot.active{ background:var(--orange); width:18px; border-radius:999px; }
-
-.toast{
-  position:fixed; left:50%; bottom:28px; transform:translate(-50%,12px); background:var(--navy); color:white;
-  font-size:13px; font-weight:650; padding:11px 18px; border-radius:999px; box-shadow:0 10px 26px rgba(3,36,77,.3);
-  opacity:0; transition: opacity .25s ease, transform .25s ease; z-index:90; max-width:88%; text-align:center;
-  pointer-events:none;
-}
-.toast.show{ opacity:1; transform:translate(-50%,0); }
-
-.loading{ display:flex; align-items:center; justify-content:center; min-height:60vh; color:var(--muted); font-size:14px; }
-
-@keyframes fadeIn{ from{ opacity:0; } to{ opacity:1; } }
-@keyframes fadeSlideIn{ from{ opacity:0; transform:translateY(-4px); } to{ opacity:1; transform:translateY(0); } }
-@keyframes slideUp{ from{ opacity:0; transform:translateY(18px); } to{ opacity:1; transform:translateY(0); } }
-
-@media(max-width:380px){
-  .balance-num{ font-size:38px; }
-  .allowance-num{ font-size:36px; }
-  .card{ padding:20px; }
-  .bar-row-label{ width:58px; }
-  .bar-row-amt{ width:70px; }
-}
-</style>
 </head>
 
 <body>
@@ -383,38 +38,40 @@ input:focus{ border-color:var(--orange); box-shadow: 0 0 0 3px rgba(242,101,34,.
 
 <script>
 /* =========================================================
-   AUBURN DINING DOLLARS TRACKER — FALL 2026
-   Persistent storage: localStorage
-   Semester: August 17, 2026 → December 11, 2026
-   No class: Sep 7, Oct 8–9, Nov 23–27 (weekends auto-excluded)
-   Includes Pro-tier tools (Insights, categories, quick-log presets,
-   pace targeting, multiple budgets, a swipeable tutorial, a
-   shareable stats-card image, and CSV/backup export & restore) —
-   unlocked for this build.
+   STIPEND — campus funds tracker
+   Persistent storage: localStorage (+ optional Firebase sync,
+   see sync.js). Tracks one or more campus funds — dining dollars,
+   a meal plan, campus cash, bookstore funds, or a custom fund —
+   each accruing evenly across the weekdays of a user-defined term.
    ========================================================= */
 
-const CONFIG_KEY = 'auburn_dining_dollars_config_v4';
-const LEGACY_CONFIG_KEY = 'auburn_dining_dollars_config_v3';
-const LEGACY_HISTORY_KEY = 'auburn_dining_dollars_history_v3';
+const CONFIG_KEY = 'stipend_config_v5';
+const LEGACY_CONFIG_KEY_V4 = 'auburn_dining_dollars_config_v4';
+const LEGACY_CONFIG_KEY_V3 = 'auburn_dining_dollars_config_v3';
+const LEGACY_HISTORY_KEY_V3 = 'auburn_dining_dollars_history_v3';
+
+const APP_NAME = 'Stipend';
+
+const FUND_TYPES = [
+  { key:'dining',     label:'Dining Dollars',  emoji:'🍽️' },
+  { key:'mealplan',   label:'Meal Plan',       emoji:'🍴' },
+  { key:'campuscash', label:'Campus Cash',     emoji:'💳' },
+  { key:'bookstore',  label:'Bookstore Funds', emoji:'📚' },
+  { key:'custom',     label:'Custom Fund',     emoji:'🎓' }
+];
 
 const CATEGORIES = [
-  { key:'meal',    label:'Meal',      emoji:'🍽️', color:'#F26522' },
+  { key:'meal',    label:'Meal',      emoji:'🍽️', color:'#C9A06B' },
   { key:'coffee',  label:'Coffee',    emoji:'☕', color:'#8B5E34' },
-  { key:'snack',   label:'Snack',     emoji:'🍪', color:'#D9A441' },
-  { key:'grocery', label:'Groceries', emoji:'🛒', color:'#2E7D4F' },
-  { key:'vending', label:'Vending',   emoji:'🥤', color:'#3B6EA5' },
-  { key:'other',   label:'Other',     emoji:'🧾', color:'#65717D' }
+  { key:'snack',   label:'Snack',     emoji:'🍪', color:'#B08D57' },
+  { key:'grocery', label:'Groceries', emoji:'🛒', color:'#2F6B4F' },
+  { key:'vending', label:'Vending',   emoji:'🥤', color:'#3B6E8A' },
+  { key:'other',   label:'Other',     emoji:'🧾', color:'#6B6153' }
 ];
 
 const DEFAULTS = {
-  totalBudget:475,
-  semesterStart:'2026-08-17',
-  semesterEnd:'2026-12-11',
-  holidays:[
-    '2026-09-07',
-    '2026-10-08','2026-10-09',
-    '2026-11-23','2026-11-24','2026-11-25','2026-11-26','2026-11-27'
-  ],
+  totalBudget:500,
+  termLabel:'This term',
   quickAmounts:[5,8,12,15]
 };
 
@@ -422,17 +79,17 @@ const TUTORIAL_SLIDES = [
   {
     emoji:'🌱',
     title:'Earned so far',
-    body:"Your budget doesn't arrive all at once — it accrues a little on every class day. This is how much has “unlocked” so far."
+    body:"Your funds don't arrive all at once — they accrue a little each day of your term. This is how much has “unlocked” so far."
   },
   {
     emoji:'🎯',
     title:'Available to spend',
-    body:"Earned so far, minus what you've logged as spent. Stay under this number and you're on pace to make it to December 11."
+    body:"Earned so far, minus what you've logged as spent. Stay under this number and you're on pace to make it to the end of your term."
   },
   {
     emoji:'💳',
     title:'Balance',
-    body:"Your actual Dining Dollars balance from the dining office. It only changes when you log a purchase, or update it here to match the real account."
+    body:"Your actual account balance. It only changes when you log a purchase, or update it here to match the real account."
   }
 ];
 
@@ -443,6 +100,28 @@ function todayISO(){
   const off = d.getTimezoneOffset();
   const local = new Date(d.getTime() - off * 60000);
   return local.toISOString().slice(0,10);
+}
+
+function isoPlusDays(iso, n){
+  const [y,m,d] = iso.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  dt.setDate(dt.getDate() + n);
+  return dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0');
+}
+
+function defaultTermDates(){
+  const start = todayISO();
+  return { start, end: isoPlusDays(start, 111) };
+}
+
+function guessTermLabel(iso){
+  const m = Number(iso.split('-')[1]);
+  const y = iso.split('-')[0];
+  let season;
+  if(m >= 8 && m <= 12){ season = 'Fall'; }
+  else if(m >= 1 && m <= 5){ season = 'Spring'; }
+  else{ season = 'Summer'; }
+  return `${season} ${y}`;
 }
 
 function fmtDate(iso){
@@ -463,13 +142,13 @@ function escapeHtml(str){
 }
 
 function slugify(str){
-  return String(str).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'budget';
+  return String(str).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'fund';
 }
 
 function schoolDays(cfg){
   const days = [];
-  const [sy,sm,sd] = cfg.semesterStart.split('-').map(Number);
-  const [ey,em,ed] = cfg.semesterEnd.split('-').map(Number);
+  const [sy,sm,sd] = cfg.termStart.split('-').map(Number);
+  const [ey,em,ed] = cfg.termEnd.split('-').map(Number);
   let cur = new Date(sy, sm - 1, sd);
   const end = new Date(ey, em - 1, ed);
   const holidaySet = new Set(cfg.holidays);
@@ -484,16 +163,22 @@ function schoolDays(cfg){
   return days;
 }
 
-/* ---------- Budgets (Pro: multiple budgets) ---------- */
+/* ---------- Funds (multiple budgets) ---------- */
 function makeBudgetId(){
   return 'b-' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+}
+
+function makeEntryId(){
+  return 'h-' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 }
 
 function makeBudget(overrides){
   return Object.assign({
     id: makeBudgetId(),
-    name: 'Dining Dollars',
+    name: 'Campus Fund',
+    type: 'dining',
     totalBudget: DEFAULTS.totalBudget,
+    targetReserve: 0,
     balance: null,
     quickAmounts:[...DEFAULTS.quickAmounts],
     history:[]
@@ -501,15 +186,17 @@ function makeBudget(overrides){
 }
 
 function cloneDefaults(){
-  const budget = makeBudget({ id:'dining-dollars', name:'Dining Dollars' });
+  const budget = makeBudget({ id:'fund-1', name:'Campus Fund', type:'dining' });
+  const term = defaultTermDates();
   return {
-    semesterStart: DEFAULTS.semesterStart,
-    semesterEnd: DEFAULTS.semesterEnd,
-    holidays:[...DEFAULTS.holidays],
+    termLabel: guessTermLabel(term.start),
+    termStart: term.start,
+    termEnd: term.end,
+    holidays:[],
     setupComplete:false,
-    proBannerDismissed:false,
     installBannerDismissed:false,
     tutorialSeen:false,
+    themeMode:'system',
     activeBudgetId: budget.id,
     budgets:[budget],
     updatedAt:0
@@ -532,24 +219,59 @@ function saveConfig(opts){
   return true;
 }
 
-/* One-time upgrade from the single-budget release (config_v3 + history_v3)
-   into the multi-budget shape, so existing balances/history survive. */
-function migrateLegacy(){
+/* Bring an older config shape (v4: single fixed Auburn semester, no
+   fund type / reserve / entry ids) up to the current shape. Runs on
+   anything loaded from localStorage AND on anything pulled down from
+   Firestore, since another device might still be on older app code. */
+function upgradeConfigShape(raw){
+  if(!raw || typeof raw !== 'object') return raw;
+  if(raw.termStart === undefined && typeof raw.semesterStart === 'string'){ raw.termStart = raw.semesterStart; }
+  if(raw.termEnd === undefined && typeof raw.semesterEnd === 'string'){ raw.termEnd = raw.semesterEnd; }
+  if(Array.isArray(raw.budgets)){
+    raw.budgets.forEach(b => {
+      if(b && !b.type){ b.type = 'dining'; }
+      if(b && typeof b.targetReserve !== 'number'){ b.targetReserve = 0; }
+    });
+  }
+  delete raw.semesterStart;
+  delete raw.semesterEnd;
+  delete raw.proBannerDismissed;
+  return raw;
+}
+
+function migrateFromV4(){
   try{
-    const legacyConfigRaw = localStorage.getItem(LEGACY_CONFIG_KEY);
+    const raw = localStorage.getItem(LEGACY_CONFIG_KEY_V4);
+    if(!raw) return null;
+    const legacy = JSON.parse(raw);
+    /* Existing users already know the app — don't interrupt them with the tutorial. */
+    legacy.tutorialSeen = true;
+    return legacy;
+  }catch(e){
+    console.error('v4 migration failed:', e);
+    return null;
+  }
+}
+
+/* One-time upgrade from the original single-budget release
+   (config_v3 + history_v3), so existing balances/history survive. */
+function migrateLegacyV3(){
+  try{
+    const legacyConfigRaw = localStorage.getItem(LEGACY_CONFIG_KEY_V3);
     if(!legacyConfigRaw) return null;
     const legacy = JSON.parse(legacyConfigRaw);
 
     let legacyHistory = [];
     try{
-      const legacyHistoryRaw = localStorage.getItem(LEGACY_HISTORY_KEY);
+      const legacyHistoryRaw = localStorage.getItem(LEGACY_HISTORY_KEY_V3);
       legacyHistory = legacyHistoryRaw ? JSON.parse(legacyHistoryRaw) : [];
     }catch(e){ legacyHistory = []; }
     if(!Array.isArray(legacyHistory)){ legacyHistory = []; }
 
     const budget = makeBudget({
-      id:'dining-dollars',
+      id:'fund-1',
       name:'Dining Dollars',
+      type:'dining',
       totalBudget: (typeof legacy.totalBudget === 'number' && legacy.totalBudget > 0) ? legacy.totalBudget : DEFAULTS.totalBudget,
       balance: legacy.balance,
       quickAmounts: (Array.isArray(legacy.quickAmounts) && legacy.quickAmounts.length) ? legacy.quickAmounts : [...DEFAULTS.quickAmounts],
@@ -557,17 +279,11 @@ function migrateLegacy(){
     });
 
     return {
-      semesterStart: DEFAULTS.semesterStart,
-      semesterEnd: DEFAULTS.semesterEnd,
-      holidays:[...DEFAULTS.holidays],
       setupComplete: !!legacy.setupComplete,
-      proBannerDismissed: !!legacy.proBannerDismissed,
       installBannerDismissed: !!legacy.installBannerDismissed,
-      /* Existing users already know the app — don't interrupt them with the tutorial. */
-      tutorialSeen: !!legacy.setupComplete,
+      tutorialSeen: true,
       activeBudgetId: budget.id,
-      budgets:[budget],
-      updatedAt:0
+      budgets:[budget]
     };
   }catch(e){
     console.error('Legacy migration failed:', e);
@@ -576,32 +292,35 @@ function migrateLegacy(){
 }
 
 function normalizeConfig(){
-  if(!Array.isArray(config.holidays)){
-    config.holidays = [...DEFAULTS.holidays];
-  }else{
-    DEFAULTS.holidays.forEach(date => { if(!config.holidays.includes(date)){ config.holidays.push(date); } });
+  if(typeof config.termLabel !== 'string' || !config.termLabel.trim()){ config.termLabel = DEFAULTS.termLabel; }
+  const validRange = typeof config.termStart === 'string' && typeof config.termEnd === 'string' && config.termStart <= config.termEnd;
+  if(!validRange){
+    const def = defaultTermDates();
+    config.termStart = def.start;
+    config.termEnd = def.end;
   }
-  /* Always lock the semester to Fall 2026. */
-  config.semesterStart = DEFAULTS.semesterStart;
-  config.semesterEnd = DEFAULTS.semesterEnd;
+  if(!Array.isArray(config.holidays)){ config.holidays = []; }
 
   if(typeof config.setupComplete !== 'boolean'){ config.setupComplete = false; }
-  if(typeof config.proBannerDismissed !== 'boolean'){ config.proBannerDismissed = false; }
   if(typeof config.installBannerDismissed !== 'boolean'){ config.installBannerDismissed = false; }
   if(typeof config.tutorialSeen !== 'boolean'){ config.tutorialSeen = false; }
+  if(!['system','light','dark'].includes(config.themeMode)){ config.themeMode = 'system'; }
   if(typeof config.updatedAt !== 'number' || !isFinite(config.updatedAt)){ config.updatedAt = 0; }
 
   if(!Array.isArray(config.budgets) || !config.budgets.length){
-    config.budgets = [makeBudget({ id:'dining-dollars', name:'Dining Dollars' })];
+    config.budgets = [makeBudget({ id:'fund-1', name:'Campus Fund', type:'dining' })];
   }
   config.budgets.forEach(b => {
     if(!b.id){ b.id = makeBudgetId(); }
-    if(typeof b.name !== 'string' || !b.name.trim()){ b.name = 'Dining Dollars'; }
+    if(typeof b.name !== 'string' || !b.name.trim()){ b.name = 'Campus Fund'; }
+    if(!FUND_TYPES.find(t => t.key === b.type)){ b.type = 'custom'; }
     if(typeof b.totalBudget !== 'number' || !isFinite(b.totalBudget) || b.totalBudget <= 0){ b.totalBudget = DEFAULTS.totalBudget; }
+    if(typeof b.targetReserve !== 'number' || !isFinite(b.targetReserve) || b.targetReserve < 0){ b.targetReserve = 0; }
     if(b.balance === undefined){ b.balance = null; }
     if(b.balance !== null && (typeof b.balance !== 'number' || !isFinite(b.balance))){ b.balance = 0; }
     if(!Array.isArray(b.quickAmounts) || !b.quickAmounts.length){ b.quickAmounts = [...DEFAULTS.quickAmounts]; }
     if(!Array.isArray(b.history)){ b.history = []; }
+    b.history.forEach(h => { if(h && !h.id){ h.id = makeEntryId(); } });
   });
   if(!config.budgets.find(b => b.id === config.activeBudgetId)){
     config.activeBudgetId = config.budgets[0].id;
@@ -618,13 +337,33 @@ function loadState(){
   }
 
   if(!config){
-    config = migrateLegacy() || cloneDefaults();
+    config = migrateFromV4() || migrateLegacyV3() || cloneDefaults();
   }
 
+  config = upgradeConfigShape(config);
   normalizeConfig();
 }
 
-/* ---------- Pro: cross-device sync (Firebase Auth + Firestore) ----------
+/* Recompute every balanceAfter (and the fund's live balance) by
+   replaying history in order. 'setup' and 'update' entries are
+   trusted anchors (their balanceAfter is the actual value entered);
+   'spend' entries subtract from whatever the running balance is.
+   Called after editing or deleting a logged purchase, since that can
+   shift every balance recorded after it. */
+function recomputeBalances(budget){
+  let bal = 0;
+  budget.history.forEach(h => {
+    if(h.type === 'spend'){
+      bal = Math.round((bal - (Number(h.amount) || 0)) * 100) / 100;
+    }else{
+      bal = Math.round((Number(h.balanceAfter) || 0) * 100) / 100;
+    }
+    h.balanceAfter = bal;
+  });
+  budget.balance = bal;
+}
+
+/* ---------- Cross-device sync (Firebase Auth + Firestore) ----------
    sync.js (an ES module, loaded separately) owns the actual Firebase
    calls and talks back to this classic script via window events, since
    module scripts are deferred and may finish loading after this script
@@ -641,9 +380,10 @@ function pushToCloud(){
 }
 
 function adoptRemoteConfig(remote){
-  config = Object.assign(cloneDefaults(), remote);
+  config = Object.assign(cloneDefaults(), upgradeConfigShape(remote));
   normalizeConfig();
   saveConfig({ skipPush:true });
+  applyTheme();
   render();
   showToast('Synced from your account');
 }
@@ -671,12 +411,12 @@ function accountSectionHtml(introText){
   const user = window.DDSync.currentUser();
   if(user){
     return `
-      <div class="activity-row" style="margin-bottom:10px;">
-        <div class="activity-left">
-          <div class="activity-icon">☁️</div>
+      <div class="row-flat" style="margin-bottom:6px;">
+        <div class="row-flat-left">
+          <div class="row-flat-icon">☁️</div>
           <div>
-            <div class="activity-label">Synced</div>
-            <div class="activity-sub">${escapeHtml(user.email || '')}</div>
+            <div class="row-flat-label">Synced</div>
+            <div class="row-flat-sub">${escapeHtml(user.email || '')}</div>
           </div>
         </div>
       </div>
@@ -684,9 +424,9 @@ function accountSectionHtml(introText){
     `;
   }
   return `
-    <p class="hint" style="margin-top:0;">${introText || "Sign in to keep your budgets and history in sync across every device."}</p>
+    <p class="hint" style="margin-top:0;">${introText || 'Sign in to keep your funds and history in sync across every device.'}</p>
     <label>Email</label>
-    <input type="email" id="auth-email" autocapitalize="off" autocomplete="email" placeholder="you@auburn.edu">
+    <input type="email" id="auth-email" autocapitalize="off" autocomplete="email" placeholder="you@school.edu">
     <label>Password</label>
     <input type="password" id="auth-password" placeholder="At least 6 characters" autocomplete="current-password">
     <div class="sheet-actions" style="margin-top:14px;">
@@ -817,27 +557,24 @@ window.addEventListener('dd-remote-update', (e) => {
   adoptRemoteConfig(remote);
 });
 
-/* Total eligible class days is a fixed number — not derived from the
-   semester date range. The start/end dates below are only used to figure
-   out how many class days have passed as of today; they don't drive the total. */
-const TOTAL_CLASS_DAYS = 72;
-
 function computeStats(budget){
   budget = budget || activeBudget();
   const days = schoolDays(config);
   const today = todayISO();
-  const totalDays = TOTAL_CLASS_DAYS;
+  const totalDays = days.length;
 
-  const earnedDays = days.filter(d => d <= today).slice(0, totalDays);
+  const earnedDays = days.filter(d => d <= today);
   const elapsedDays = earnedDays.length;
 
   const dayIndex = days.indexOf(today);
-  const dayOfClass = (dayIndex >= 0 && dayIndex < totalDays) ? dayIndex + 1 : null;
+  const dayOfTerm = dayIndex >= 0 ? dayIndex + 1 : null;
 
   const remainingCount = Math.max(0, totalDays - elapsedDays);
 
   const totalBudget = Number(budget.totalBudget) || 0;
-  const dailyRate = totalDays > 0 ? totalBudget / totalDays : 0;
+  const targetReserve = Number(budget.targetReserve) || 0;
+  const spendableTotal = Math.max(0, totalBudget - targetReserve);
+  const dailyRate = totalDays > 0 ? spendableTotal / totalDays : 0;
 
   const accumulatedAllowance = dailyRate * elapsedDays;
 
@@ -850,24 +587,25 @@ function computeStats(budget){
   }, 0);
 
   const availableToSpend = accumulatedAllowance - totalSpent;
-
   const balance = Number(budget.balance) || 0;
+
+  const avgPerDay = elapsedDays > 0 ? totalSpent / elapsedDays : 0;
+  const projectedEndBalance = totalBudget - (avgPerDay * totalDays);
 
   return {
     budget, days, today, totalDays, earnedDays, elapsedDays, remainingCount,
-    dayOfClass, dailyRate, accumulatedAllowance, totalSpent, availableToSpend,
-    balance, totalBudget, isClassToday: dayIndex >= 0
+    dayOfTerm, dailyRate, accumulatedAllowance, totalSpent, availableToSpend,
+    balance, totalBudget, targetReserve, spendableTotal, avgPerDay, projectedEndBalance,
+    isTermDayToday: dayIndex >= 0
   };
 }
 
-/* ---------- Pro: today's pace target ---------- */
 function computeTodayTarget(s){
   if(s.availableToSpend <= 0) return null;
-  const divisor = Math.max(1, s.remainingCount + (s.isClassToday ? 1 : 0));
+  const divisor = Math.max(1, s.remainingCount + (s.isTermDayToday ? 1 : 0));
   return s.availableToSpend / divisor;
 }
 
-/* ---------- Pro: insights (weekly trend, category mix, projection) ---------- */
 function mondayOf(iso){
   const [y,m,d] = iso.split('-').map(Number);
   const dt = new Date(y, m - 1, d);
@@ -899,25 +637,23 @@ function computeInsights(budget){
   const catEntries = Object.entries(catTotals).sort((a,b) => b[1] - a[1]);
   const maxCat = Math.max(1, ...catEntries.map(e => e[1]));
 
-  const avgPerClassDay = s.elapsedDays > 0 ? s.totalSpent / s.elapsedDays : 0;
-
   let projection;
   if(s.elapsedDays === 0){
     projection = { status:'none' };
-  }else if(avgPerClassDay <= s.dailyRate + 0.005){
-    projection = { status:'good', projectedLeftover: s.totalBudget - (avgPerClassDay * s.totalDays) };
+  }else if(s.avgPerDay <= s.dailyRate + 0.005){
+    projection = { status:'good', projectedLeftover: s.projectedEndBalance };
   }else{
-    const daysUntilExhausted = avgPerClassDay > 0 ? s.balance / avgPerClassDay : Infinity;
+    const daysUntilExhausted = s.avgPerDay > 0 ? s.balance / s.avgPerDay : Infinity;
     const futureDays = s.days.filter(d => d > s.today);
     const idx = Math.min(futureDays.length - 1, Math.max(0, Math.floor(daysUntilExhausted) - 1));
     const runOutDate = (isFinite(daysUntilExhausted) && futureDays.length) ? futureDays[idx] : null;
-    projection = { status:'warn', runOutDate, avgPerClassDay };
+    projection = { status:'warn', runOutDate, avgPerDay: s.avgPerDay };
   }
 
-  return { s, weekKeys, weekTotals, maxWeek, catEntries, maxCat, avgPerClassDay, projection };
+  return { s, weekKeys, weekTotals, maxWeek, catEntries, maxCat, projection };
 }
 
-/* ---------- Pro: export / share / backup ---------- */
+/* ---------- Export / share / backup ---------- */
 function csvEscape(v){
   const str = String(v);
   return /[",\n]/.test(str) ? '"' + str.replace(/"/g, '""') + '"' : str;
@@ -925,13 +661,14 @@ function csvEscape(v){
 
 function toCSV(budget){
   budget = budget || activeBudget();
-  const header = ['date','type','category','amount','balance_after'];
+  const header = ['date','type','category','amount','balance_after','note'];
   const rows = budget.history.map(h => [
     h.date || '',
     h.type || '',
     h.category || '',
     (typeof h.amount === 'number' ? h.amount.toFixed(2) : ''),
-    (typeof h.balanceAfter === 'number' ? h.balanceAfter.toFixed(2) : '')
+    (typeof h.balanceAfter === 'number' ? h.balanceAfter.toFixed(2) : ''),
+    h.note || ''
   ]);
   return [header, ...rows].map(r => r.map(csvEscape).join(',')).join('\n');
 }
@@ -950,13 +687,13 @@ function downloadBlob(content, filename, mime){
 
 function exportCSV(){
   const budget = activeBudget();
-  downloadBlob(toCSV(budget), `dining-dollars-${slugify(budget.name)}-history.csv`, 'text/csv');
+  downloadBlob(toCSV(budget), `stipend-${slugify(budget.name)}-history.csv`, 'text/csv');
   showToast('History exported as CSV');
 }
 
 function exportBackup(){
-  const payload = JSON.stringify({ version:2, exportedAt: todayISO(), config }, null, 2);
-  downloadBlob(payload, 'dining-dollars-backup.json', 'application/json');
+  const payload = JSON.stringify({ version:3, exportedAt: todayISO(), config }, null, 2);
+  downloadBlob(payload, 'stipend-backup.json', 'application/json');
   showToast('Backup file downloaded');
 }
 
@@ -966,7 +703,7 @@ async function shareSummary(){
   const text = `${budget.name} — ${fmtDate(s.today)}\n` +
     `Balance: ${fmtMoney(s.balance)}\n` +
     `Available to spend: ${fmtMoney(s.availableToSpend)}\n` +
-    `Class days completed: ${s.elapsedDays}/${s.totalDays}`;
+    `Days completed: ${s.elapsedDays}/${s.totalDays}`;
 
   if(navigator.share){
     try{ await navigator.share({ title: `${budget.name} summary`, text }); }
@@ -993,26 +730,26 @@ function importBackupFile(file){
         throw new Error('Unrecognized backup format');
       }
     }catch(e){
-      await showAlert("That file doesn't look like a valid Dining Dollars backup.");
+      await showAlert("That file doesn't look like a valid Stipend backup.");
       return;
     }
 
     const ok = await showConfirm(
-      'This will replace your current budgets, settings, and history with the contents of this backup file.',
+      'This will replace your current funds, settings, and history with the contents of this backup file.',
       { title:'Restore backup?', okLabel:'Restore' }
     );
     if(!ok) return;
 
     let restored;
     if(Array.isArray(data.config.budgets) && data.config.budgets.length){
-      /* v2+ backup — already in the multi-budget shape. */
-      restored = data.config;
+      restored = upgradeConfigShape(data.config);
     }else{
-      /* v1 backup from the earlier single-budget release. */
+      /* Very old single-budget backup format. */
       const legacyHistory = Array.isArray(data.history) ? data.history : [];
       const budget = makeBudget({
-        id:'dining-dollars',
-        name:'Dining Dollars',
+        id:'fund-1',
+        name:'Campus Fund',
+        type:'dining',
         totalBudget: (typeof data.config.totalBudget === 'number' && data.config.totalBudget > 0) ? data.config.totalBudget : DEFAULTS.totalBudget,
         balance: data.config.balance,
         quickAmounts: (Array.isArray(data.config.quickAmounts) && data.config.quickAmounts.length) ? data.config.quickAmounts : [...DEFAULTS.quickAmounts],
@@ -1020,7 +757,6 @@ function importBackupFile(file){
       });
       restored = {
         setupComplete: !!data.config.setupComplete,
-        proBannerDismissed: !!data.config.proBannerDismissed,
         installBannerDismissed: !!data.config.installBannerDismissed,
         tutorialSeen: true,
         activeBudgetId: budget.id,
@@ -1031,6 +767,7 @@ function importBackupFile(file){
     config = restored;
     normalizeConfig();
     saveConfig();
+    applyTheme();
 
     document.querySelectorAll('.overlay').forEach(o => o.remove());
     showToast('Backup restored');
@@ -1039,7 +776,7 @@ function importBackupFile(file){
   reader.readAsText(file);
 }
 
-/* ---------- Pro: shareable budget-card image ---------- */
+/* ---------- Shareable fund-card image ---------- */
 function roundRectPath(ctx, x, y, w, h, r){
   ctx.beginPath();
   ctx.moveTo(x + r, y);
@@ -1062,21 +799,21 @@ function fitFontSize(ctx, text, weight, font, maxWidth, startSize, minSize){
 
 function drawBudgetCard(budget, s){
   const W = 1080, H = 1080;
-  const FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+  const FONT = 'Georgia, "Iowan Old Style", "Palatino Linotype", serif';
   const canvas = document.createElement('canvas');
   canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext('2d');
 
   const bg = ctx.createLinearGradient(0, 0, W, H);
-  bg.addColorStop(0, '#03244D');
-  bg.addColorStop(0.55, '#063568');
-  bg.addColorStop(1, '#0A447A');
+  bg.addColorStop(0, '#173A2E');
+  bg.addColorStop(0.55, '#1F4739');
+  bg.addColorStop(1, '#2E5C4A');
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
   const glow = ctx.createRadialGradient(W - 40, 40, 20, W - 40, 40, 460);
-  glow.addColorStop(0, 'rgba(242,101,34,.55)');
-  glow.addColorStop(1, 'rgba(242,101,34,0)');
+  glow.addColorStop(0, 'rgba(201,160,107,.45)');
+  glow.addColorStop(1, 'rgba(201,160,107,0)');
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, W, H);
 
@@ -1084,7 +821,7 @@ function drawBudgetCard(budget, s){
 
   ctx.fillStyle = 'rgba(255,255,255,.7)';
   ctx.font = `700 30px ${FONT}`;
-  ctx.fillText('AUBURN UNIVERSITY · FALL 2026', 70, 120);
+  ctx.fillText(String(config.termLabel || '').toUpperCase(), 70, 120);
 
   const nameSize = fitFontSize(ctx, budget.name, 800, FONT, W - 140, 56, 30);
   ctx.fillStyle = '#FFFFFF';
@@ -1097,7 +834,7 @@ function drawBudgetCard(budget, s){
 
   const amountText = (s.availableToSpend < 0 ? '−' : '') + fmtMoney(Math.abs(s.availableToSpend));
   const amtSize = fitFontSize(ctx, amountText, 800, FONT, W - 132, 128, 64);
-  ctx.fillStyle = s.availableToSpend < 0 ? '#FF8A70' : '#FF9A52';
+  ctx.fillStyle = s.availableToSpend < 0 ? '#FF8A70' : '#E4B879';
   ctx.font = `800 ${amtSize}px ${FONT}`;
   ctx.fillText(amountText, 66, 490);
 
@@ -1133,19 +870,19 @@ function drawBudgetCard(budget, s){
 
   const pct = s.totalDays > 0 ? Math.max(0, Math.min(1, s.elapsedDays / s.totalDays)) : 0;
   const fillGrad = ctx.createLinearGradient(barX, 0, barX + barW, 0);
-  fillGrad.addColorStop(0, '#F26522');
-  fillGrad.addColorStop(1, '#FF7A2F');
+  fillGrad.addColorStop(0, '#C9A06B');
+  fillGrad.addColorStop(1, '#E4B879');
   ctx.fillStyle = fillGrad;
   roundRectPath(ctx, barX, barY, Math.max(barH, barW * pct), barH, 9);
   ctx.fill();
 
   ctx.fillStyle = 'rgba(255,255,255,.6)';
   ctx.font = `600 24px ${FONT}`;
-  ctx.fillText(`${s.elapsedDays} of ${s.totalDays} class days completed`, barX, barY + 56);
+  ctx.fillText(`${s.elapsedDays} of ${s.totalDays} days completed`, barX, barY + 56);
 
   ctx.fillStyle = 'rgba(255,255,255,.45)';
   ctx.font = `500 22px ${FONT}`;
-  ctx.fillText(`Tracked with my Dining Dollars app · ${fmtDate(s.today)}`, 70, H - 60);
+  ctx.fillText(`Tracked with ${APP_NAME} · ${fmtDate(s.today)}`, 70, H - 60);
 
   return canvas;
 }
@@ -1157,11 +894,11 @@ async function shareBudgetCardImage(budget, s){
 
   canvas.toBlob(async (blob) => {
     if(!blob){ showToast("Couldn't generate the image"); return; }
-    const filename = `dining-dollars-${slugify(budget.name)}.png`;
+    const filename = `stipend-${slugify(budget.name)}.png`;
     const file = new File([blob], filename, { type:'image/png' });
 
     if(navigator.canShare && navigator.canShare({ files:[file] })){
-      try{ await navigator.share({ files:[file], title: `${budget.name} — Dining Dollars` }); }
+      try{ await navigator.share({ files:[file], title: `${budget.name} — ${APP_NAME}` }); }
       catch(e){ /* user cancelled the share sheet */ }
       return;
     }
@@ -1193,6 +930,13 @@ function isSafariBrowser(){
 }
 function shouldShowInstallBanner(){
   return isIOS() && isSafariBrowser() && !isStandalone() && !config.installBannerDismissed;
+}
+
+/* ---------- Manual theme override (in addition to system preference) ---------- */
+function applyTheme(){
+  if(config.themeMode === 'light'){ document.documentElement.setAttribute('data-theme','light'); }
+  else if(config.themeMode === 'dark'){ document.documentElement.setAttribute('data-theme','dark'); }
+  else{ document.documentElement.removeAttribute('data-theme'); }
 }
 
 /* ---------- Lightweight in-app dialogs (replace native alert/confirm) ---------- */
@@ -1239,7 +983,7 @@ function showToast(message){
   }, 2200);
 }
 
-/* ---------- Pro: swipeable "how this works" tutorial ---------- */
+/* ---------- Swipeable "how this works" tutorial ---------- */
 function showTutorial(){
   let index = 0;
 
@@ -1302,6 +1046,7 @@ function showTutorial(){
 }
 
 function render(){
+  applyTheme();
   const app = document.getElementById('app');
   if(!config.setupComplete){
     app.innerHTML = onboardingView();
@@ -1315,22 +1060,12 @@ function render(){
 }
 
 function bannersHtml(){
-  let html = '';
-  if(shouldShowInstallBanner()){
-    html += `
-      <div class="banner install-banner" id="install-banner">
-        <span>📲 Add this to your Home Screen: tap <b>Share</b>, then <b>“Add to Home Screen”</b> for the full-screen app.</span>
-        <button class="banner-x" id="dismiss-install" aria-label="Dismiss">×</button>
-      </div>`;
-  }
-  if(!config.proBannerDismissed){
-    html += `
-      <div class="banner pro-banner" id="pro-banner">
-        <span>✨ <b>Pro features unlocked</b> — Insights, categories, multiple budgets, backups &amp; more are free in this build.</span>
-        <button class="banner-x" id="dismiss-pro" aria-label="Dismiss">×</button>
-      </div>`;
-  }
-  return html;
+  if(!shouldShowInstallBanner()) return '';
+  return `
+    <div class="banner" id="install-banner">
+      <span>📲 Add this to your Home Screen: tap <b>Share</b>, then <b>“Add to Home Screen”</b> for the full-screen app.</span>
+      <button class="banner-x" id="dismiss-install" aria-label="Dismiss">×</button>
+    </div>`;
 }
 
 function wireBanners(){
@@ -1343,75 +1078,55 @@ function wireBanners(){
       if(el) el.remove();
     };
   }
-  const proBtn = document.getElementById('dismiss-pro');
-  if(proBtn){
-    proBtn.onclick = () => {
-      config.proBannerDismissed = true;
-      saveConfig();
-      const el = document.getElementById('pro-banner');
-      if(el) el.remove();
-    };
-  }
 }
 
 function onboardingView(){
+  const term = defaultTermDates();
+  const guessedLabel = guessTermLabel(term.start);
+  const typeChips = FUND_TYPES.map((t,i) => `
+    <button type="button" class="tile fund-type-tile${i===0?' active':''}" data-type="${t.key}">
+      <span class="tile-icon">${t.emoji}</span>${t.label}
+    </button>`).join('');
+
   return `
-    <div class="hero">
-      <div class="hero-inner">
-        <div class="hero-top">
-          <div>
-            <div class="eyebrow">Auburn University</div>
-            <h1>Dining Dollars</h1>
-          </div>
+    <div class="topbar">
+      <div class="topbar-inner">
+        <div>
+          <div class="eyebrow">Welcome to</div>
+          <h1>${APP_NAME}</h1>
         </div>
       </div>
     </div>
     <div class="wrap">
       ${bannersHtml()}
 
-      <div class="allowance" style="margin-bottom:16px;">
-        <div id="account-section">${accountSectionHtml("Already syncing on another device? Sign in to pick up your budgets and history — no need to re-enter anything.")}</div>
+      <p class="hint" style="margin-top:14px;">Track a campus fund — dining dollars, a meal plan, campus cash, bookstore funds, or anything else — and always know how much you can safely spend.</p>
+
+      <div class="section-title">Sync</div>
+      <div id="account-section">${accountSectionHtml('Already using Stipend on another device? Sign in to pick up your funds and history — no need to re-enter anything.')}</div>
+
+      <div class="divider"><span>or start fresh</span></div>
+
+      <div class="section-title">Fund type</div>
+      <div class="tile-grid" id="ob-type-grid">${typeChips}</div>
+
+      <label>Fund name</label>
+      <input type="text" id="ob-name" value="${escapeHtml(FUND_TYPES[0].label)}" maxlength="30">
+      <label>Current balance</label>
+      <input type="number" id="ob-balance" inputmode="decimal" placeholder="e.g. 300.00" step="0.01" min="0">
+      <label>Total for the term</label>
+      <input type="number" id="ob-total" value="${DEFAULTS.totalBudget}" step="1" min="1">
+
+      <div class="section-title">Term</div>
+      <p class="hint" style="margin-top:0;">Your allowance spreads evenly across each weekday in this range. Add breaks later in Settings.</p>
+      <label>Term label</label>
+      <input type="text" id="ob-term-label" value="${guessedLabel}" maxlength="30">
+      <div class="row2">
+        <div><label>Start date</label><input type="date" id="ob-term-start" value="${term.start}"></div>
+        <div><label>End date</label><input type="date" id="ob-term-end" value="${term.end}"></div>
       </div>
 
-      <div style="display:flex; align-items:center; gap:10px; margin:4px 0 16px; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; font-weight:700;">
-        <div style="flex:1; height:1px; background:var(--card-line);"></div>
-        or start fresh
-        <div style="flex:1; height:1px; background:var(--card-line);"></div>
-      </div>
-
-      <div class="allowance" style="margin-bottom:16px;">
-        <p class="hint" style="margin-bottom:0;">
-          Enter your <b>current</b> Dining Dollars balance.
-          I'll calculate your accumulated spending allowance based on how many class days have passed.
-        </p>
-        <label>Current balance</label>
-        <input type="number" id="ob-balance" inputmode="decimal" placeholder="e.g. 475.00" step="0.01" min="0">
-      </div>
-
-      <div class="allowance">
-        <p class="hint" style="margin-bottom:2px;">
-          <b>Fall 2026 settings</b>
-          Budget is split across 72 eligible class days — dates below are just for reference.
-        </p>
-        <div class="row2">
-          <div>
-            <label>Total budget</label>
-            <input type="number" id="ob-total" value="${DEFAULTS.totalBudget}" step="1" min="1">
-          </div>
-          <div>
-            <label>Last day</label>
-            <input type="text" value="Dec 11, 2026" disabled style="opacity:.65;">
-          </div>
-        </div>
-        <label>First day of class</label>
-        <input type="text" value="Aug 17, 2026" disabled style="opacity:.65;">
-        <div class="note">
-          Weekends are automatically excluded.
-          Labor Day, Fall Break, and Thanksgiving Break are built into the app automatically.
-        </div>
-      </div>
-
-      <div class="sheet-actions" style="margin-top:4px;">
+      <div class="sheet-actions" style="margin-top:20px;">
         <button class="btn btn-primary" id="ob-start-btn" style="flex:1;">Start tracking</button>
       </div>
     </div>
@@ -1421,12 +1136,37 @@ function onboardingView(){
 function wireOnboarding(){
   wireAccountSection(document.getElementById('account-section'));
 
+  let selectedType = FUND_TYPES[0].key;
+  let nameTouched = false;
+  const nameInput = document.getElementById('ob-name');
+  nameInput.addEventListener('input', () => { nameTouched = true; });
+
+  document.querySelectorAll('.fund-type-tile').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.fund-type-tile').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedType = btn.dataset.type;
+      if(!nameTouched){
+        const meta = FUND_TYPES.find(t => t.key === selectedType);
+        nameInput.value = meta.label;
+      }
+    };
+  });
+
   document.getElementById('ob-start-btn').onclick = async () => {
     const balance = parseFloat(document.getElementById('ob-balance').value);
     const total = parseFloat(document.getElementById('ob-total').value);
+    const start = document.getElementById('ob-term-start').value;
+    const end = document.getElementById('ob-term-end').value;
+    const label = document.getElementById('ob-term-label').value.trim();
+    const name = nameInput.value.trim();
 
     if(isNaN(balance) || balance < 0){
       await showAlert('Enter your current balance to continue.');
+      return;
+    }
+    if(!start || !end || start > end){
+      await showAlert('Enter a valid term date range.');
       return;
     }
 
@@ -1438,20 +1178,22 @@ function wireOnboarding(){
     const spentBeforeSetup = Math.max(0, totalBudget - balance);
 
     const budget = makeBudget({
-      id:'dining-dollars',
-      name:'Dining Dollars',
+      id:'fund-1',
+      name: name || FUND_TYPES.find(t => t.key === selectedType).label,
+      type: selectedType,
       totalBudget,
       balance,
       history:[{
-        date: todayISO(),
-        type:'setup',
+        id: makeEntryId(), date: todayISO(), type:'setup',
         amount: spentBeforeSetup > 0 ? spentBeforeSetup : null,
-        category:'other',
-        balanceAfter: balance,
-        note:'Starting balance entered'
+        category:'other', balanceAfter: balance, note:'Starting balance entered'
       }]
     });
 
+    config.termLabel = label || guessTermLabel(start);
+    config.termStart = start;
+    config.termEnd = end;
+    config.holidays = [];
     config.budgets = [budget];
     config.activeBudgetId = budget.id;
     config.setupComplete = true;
@@ -1494,123 +1236,99 @@ function mainView(){
   const budget = activeBudget();
   const s = computeStats(budget);
   const multi = config.budgets.length > 1;
-
-  const dayLabel = s.dayOfClass ? `Day ${s.dayOfClass} of ${s.totalDays}` : `Not a class day`;
   const target = computeTodayTarget(s);
+  const pct = s.totalDays > 0 ? Math.max(0, Math.min(1, s.elapsedDays / s.totalDays)) * 100 : 0;
 
-  const historyRows = budget.history.slice().reverse().slice(0,8).map(h => {
+  const historyRows = budget.history.slice().reverse().slice(0,6).map(h => {
     const meta = historyRowMeta(h);
     return `
-      <div class="activity-row">
-        <div class="activity-left">
-          <div class="activity-icon">${meta.icon}</div>
-          <div class="activity-label">${meta.label}</div>
+      <div class="row-flat">
+        <div class="row-flat-left">
+          <span class="row-flat-icon">${meta.icon}</span>
+          <div class="row-flat-label">${meta.label}</div>
         </div>
-        <div class="activity-right">
-          <div class="activity-amt">${fmtMoney(h.balanceAfter)}</div>
-          <div class="activity-sub">${fmtDate(h.date)}</div>
+        <div class="row-flat-right">
+          <div class="row-flat-amt">${fmtMoney(h.balanceAfter)}</div>
+          <div class="row-flat-sub">${fmtDate(h.date)}</div>
         </div>
       </div>
     `;
   }).join('');
 
-  let allowanceSub;
-  if(s.elapsedDays === 0){
-    allowanceSub = 'No class days have occurred yet';
-  }else{
-    allowanceSub = `${fmtMoney(s.accumulatedAllowance)} earned − ${fmtMoney(s.totalSpent)} spent`;
-  }
-
-  let paceHtml;
+  let paceClass, paceText;
   if(s.availableToSpend < 0){
-    paceHtml = `
-      <div class="pace-card pace-bad">
-        <div class="pace-icon">⚠️</div>
-        <div><b>Over pace</b> — you've spent ${fmtMoney(Math.abs(s.availableToSpend))} more than you've earned so far.</div>
-      </div>`;
+    paceClass = 'pace-bad';
+    paceText = `⚠ ${fmtMoney(Math.abs(s.availableToSpend))} ahead of what you've earned so far.`;
+  }else if(s.elapsedDays === 0){
+    paceClass = 'pace-neutral';
+    paceText = `Nothing earned yet — check back once the term gets underway.`;
+  }else if(s.availableToSpend > s.dailyRate * 1.5){
+    paceClass = 'pace-good';
+    paceText = `You're ${fmtMoney(s.availableToSpend)} ahead of pace. Nice work.`;
   }else if(target !== null){
-    paceHtml = `
-      <div class="pace-card pace-good">
-        <div class="pace-icon">🎯</div>
-        <div><b>Today's target:</b> keep purchases under ${fmtMoney(target)} to stay on pace through Dec 11.</div>
-      </div>`;
+    paceClass = 'pace-good';
+    paceText = `Keep today under ${fmtMoney(target)} to stay on pace.`;
   }else{
-    paceHtml = `
-      <div class="pace-card pace-good">
-        <div class="pace-icon">🎯</div>
-        <div>Nothing earned to spend yet — check back once class days start accruing.</div>
-      </div>`;
+    paceClass = 'pace-neutral';
+    paceText = `Right on pace.`;
   }
 
   return `
-    <div class="hero">
-      <div class="hero-inner">
-        <div class="hero-top">
-          <div>
-            <div class="eyebrow">Auburn University · Fall 2026</div>
-            <h1>Dining Dollars</h1>
-          </div>
-          <div class="hero-actions">
-            <button class="icon-btn" id="open-tutorial" aria-label="How this works">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="16" x2="12" y2="11.5"/>
-                <circle cx="12" cy="8" r="0.6" fill="currentColor" stroke="none"/>
-              </svg>
-            </button>
-          </div>
+    <div class="topbar">
+      <div class="topbar-inner">
+        <div>
+          <div class="eyebrow">${escapeHtml(config.termLabel)}</div>
+          <h1>${APP_NAME}</h1>
         </div>
+        <button class="icon-btn" id="open-tutorial" aria-label="How this works">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="11.5"/>
+            <circle cx="12" cy="8" r="0.6" fill="currentColor" stroke="none"/>
+          </svg>
+        </button>
       </div>
     </div>
 
     <div class="wrap">
       ${bannersHtml()}
+      ${multi ? budgetTabsHtml() : ''}
 
-      ${budgetTabsHtml()}
+      <div class="hero-metric">
+        <div class="hero-metric-label">${escapeHtml(budget.name)} · available to spend</div>
+        <div class="hero-metric-num${s.availableToSpend < 0 ? ' neg' : ''}">${s.availableToSpend < 0 ? '−' : ''}${fmtMoney(Math.abs(s.availableToSpend))}</div>
+        <div class="pace-line ${paceClass}">${paceText}</div>
+      </div>
 
-      <div class="card">
-        <div class="card-top">
-          <div><div class="card-label">${escapeHtml(budget.name)} balance</div></div>
-          <div class="chip-emblem"></div>
+      <div class="stat-strip">
+        <div class="stat-col">
+          <div class="stat-col-n">${fmtMoney(s.balance)}</div>
+          <div class="stat-col-l">Balance</div>
         </div>
-        <div class="balance-num">${fmtMoney(s.balance)}</div>
-        <div class="balance-sub">of ${fmtMoney(s.totalBudget)} for the semester</div>
-        <div class="card-bottom">
-          <div class="field">${dayLabel}<b>${fmtDate(s.today)}</b></div>
-          <div class="field" style="text-align:right;">Class days left<b>${s.remainingCount}</b></div>
+        <div class="stat-col">
+          <div class="stat-col-n">${fmtMoney(Math.max(0, s.projectedEndBalance))}</div>
+          <div class="stat-col-l">Projected left</div>
+        </div>
+        <div class="stat-col">
+          <div class="stat-col-n">${s.remainingCount}</div>
+          <div class="stat-col-l">Days left</div>
         </div>
       </div>
 
-      <div class="allowance">
-        <div class="allowance-top"><span class="allowance-label">Available to spend</span></div>
-        <div class="allowance-num" style="${s.availableToSpend < 0 ? 'color:var(--bad);' : ''}">${s.availableToSpend < 0 ? '−' : ''}${fmtMoney(Math.abs(s.availableToSpend))}</div>
-        <div class="allowance-sub">${allowanceSub}</div>
-        ${s.availableToSpend < 0
-          ? `<div class="allowance-note" style="background:rgba(194,59,34,.10); color:var(--bad);">Spent ahead of what you've earned</div>`
-          : `<div class="allowance-note">Earns ${fmtMoney(s.dailyRate)} each class day</div>`
-        }
-      </div>
-
-      ${paceHtml}
-
-      <div class="stat-row">
-        <div class="stat"><div class="n">${fmtMoney(s.totalSpent)}</div><div class="l">Spent so far</div></div>
-        <div class="stat"><div class="n">${fmtMoney(s.accumulatedAllowance)}</div><div class="l">Earned so far</div></div>
-      </div>
-
-      <div class="progress-wrap">
-        <div class="progress-head">
-          <span>${s.elapsedDays} class days completed</span>
-          <span>${s.totalDays} total</span>
+      <div class="term-progress">
+        <div class="term-progress-head">
+          <span>${s.elapsedDays} of ${s.totalDays} days</span>
+          <button type="button" class="link-inline" id="open-update">Update balance</button>
         </div>
-        <div class="bar"><div class="bar-fill" style="width:${s.totalDays > 0 ? (s.elapsedDays / s.totalDays) * 100 : 0}%"></div></div>
+        <div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>
       </div>
-
-      <button class="btn btn-secondary btn-wide" id="open-update" style="margin-bottom:20px;">Update balance</button>
 
       <div class="activity-section">
-        <div class="activity-title">Recent activity${multi ? ` · ${escapeHtml(budget.name)}` : ''}</div>
-        ${budget.history.length ? historyRows : '<div class="activity-row" style="justify-content:center;"><span class="empty" style="padding:0;">Nothing logged yet</span></div>'}
+        <div class="activity-title-row">
+          <span class="activity-title">Recent activity${multi ? ` · ${escapeHtml(budget.name)}` : ''}</span>
+          ${budget.history.length ? `<button type="button" class="link-inline" id="open-history">See all</button>` : ''}
+        </div>
+        ${budget.history.length ? historyRows : '<div class="empty">Nothing logged yet</div>'}
       </div>
     </div>
 
@@ -1652,6 +1370,9 @@ function mainView(){
 function wireMain(){
   document.getElementById('open-tutorial').onclick = () => showTutorial();
   document.getElementById('open-update').onclick = () => showUpdate();
+
+  const historyBtn = document.getElementById('open-history');
+  if(historyBtn){ historyBtn.onclick = () => showHistory(); }
 
   document.getElementById('tab-home').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
   document.getElementById('tab-log').onclick = () => showSpend();
@@ -1706,8 +1427,11 @@ function showSpend(){
     <label>Amount spent</label>
     <input type="number" id="spend-amount" inputmode="decimal" step="0.01" min="0" placeholder="0.00" autofocus>
 
-    <label>Category <span class="pro-chip">PRO</span></label>
+    <label>Category</label>
     <div class="tile-grid" id="cat-tile-grid">${catTiles}</div>
+
+    <label>Note</label>
+    <input type="text" id="spend-note" placeholder="Optional" maxlength="60">
 
     <div class="sheet-actions">
       <button class="btn btn-secondary" id="cancel-spend">Cancel</button>
@@ -1742,8 +1466,12 @@ function showSpend(){
       if(!proceed){ return; }
     }
 
-    budget.balance = Math.max(0, Number(budget.balance) - amt);
-    budget.history.push({ date: todayISO(), type:'spend', amount:amt, category:selectedCategory, balanceAfter: budget.balance });
+    const note = document.getElementById('spend-note').value.trim();
+    budget.balance = Math.round(Math.max(0, Number(budget.balance) - amt) * 100) / 100;
+    budget.history.push({
+      id: makeEntryId(), date: todayISO(), type:'spend', amount:amt,
+      category:selectedCategory, balanceAfter: budget.balance, note: note || undefined
+    });
 
     saveConfig();
     ov.remove();
@@ -1777,7 +1505,7 @@ function showUpdate(){
     budget.balance = amt;
 
     /* Updating the actual balance does NOT affect earned allowance. */
-    budget.history.push({ date: todayISO(), type:'update', amount:null, balanceAfter: amt });
+    budget.history.push({ id: makeEntryId(), date: todayISO(), type:'update', amount:null, balanceAfter: amt });
 
     saveConfig();
     ov.remove();
@@ -1790,6 +1518,7 @@ function showInsights(){
   const budget = activeBudget();
   const titleSuffix = config.budgets.length > 1 ? ` · ${escapeHtml(budget.name)}` : '';
   const { s, weekKeys, weekTotals, maxWeek, catEntries, maxCat, projection } = computeInsights(budget);
+  const target = computeTodayTarget(s);
 
   const weekRows = weekKeys.length ? weekKeys.map(k => {
     const amt = weekTotals[k];
@@ -1818,17 +1547,21 @@ function showInsights(){
   if(projection.status === 'none'){
     projectionHtml = `<div class="note">Log some purchases to see your spending projection.</div>`;
   }else if(projection.status === 'good'){
-    projectionHtml = `<div class="note" style="background:rgba(46,125,79,.10); color:var(--good);">On pace — projected to finish the semester with about <b>${fmtMoney(Math.max(0, projection.projectedLeftover))}</b> left over.</div>`;
+    projectionHtml = `<div class="note note-good">On pace — projected to finish the term with about <b>${fmtMoney(Math.max(0, projection.projectedLeftover))}</b> left over.</div>`;
   }else{
-    const when = projection.runOutDate ? `around <b>${fmtDate(projection.runOutDate)}</b>` : 'before the semester ends';
-    projectionHtml = `<div class="note" style="background:rgba(194,59,34,.10); color:var(--bad);">At your current pace (${fmtMoney(projection.avgPerClassDay)}/class day) you're projected to run out ${when}.</div>`;
+    const when = projection.runOutDate ? `around <b>${fmtDate(projection.runOutDate)}</b>` : 'before the term ends';
+    projectionHtml = `<div class="note note-bad">At your current pace (${fmtMoney(projection.avgPerDay)}/day) you're projected to run out ${when}.</div>`;
   }
+
+  const paceHint = target !== null
+    ? `<p class="hint">Suggested pace: about <b>${fmtMoney(target)}</b>/day, or <b>${fmtMoney(target * 7)}</b>/week, to stay on track.</p>`
+    : '';
 
   const ov = overlay(`
     <button class="close-x" id="close-insights">×</button>
-    <span class="pro-chip">✨ PRO</span>
-    <h2 style="margin-top:8px;">Insights${titleSuffix}</h2>
+    <h2>Insights${titleSuffix}</h2>
     <p class="hint">A closer look at your spending pace and habits.</p>
+    ${paceHint}
 
     ${projectionHtml}
 
@@ -1839,7 +1572,7 @@ function showInsights(){
     ${catRows}
 
     <div class="sheet-actions">
-      <button class="btn btn-secondary" id="share-card-btn" style="flex:1;">🖼️ Share card</button>
+      <button class="btn btn-secondary" id="share-card-btn" style="flex:1;">Share card</button>
       <button class="btn btn-primary" id="close-insights-2" style="flex:1;">Done</button>
     </div>
   `);
@@ -1849,20 +1582,89 @@ function showInsights(){
   document.getElementById('share-card-btn').onclick = () => shareBudgetCardImage(budget, s);
 }
 
-function showSettings(){
-  const walletIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><circle cx="17" cy="14.2" r="1.1" fill="currentColor" stroke="none"/></svg>`;
+function showTermForm(){
+  let holidays = [...config.holidays];
 
-  const budgetRows = config.budgets.map(b => `
-    <button type="button" class="activity-row" data-edit-budget="${b.id}">
-      <div class="activity-left">
-        <div class="activity-icon">${walletIcon}</div>
-        <div class="activity-label">${escapeHtml(b.name)}${b.id === config.activeBudgetId ? '<span class="active-chip">ACTIVE</span>' : ''}</div>
+  function holidaysHtml(){
+    if(!holidays.length) return '<div class="empty" style="padding:4px 0;">No skipped days added</div>';
+    return holidays.slice().sort().map(iso => `
+      <div class="holiday-row" data-date="${iso}">
+        <span>${fmtDate(iso)}</span>
+        <button type="button" class="chip-x" data-remove="${iso}">×</button>
       </div>
-      <div class="activity-right">
-        <div class="activity-amt">${fmtMoney(b.totalBudget)}</div>
+    `).join('');
+  }
+
+  const ov = overlay(`
+    <button class="close-x" id="close-term-form">×</button>
+    <h2>Term settings</h2>
+    <p class="hint">Your spending allowance is spread evenly across each weekday in this range, minus any days you skip below.</p>
+    <label>Term label</label>
+    <input type="text" id="tf-label" value="${escapeHtml(config.termLabel)}" maxlength="30">
+    <div class="row2">
+      <div><label>Start date</label><input type="date" id="tf-start" value="${config.termStart}"></div>
+      <div><label>End date</label><input type="date" id="tf-end" value="${config.termEnd}"></div>
+    </div>
+    <label>Skip days (breaks, holidays)</label>
+    <div class="row2">
+      <input type="date" id="tf-holiday-input">
+      <button type="button" class="btn btn-secondary" id="tf-add-holiday" style="flex:0 0 auto; padding:12px 16px;">Add</button>
+    </div>
+    <div id="tf-holiday-list" style="margin-top:10px;">${holidaysHtml()}</div>
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" id="cancel-term-form">Cancel</button>
+      <button class="btn btn-primary" id="save-term-form">Save</button>
+    </div>
+  `);
+
+  function wireRemove(){
+    ov.querySelectorAll('[data-remove]').forEach(btn => {
+      btn.onclick = () => { holidays = holidays.filter(d => d !== btn.dataset.remove); refreshHolidays(); };
+    });
+  }
+  function refreshHolidays(){
+    ov.querySelector('#tf-holiday-list').innerHTML = holidaysHtml();
+    wireRemove();
+  }
+  wireRemove();
+
+  document.getElementById('tf-add-holiday').onclick = () => {
+    const v = document.getElementById('tf-holiday-input').value;
+    if(v && !holidays.includes(v)){ holidays.push(v); refreshHolidays(); }
+  };
+
+  document.getElementById('close-term-form').onclick = () => ov.remove();
+  document.getElementById('cancel-term-form').onclick = () => ov.remove();
+  document.getElementById('save-term-form').onclick = async () => {
+    const label = document.getElementById('tf-label').value.trim();
+    const start = document.getElementById('tf-start').value;
+    const end = document.getElementById('tf-end').value;
+    if(!start || !end || start > end){ await showAlert('Enter a valid date range.'); return; }
+
+    config.termLabel = label || DEFAULTS.termLabel;
+    config.termStart = start;
+    config.termEnd = end;
+    config.holidays = holidays;
+    saveConfig();
+
+    document.querySelectorAll('.overlay').forEach(o => o.remove());
+    render();
+    showToast('Term updated');
+  };
+}
+
+function showSettings(){
+  const budgetRows = config.budgets.map(b => {
+    const meta = FUND_TYPES.find(t => t.key === b.type) || FUND_TYPES[FUND_TYPES.length - 1];
+    return `
+    <button type="button" class="row-flat" data-edit-budget="${b.id}">
+      <div class="row-flat-left">
+        <span class="row-flat-icon">${meta.emoji}</span>
+        <div class="row-flat-label">${escapeHtml(b.name)}${b.id === config.activeBudgetId ? '<span class="active-chip">ACTIVE</span>' : ''}</div>
       </div>
+      <div class="row-flat-amt">${fmtMoney(b.totalBudget)}</div>
     </button>
-  `).join('');
+  `;}).join('');
 
   const dataTiles = [
     { id:'btn-export-csv', label:'Export CSV', icon:'<path d="M12 3v10"/><path d="M8 9l4 4 4-4"/><path d="M5 21h14"/>' },
@@ -1879,22 +1681,35 @@ function showSettings(){
   const ov = overlay(`
     <button class="close-x" id="close-settings">×</button>
     <h2>Settings</h2>
-    <p class="hint">Budget is split across 72 fixed class days. Dates below are shown for reference only.</p>
-    <label>Semester dates</label>
-    <input type="text" value="Aug 17 – Dec 11, 2026" disabled style="opacity:.65;">
-    <div class="note">
-      Automatically excluded: Labor Day — Sep 7 · Fall Break — Oct 8–9 · Thanksgiving Break — Nov 23–27
+
+    <div class="section-title">Term</div>
+    <button type="button" class="row-flat" id="edit-term-btn">
+      <div class="row-flat-left">
+        <span class="row-flat-icon">🗓️</span>
+        <div>
+          <div class="row-flat-label">${escapeHtml(config.termLabel)}</div>
+          <div class="row-flat-sub">${fmtDate(config.termStart)} – ${fmtDate(config.termEnd)}${config.holidays.length ? ` · ${config.holidays.length} day${config.holidays.length===1?'':'s'} skipped` : ''}</div>
+        </div>
+      </div>
+      <div class="row-flat-amt">Edit</div>
+    </button>
+
+    <div class="section-title">Funds</div>
+    <div>${budgetRows}</div>
+    <button class="btn btn-secondary btn-wide" id="add-budget-btn" style="margin-top:12px;">+ Add a fund</button>
+
+    <div class="section-title">Appearance</div>
+    <div class="segmented" id="theme-segmented">
+      <button type="button" class="seg-btn${config.themeMode==='system'?' active':''}" data-theme-mode="system">System</button>
+      <button type="button" class="seg-btn${config.themeMode==='light'?' active':''}" data-theme-mode="light">Light</button>
+      <button type="button" class="seg-btn${config.themeMode==='dark'?' active':''}" data-theme-mode="dark">Dark</button>
     </div>
 
-    <div class="section-title">Budgets <span class="pro-chip">PRO</span></div>
-    <div>${budgetRows}</div>
-    <button class="btn btn-secondary btn-wide" id="add-budget-btn" style="margin-top:2px;">+ Add a budget</button>
-
-    <div class="section-title">Data <span class="pro-chip">PRO</span></div>
+    <div class="section-title">Data</div>
     <div class="tile-grid cols-2">${dataTiles}</div>
     <input type="file" id="import-file-input" accept="application/json" style="display:none;">
 
-    <div class="section-title">Account &amp; Sync <span class="pro-chip">PRO</span></div>
+    <div class="section-title">Account &amp; sync</div>
     <div id="account-section">${accountSectionHtml()}</div>
 
     <div class="sheet-actions">
@@ -1908,10 +1723,21 @@ function showSettings(){
   document.getElementById('close-settings').onclick = () => ov.remove();
   document.getElementById('close-settings-2').onclick = () => ov.remove();
 
+  document.getElementById('edit-term-btn').onclick = () => showTermForm();
+
   ov.querySelectorAll('[data-edit-budget]').forEach(btn => {
     btn.onclick = () => showBudgetForm(btn.dataset.editBudget);
   });
   document.getElementById('add-budget-btn').onclick = () => showBudgetForm(null);
+
+  ov.querySelectorAll('[data-theme-mode]').forEach(btn => {
+    btn.onclick = () => {
+      config.themeMode = btn.dataset.themeMode;
+      applyTheme();
+      saveConfig();
+      ov.querySelectorAll('[data-theme-mode]').forEach(b => b.classList.toggle('active', b === btn));
+    };
+  });
 
   document.getElementById('btn-export-csv').onclick = () => exportCSV();
   document.getElementById('btn-export-backup').onclick = () => exportBackup();
@@ -1925,12 +1751,13 @@ function showSettings(){
 
   document.getElementById('reset-all').onclick = async () => {
     const ok = await showConfirm(
-      'This clears every budget, all history, and your settings. This cannot be undone.',
+      'This clears every fund, all history, and your settings. This cannot be undone.',
       { title:'Reset all data?', okLabel:'Reset', danger:true }
     );
     if(ok){
       localStorage.removeItem(CONFIG_KEY);
       config = cloneDefaults();
+      applyTheme();
       ov.remove();
       render();
     }
@@ -1940,32 +1767,53 @@ function showSettings(){
 function showBudgetForm(budgetId){
   const existing = budgetId ? config.budgets.find(b => b.id === budgetId) : null;
   const isNew = !existing;
+  let selectedType = existing ? existing.type : 'dining';
+
+  const typeChips = FUND_TYPES.map(t => `
+    <button type="button" class="tile fund-type-tile${t.key === selectedType ? ' active' : ''}" data-type="${t.key}">
+      <span class="tile-icon">${t.emoji}</span>${t.label}
+    </button>`).join('');
 
   const ov = overlay(`
     <button class="close-x" id="close-budget-form">×</button>
-    <h2>${isNew ? 'Add a budget' : 'Edit budget'}</h2>
-    <p class="hint">${isNew ? 'Track a separate pot — like Flex or meal swipes — alongside your other budgets.' : "Update this budget's name, total, and quick-log presets."}</p>
+    <h2>${isNew ? 'Add a fund' : 'Edit fund'}</h2>
+    <p class="hint">${isNew ? 'Track a separate pot — like a bookstore allowance or campus cash — alongside your other funds.' : "Update this fund's details and quick-log presets."}</p>
+    <label>Fund type</label>
+    <div class="tile-grid" id="bf-type-grid">${typeChips}</div>
     <label>Name</label>
-    <input type="text" id="bf-name" value="${existing ? escapeHtml(existing.name) : ''}" placeholder="e.g. Flex Dollars" maxlength="30">
+    <input type="text" id="bf-name" value="${existing ? escapeHtml(existing.name) : ''}" placeholder="e.g. Bookstore Funds" maxlength="30">
     <div class="row2">
       <div>
-        <label>Total for semester</label>
+        <label>Total for term</label>
         <input type="number" id="bf-total" value="${existing ? existing.totalBudget : DEFAULTS.totalBudget}" step="1" min="1">
       </div>
       ${isNew ? `
       <div>
         <label>Current balance</label>
         <input type="number" id="bf-balance" inputmode="decimal" step="0.01" min="0" placeholder="e.g. 200.00">
-      </div>` : ''}
+      </div>` : `
+      <div>
+        <label>Reserve to keep</label>
+        <input type="number" id="bf-reserve" value="${existing.targetReserve || 0}" step="1" min="0">
+      </div>`}
     </div>
+    ${isNew ? '' : `<p class="hint" style="margin-top:-6px;">Reserve is money you'd like left over at the term's end — pace targets aim to leave this untouched.</p>`}
     <label>Quick log amounts</label>
     <input type="text" id="bf-quick" value="${(existing ? existing.quickAmounts : DEFAULTS.quickAmounts).join(', ')}" placeholder="5, 8, 12, 15">
     <div class="sheet-actions">
       <button class="btn btn-secondary" id="cancel-budget-form">Cancel</button>
-      <button class="btn btn-primary" id="save-budget-form">${isNew ? 'Add budget' : 'Save'}</button>
+      <button class="btn btn-primary" id="save-budget-form">${isNew ? 'Add fund' : 'Save'}</button>
     </div>
-    ${(!isNew && config.budgets.length > 1) ? `<button class="link" id="delete-budget-form">Delete this budget</button>` : ''}
+    ${(!isNew && config.budgets.length > 1) ? `<button class="link" id="delete-budget-form">Delete this fund</button>` : ''}
   `);
+
+  document.querySelectorAll('.fund-type-tile').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.fund-type-tile').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedType = btn.dataset.type;
+    };
+  });
 
   document.getElementById('close-budget-form').onclick = () => ov.remove();
   document.getElementById('cancel-budget-form').onclick = () => ov.remove();
@@ -1978,7 +1826,7 @@ function showBudgetForm(budgetId){
     const quickAmounts = parsedQuick.length ? parsedQuick : [...DEFAULTS.quickAmounts];
 
     if(isNaN(totalRaw) || totalRaw <= 0){
-      await showAlert('Enter a valid total budget.');
+      await showAlert('Enter a valid total for the term.');
       return;
     }
 
@@ -1988,12 +1836,12 @@ function showBudgetForm(budgetId){
         await showAlert('Enter a starting balance to continue.');
         return;
       }
-      const name = nameRaw || `Budget ${config.budgets.length + 1}`;
+      const name = nameRaw || FUND_TYPES.find(t => t.key === selectedType).label;
       const spentBeforeSetup = Math.max(0, totalRaw - balanceRaw);
       const budget = makeBudget({
-        name, totalBudget: totalRaw, balance: balanceRaw, quickAmounts,
+        name, type: selectedType, totalBudget: totalRaw, balance: balanceRaw, quickAmounts,
         history:[{
-          date: todayISO(), type:'setup',
+          id: makeEntryId(), date: todayISO(), type:'setup',
           amount: spentBeforeSetup > 0 ? spentBeforeSetup : null,
           category:'other', balanceAfter: balanceRaw, note:'Starting balance entered'
         }]
@@ -2003,15 +1851,18 @@ function showBudgetForm(budgetId){
       saveConfig();
       document.querySelectorAll('.overlay').forEach(o => o.remove());
       render();
-      showToast('Budget added');
+      showToast('Fund added');
     }else{
+      const reserveRaw = parseFloat(document.getElementById('bf-reserve').value);
       existing.name = nameRaw || existing.name;
+      existing.type = selectedType;
       existing.totalBudget = totalRaw;
+      existing.targetReserve = (!isNaN(reserveRaw) && reserveRaw >= 0) ? reserveRaw : 0;
       existing.quickAmounts = quickAmounts;
       saveConfig();
       document.querySelectorAll('.overlay').forEach(o => o.remove());
       render();
-      showToast('Budget updated');
+      showToast('Fund updated');
     }
   };
 
@@ -2020,13 +1871,13 @@ function showBudgetForm(budgetId){
     deleteBtn.onclick = async () => {
       const ok = await showConfirm(
         `This deletes "${existing.name}" and its entire history. This cannot be undone.`,
-        { title:'Delete this budget?', okLabel:'Delete', danger:true }
+        { title:'Delete this fund?', okLabel:'Delete', danger:true }
       );
       if(!ok) return;
 
       config.budgets = config.budgets.filter(b => b.id !== existing.id);
       if(!config.budgets.length){
-        config.budgets = [makeBudget({ id:'dining-dollars', name:'Dining Dollars' })];
+        config.budgets = [makeBudget({ id:'fund-1', name:'Campus Fund', type:'dining' })];
       }
       if(config.activeBudgetId === existing.id){
         config.activeBudgetId = config.budgets[0].id;
@@ -2034,9 +1885,147 @@ function showBudgetForm(budgetId){
       saveConfig();
       document.querySelectorAll('.overlay').forEach(o => o.remove());
       render();
-      showToast('Budget deleted');
+      showToast('Fund deleted');
     };
   }
+}
+
+function showHistory(){
+  const budget = activeBudget();
+  const titleSuffix = config.budgets.length > 1 ? ` · ${escapeHtml(budget.name)}` : '';
+  let query = '';
+  let activeCat = 'all';
+
+  const catChips = ['all', ...CATEGORIES.map(c => c.key)];
+
+  function rowsHtml(){
+    const entries = budget.history.slice().reverse().filter(h => {
+      if(activeCat !== 'all' && (h.category || 'other') !== activeCat) return false;
+      if(!query) return true;
+      const meta = historyRowMeta(h);
+      const hay = `${meta.label} ${h.note || ''} ${fmtDate(h.date)}`.toLowerCase();
+      return hay.includes(query.toLowerCase());
+    });
+    if(!entries.length) return '<div class="empty">No matching transactions</div>';
+    return entries.map(h => {
+      const meta = historyRowMeta(h);
+      const editable = h.type === 'spend';
+      return `
+        <button type="button" class="row-flat" data-entry="${h.id}" ${editable ? '' : 'disabled'}>
+          <div class="row-flat-left">
+            <span class="row-flat-icon">${meta.icon}</span>
+            <div>
+              <div class="row-flat-label">${meta.label}</div>
+              <div class="row-flat-sub">${fmtDate(h.date)}${h.note ? ' · ' + escapeHtml(h.note) : ''}</div>
+            </div>
+          </div>
+          <div class="row-flat-amt">${fmtMoney(h.balanceAfter)}</div>
+        </button>`;
+    }).join('');
+  }
+
+  const ov = overlay(`
+    <button class="close-x" id="close-history">×</button>
+    <h2>All activity${titleSuffix}</h2>
+    <input type="text" id="hist-search" placeholder="Search transactions" style="margin-bottom:10px;">
+    <div class="chip-row" id="hist-cats">
+      ${catChips.map(k => {
+        const meta = k === 'all' ? { label:'All' } : CATEGORIES.find(c => c.key === k);
+        return `<button type="button" class="chip cat-chip${k === 'all' ? ' active' : ''}" data-cat="${k}">${meta.label}</button>`;
+      }).join('')}
+    </div>
+    <div id="hist-rows" style="margin-top:12px;">${rowsHtml()}</div>
+  `);
+
+  function refresh(){
+    document.getElementById('hist-rows').innerHTML = rowsHtml();
+    wireRows();
+  }
+
+  function wireRows(){
+    document.querySelectorAll('#hist-rows .row-flat:not(:disabled)').forEach(btn => {
+      btn.onclick = () => showEditEntry(budget, btn.dataset.entry, refresh);
+    });
+  }
+
+  document.getElementById('close-history').onclick = () => ov.remove();
+  document.getElementById('hist-search').oninput = (e) => { query = e.target.value; refresh(); };
+  ov.querySelectorAll('.cat-chip').forEach(btn => {
+    btn.onclick = () => {
+      ov.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCat = btn.dataset.cat;
+      refresh();
+    };
+  });
+  wireRows();
+}
+
+function showEditEntry(budget, entryId, onDone){
+  const entry = budget.history.find(h => h.id === entryId);
+  if(!entry) return;
+
+  let selectedCategory = entry.category || 'other';
+  const catTiles = CATEGORIES.map(c =>
+    `<button type="button" class="tile cat-tile${c.key === selectedCategory ? ' active' : ''}" data-cat="${c.key}">
+      <span class="tile-icon">${c.emoji}</span>${c.label}
+    </button>`
+  ).join('');
+
+  const ov = overlay(`
+    <button class="close-x" id="close-edit-entry">×</button>
+    <h2>Edit transaction</h2>
+    <p class="hint">${fmtDate(entry.date)}</p>
+    <label>Amount</label>
+    <input type="number" id="ee-amount" inputmode="decimal" step="0.01" min="0" value="${Number(entry.amount).toFixed(2)}">
+    <label>Category</label>
+    <div class="tile-grid" id="ee-cat-grid">${catTiles}</div>
+    <label>Note</label>
+    <input type="text" id="ee-note" value="${entry.note ? escapeHtml(entry.note) : ''}" placeholder="Optional" maxlength="60">
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" id="cancel-edit-entry">Cancel</button>
+      <button class="btn btn-primary" id="save-edit-entry">Save</button>
+    </div>
+    <button class="link" id="delete-edit-entry">Delete this transaction</button>
+  `);
+
+  ov.querySelectorAll('.cat-tile').forEach(btn => {
+    btn.onclick = () => {
+      ov.querySelectorAll('.cat-tile').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedCategory = btn.dataset.cat;
+    };
+  });
+
+  document.getElementById('close-edit-entry').onclick = () => ov.remove();
+  document.getElementById('cancel-edit-entry').onclick = () => ov.remove();
+
+  document.getElementById('save-edit-entry').onclick = async () => {
+    const amt = parseFloat(document.getElementById('ee-amount').value);
+    if(isNaN(amt) || amt <= 0){ await showAlert('Enter a valid amount.'); return; }
+    entry.amount = amt;
+    entry.category = selectedCategory;
+    const note = document.getElementById('ee-note').value.trim();
+    entry.note = note || undefined;
+    recomputeBalances(budget);
+    saveConfig();
+    render();
+    ov.remove();
+    showToast('Transaction updated');
+    if(onDone){ onDone(); }
+  };
+
+  document.getElementById('delete-edit-entry').onclick = async () => {
+    const ok = await showConfirm('This removes the transaction and recalculates your balance.', { title:'Delete transaction?', okLabel:'Delete', danger:true });
+    if(!ok) return;
+    budget.history = budget.history.filter(h => h.id !== entryId);
+    recomputeBalances(budget);
+    saveConfig();
+    render();
+    ov.remove();
+    showToast('Transaction deleted');
+    if(onDone){ onDone(); }
+  };
 }
 
 if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){
@@ -2051,5 +2040,4 @@ if('serviceWorker' in navigator && (location.protocol === 'https:' || location.h
 })();
 </script>
 
-</body>
-</html>
+</body></html>

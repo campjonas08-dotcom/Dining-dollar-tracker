@@ -1,10 +1,11 @@
-/* Offline app-shell cache for the Auburn Dining Dollars home-screen app.
+/* Offline app-shell cache for the Stipend home-screen app.
    Bump CACHE_NAME whenever the app shell files change so clients pick up
    the new version instead of serving a stale cache. */
-const CACHE_NAME = 'dining-dollars-v2';
+const CACHE_NAME = 'stipend-v1';
 const APP_SHELL = [
   './',
   './index.html',
+  './style.css',
   './manifest.json',
   './dining-icon.png',
   './sync.js',
