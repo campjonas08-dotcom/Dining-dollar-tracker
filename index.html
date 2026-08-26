@@ -481,11 +481,21 @@ function wireAccountSection(container){
       const email = emailInput().value.trim();
       if(!email){ await showAlert('Enter your email above, then tap "Forgot password?" again.'); return; }
       if(!window.DDSync){ await showAlert('Still loading — try again in a second.'); return; }
+      const originalLabel = forgotBtn.textContent;
+      forgotBtn.disabled = true;
+      forgotBtn.textContent = 'Sending…';
       try{
         await window.DDSync.resetPassword(email);
-        showToast('Password reset email sent');
+        /* Firebase never reveals whether an email actually has an account
+           (that's deliberate anti-enumeration behavior) — this call
+           "succeeds" either way, so the message can't promise an email
+           landed, only that one will if the account exists. */
+        await showAlert("If an account exists for that email, we've sent a password reset link — check your inbox (and spam folder). It can take a few minutes.");
       }catch(e){
         await showAlert(friendlySyncError(e));
+      }finally{
+        forgotBtn.disabled = false;
+        forgotBtn.textContent = originalLabel;
       }
     };
   }
