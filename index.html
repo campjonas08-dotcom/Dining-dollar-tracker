@@ -193,6 +193,7 @@ function cloneDefaults(){
     termStart: term.start,
     termEnd: term.end,
     holidays:[],
+    totalDaysOverride:null,
     setupComplete:false,
     installBannerDismissed:false,
     tutorialSeen:false,
@@ -300,6 +301,9 @@ function normalizeConfig(){
     config.termEnd = def.end;
   }
   if(!Array.isArray(config.holidays)){ config.holidays = []; }
+  if(config.totalDaysOverride !== null && (typeof config.totalDaysOverride !== 'number' || !isFinite(config.totalDaysOverride) || config.totalDaysOverride <= 0)){
+    config.totalDaysOverride = null;
+  }
 
   if(typeof config.setupComplete !== 'boolean'){ config.setupComplete = false; }
   if(typeof config.installBannerDismissed !== 'boolean'){ config.installBannerDismissed = false; }
@@ -569,9 +573,19 @@ window.addEventListener('dd-remote-update', (e) => {
 
 function computeStats(budget){
   budget = budget || activeBudget();
-  const days = schoolDays(config);
   const today = todayISO();
-  const totalDays = days.length;
+
+  /* Weekdays-minus-skip-days is a good default, but some terms have a
+     known, authoritative day count that doesn't cleanly reduce to "every
+     weekday except these specific dates" (e.g. a school's own published
+     class-day count may exclude extra days a generic weekday count can't
+     infer). totalDaysOverride lets that real number win when set — the
+     first N school days in the range become "the term," everything
+     computed past that point is just outside it. */
+  const allDays = schoolDays(config);
+  const hasOverride = typeof config.totalDaysOverride === 'number' && config.totalDaysOverride > 0;
+  const totalDays = hasOverride ? Math.min(config.totalDaysOverride, allDays.length) : allDays.length;
+  const days = hasOverride ? allDays.slice(0, totalDays) : allDays;
 
   const earnedDays = days.filter(d => d <= today);
   const elapsedDays = earnedDays.length;
@@ -1621,11 +1635,29 @@ function showTermForm(){
       <button type="button" class="btn btn-secondary" id="tf-add-holiday" style="flex:0 0 auto; padding:12px 16px;">Add</button>
     </div>
     <div id="tf-holiday-list" style="margin-top:10px;">${holidaysHtml()}</div>
+
+    <label>Total class days</label>
+    <input type="number" id="tf-total-override" inputmode="numeric" min="1" step="1"
+      value="${config.totalDaysOverride || ''}"
+      placeholder="Auto: ${schoolDays({ termStart: config.termStart, termEnd: config.termEnd, holidays }).length} from the dates above">
+    <p class="hint" style="margin-top:6px;">Leave blank to count weekdays automatically. Set this if your school publishes an official class-day count that runs different from a plain weekday count.</p>
+
     <div class="sheet-actions">
       <button class="btn btn-secondary" id="cancel-term-form">Cancel</button>
       <button class="btn btn-primary" id="save-term-form">Save</button>
     </div>
   `);
+
+  function updateAutoPlaceholder(){
+    const start = document.getElementById('tf-start').value;
+    const end = document.getElementById('tf-end').value;
+    const input = document.getElementById('tf-total-override');
+    if(start && end && start <= end){
+      input.placeholder = `Auto: ${schoolDays({ termStart: start, termEnd: end, holidays }).length} from the dates above`;
+    }else{
+      input.placeholder = 'Auto: computed from the dates above';
+    }
+  }
 
   function wireRemove(){
     ov.querySelectorAll('[data-remove]').forEach(btn => {
@@ -1635,8 +1667,12 @@ function showTermForm(){
   function refreshHolidays(){
     ov.querySelector('#tf-holiday-list').innerHTML = holidaysHtml();
     wireRemove();
+    updateAutoPlaceholder();
   }
   wireRemove();
+
+  document.getElementById('tf-start').addEventListener('input', updateAutoPlaceholder);
+  document.getElementById('tf-end').addEventListener('input', updateAutoPlaceholder);
 
   document.getElementById('tf-add-holiday').onclick = () => {
     const v = document.getElementById('tf-holiday-input').value;
@@ -1651,10 +1687,14 @@ function showTermForm(){
     const end = document.getElementById('tf-end').value;
     if(!start || !end || start > end){ await showAlert('Enter a valid date range.'); return; }
 
+    const overrideRaw = parseInt(document.getElementById('tf-total-override').value, 10);
+    const totalDaysOverride = (!isNaN(overrideRaw) && overrideRaw > 0) ? overrideRaw : null;
+
     config.termLabel = label || DEFAULTS.termLabel;
     config.termStart = start;
     config.termEnd = end;
     config.holidays = holidays;
+    config.totalDaysOverride = totalDaysOverride;
     saveConfig();
 
     document.querySelectorAll('.overlay').forEach(o => o.remove());
